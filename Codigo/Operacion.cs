@@ -3,105 +3,34 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
-
-public class Dispositivo
+enum estadoOp
 {
-
-    #region Attributes
-
-    private int Tlectura;
-
-
-    private int Tescritura;
-
-
-    private int Tseek;
-
-
-    private int TamBloques;
-
-
-    private int TamDispositivo;
-
-
-    private int CantBloques;
-
-
-    private Array<float> TablaBloques;
-
-
-
-    #endregion
-
-
-    #region Public methods
-
-    public Dispositivo()
-    {
-        throw new Exception("The method or operation is not implemented.");
-    }
-
-    public int estadoBloque(int numBloque)
-    {
-        throw new Exception("The method or operation is not implemented.");
-    }
-
-    public void CambiarEstado(int numBloque, float Estado)
-    {
-        throw new Exception("The method or operation is not implemented.");
-    }
-
-    #endregion
-
-
+    Espera = 0,
+    Ejecutando = 1,
+    Finalizado = 2
 }
 
-
-using System;
-using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-
-
 public class Operacion
-{
-
-    #region Attributes
-
+{ 
     private string NombreArchivo;
-
-
     private char IdOperacion;
-
-
     private int NumProceso;
-
-
     private int Tarribo;
-
-
     private int Offset;
-
-
     private int CantidadUA;
+    private estadoOp Estado;    //Espera, Ejecutando, Finalizado
+    
 
-
-    private estadoOp Estado;
-
-
-
-    #endregion
-
-
-    #region Public methods
-
-    public void Operacion_string_char_int_int_int_int_()
+    public Operacion(string nombreArchivo, char idOperacion, int numProceso, int tArribo, int offset, int cantidadUA, estadoOp estado)
     {
-        throw new Exception("The method or operation is not implemented.");
+        this.NombreArchivo = nombreArchivo;
+        this.IdOperacion = idOperacion;
+        this.NumProceso = numProceso;
+        this.Tarribo = tArribo;
+        this.Offset = offset;
+        this.CantidadUA = cantidadUA;
+        this.Estado = estado;
     }
-
-    #endregion
-
 
 }
 
