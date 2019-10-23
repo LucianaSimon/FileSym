@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
-enum estadoOp
+public enum estadoOp
 {
     Espera = 0,
     Ejecutando = 1,
