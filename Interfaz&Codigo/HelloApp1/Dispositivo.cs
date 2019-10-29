@@ -75,7 +75,7 @@ namespace FireSim
 
         public int GetLibres(int uAdeseada, string OrgaFisica, ref Archivo arch)
         {
-            int tiempo;
+            int tiempo = -1;
             
             if (OrgaFisica.Equals("contigua"))
             { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
@@ -91,7 +91,7 @@ namespace FireSim
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
                 arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Actualizo direcciones
-                arch.TablaDirecciones.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch));
+                arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch));
             }
             return tiempo;
         }
@@ -99,16 +99,20 @@ namespace FireSim
 
         public ArrayList getDireccionBloqueLibreIndice( int BloquesDeseados, Archivo arch )
         {
-
-
-          //  int cantI = (int)Math.Ceiling((decimal)BloquesDeseados / (decimal)tamIndice);
-            //int cantBloquesI = (int)Math.Ceiling((decimal)tamBloque / (decimal)cantI);
+            // Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
+            int cant_uaI = BloquesDeseados * tamIndice;
+            // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+            // son necesarios para almacenar todos los indices necesarios
+            int cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
+            
             ArrayList bloquesLibres = new ArrayList();
             if (arch.TablaDireccionesIndice.Count == 0 )
             {
-                
+                // TODO: Falta hacer el analisis para asignar los bloques de indices
+                // tanto para cuando se crea el archivo como para cuando se quiere escribir y se necesita mas espacio
             }
 
+            return bloquesLibres;
 
         }
 
