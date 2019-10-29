@@ -73,50 +73,136 @@ namespace FireSim
          * ya sea agregando direcciones o realocando todo el archivo y modificandola por completo.
          */
 
-        public int GetLibres(int uAdeseada, string OrgaFisica, ref Archivo arch)
+        public int GetLibres(int uAdeseada, string OrgaFisica, string AdminLibres, ref Archivo arch)
         {
             int tiempo = -1;
-            
+            // TODO: Falta hacer las cuentas de los tiempos para cada organizacion, para eso se usa AdminLibres
+            // Fede: creo que realocar para contigua se tiene que hacer en un metodo aparte
             if (OrgaFisica.Equals("contigua"))
             { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
-
+                arch.TablaDirecciones.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
             }
             else if (OrgaFisica.Equals("enlazada"))
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque);
                 arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Obtengo Array List de los bloques libres
+                // Asigno el tamaño del indice a las uABurocracia de cada bloque asignado
+                for (int i=0; i< bloquesDeseados; i++)
+                {
+                    // Obtengo la posicion del bloque
+                    int posBloque = (int)arch.TablaDirecciones[i];
+                    TablaBloques[posBloque].uABurocracia = tamIndice;
+                }
             }
             else if (OrgaFisica.Equals("indexado"))
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
                 arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Actualizo direcciones
-                arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch));
+                arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.TablaDireccionesIndice));
             }
             return tiempo;
         }
 
 
-        public ArrayList getDireccionBloqueLibreIndice( int BloquesDeseados, Archivo arch )
+        private ArrayList getDireccionBloqueLibreIndice( int BloquesDeseados, ArrayList TablaIndices )
         {
-            // Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
-            int cant_uaI = BloquesDeseados * tamIndice;
-            // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
-            // son necesarios para almacenar todos los indices necesarios
-            int cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
-            
-            ArrayList bloquesLibres = new ArrayList();
-            if (arch.TablaDireccionesIndice.Count == 0 )
+            ArrayList bloquesLibresIndices = new ArrayList();
+            if (TablaIndices.Count == 0 )
             {
-                // TODO: Falta hacer el analisis para asignar los bloques de indices
-                // tanto para cuando se crea el archivo como para cuando se quiere escribir y se necesita mas espacio
+                /* 
+                 * Para este caso hay que crear todos los bloques de indices para ese archivo, por eso
+                 * se busca la cantidad de bloques necesarios, segun los deseados
+                */
+                
+                //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
+                int cant_uaI = BloquesDeseados * tamIndice;
+                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+                // son necesarios para almacenar todos los indices necesarios
+                int cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
+
+                // Se recorre desde el final al principio para dejar los indices en el final de la tabla de bloques
+                //(No se, se me ocurrio a mi, sino aca se pude usar el metodo getDireccionBloqueLibre)(FEDE)
+                int posBloque = GetCantBloques();
+                int posIndice = 0;
+                while ((posIndice < cant_bloquesI) && (posBloque >= 0))
+                {
+                    if (!TablaBloques[posBloque].estadoReserva)
+                    {
+                        bloquesLibresIndices[posIndice] = posBloque;
+                    }
+                }
+                if (posIndice == cant_bloquesI)
+                {
+                    for (int i=0; i<posIndice; i++)
+                    {
+                        TablaBloques[(int)bloquesLibresIndices[posIndice]].estadoReserva = true;
+                        // Voy agregando "indices" al bloque indice hasta llenarlo o ya no necesitar guardar indices
+                        while((TablaBloques[posIndice].uABurocracia <= tamBloque) && (cant_uaI > 0))
+                        {
+                            TablaBloques[posIndice].uABurocracia += tamIndice;
+                            cant_uaI -= tamIndice;
+                        }
+                    }
+                }
+                else
+                {
+                    // Quito todos los elementos de la tabla de indices ya que no se pudo hacer la reserva
+                    // despues lanzo excepcion
+                    TablaIndices.Clear();
+                    throw new Exception("No hay suficiente espacio de almacenamiento para el archivo solicitado");
+                }
+            }
+            else
+            {
+                /*
+                 * Para este caso hay que completar el ultimo bloque indice con la cantidad de indices que entren
+                 * y luego crear la cantidad de bloques de indices necesarios nuevos y completarlos con la 
+                 * cantidad de bloque indice restantes
+                 */
+                int ultimoIndice = TablaIndices.Count;
+                //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
+                int cant_uaI = BloquesDeseados * tamIndice;
+                // Compruebo si la cantidad de uA para indice que necesito entra en el ulimo indice
+                // si es asi agrego cant_uaI a uABurocracia del ultimo indice y la tabla no se modifica
+                if ((tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia) >= cant_uaI)
+                {
+                    TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia += cant_uaI;
+                }
+                else // Si no, tengo que agregar la diferencia y buscar un nuevo indice
+                {
+                    int diff = (tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia);
+
+                    // Asigno la cantidad de indices que entran en el ultimo indice
+                    TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia += diff;
+
+                    // bloqueNecesitado en este caso es la cantidad de indices que voy a necesitar (no bloques, indices)
+                    int bloqueNecesitado = (int)Math.Ceiling((decimal)(cant_uaI - diff) / (decimal)tamIndice);
+                    
+                    // En aux se van a guardar los nuevos bloques indices que se van a anexar a la tabla original
+                    ArrayList aux = new ArrayList();
+
+                    // Agrego la Tabla de indices original para no perderla
+                    bloquesLibresIndices.AddRange(TablaIndices);
+                    
+                    try
+                    {
+                        // Agrego los nuevos bloques que necesito
+                        bloquesLibresIndices.AddRange(getDireccionBloqueLibreIndice(bloqueNecesitado, aux));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Error: " + e);
+                    }
+
+                }
             }
 
-            return bloquesLibres;
+            return bloquesLibresIndices;
 
         }
 
-        public ArrayList getDireccionBloqueLibre ( int bloquesDeseados ) // solo valido para indexada/ enlazada
+        private ArrayList getDireccionBloqueLibre ( int bloquesDeseados ) // solo valido para indexada/ enlazada
         {
             ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
             int aux = 0;
@@ -146,6 +232,51 @@ namespace FireSim
             return bloquesLibres;
         }
 
+        private ArrayList getDireccionBloqueContiguo(int bloquesDeseados)
+        {
+            ArrayList bloquesContiguos = new ArrayList();
+            
+            // Para verificar que existan la cantidad de bloques deseados contiguos
+            int contiguos = 0;
+            
+            // Para recorrer la Tabla de Bloques
+            int posBloque = 0;
+
+            // Posicion donde comienzan los bloques contiguos
+            int posInicial = -1;
+
+            while ((posBloque <GetCantBloques()) && (contiguos < bloquesDeseados))
+            {
+                if (!TablaBloques[posBloque].estadoReserva)
+                {
+                    // Aumento el contador de bloques contiguos encontrados
+                    contiguos++;
+                    posInicial = posBloque;                
+                }
+                else
+                {
+                    // Si en algun momento se encuentra un bloque reservado sin cumplir la cantidad de bloques
+                    // contiguos deseados, se vuelve a empezar de 0
+                    contiguos = 0;
+                    posInicial = -1;
+                }
+            }
+            if (contiguos == bloquesDeseados)
+            {
+                for (int i=0; i<contiguos; i++)
+                {
+                    bloquesContiguos.Add(TablaBloques[posInicial + i]);
+                    TablaBloques[posInicial + i].estadoReserva = true;
+                }
+            }
+            else
+            {
+                throw new Exception("No hay suficiente espacio de almacenamiento para el archivo solicitado");
+            }
+
+            return bloquesContiguos;
+        }
+        
         public int GetCantBloques()
         {
             return cantBloques;
