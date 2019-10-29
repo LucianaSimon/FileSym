@@ -12,6 +12,7 @@ public struct Archivo
     public int estado;
     public int cant_uA;
     public ArrayList TablaDirecciones;
+    public ArrayList TablaDireccionesIndice; // Se utiliza en el caso de indexada unicamente
 }
 
 namespace FireSim
@@ -156,7 +157,8 @@ namespace FireSim
             archivo.cant_uA = cant_uA;
             archivo.estado = -1; // Se creo pero no esta abierto
             archivo.TablaDirecciones = new ArrayList();
-            disp.GetLibres(cant_uA, GetOrganizacionFisica(), archivo.TablaDirecciones);
+            archivo.TablaDireccionesIndice = new ArrayList();
+            disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo); 
         }
 
         public void Write()

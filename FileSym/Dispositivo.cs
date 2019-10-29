@@ -29,7 +29,7 @@ namespace FireSim
         {
             //Calculo de la cantidad de bloques
             //ceiling ??
-            int cantBloques = (tamDispositivo / tamBloques);
+            int cantBloques = (int)Math.Ceiling(((decimal)tamDispositivo / (decimal)tamBloques));
 
             //Creo el arreglo de floats para almacenar los diferentes estados de cada bloque
             //TablaBloques[numBloque] = float estado que varia entre 0 (disponible) y 1 (ocupado).

@@ -40,3 +40,15 @@ C:\Users\Ayrton\source\repos\HelloApp1\HelloApp1\bin\Debug\Xamarin.Forms.Xaml.pd
 C:\Users\Ayrton\source\repos\HelloApp1\HelloApp1\bin\Debug\Xamarin.Forms.Xaml.xml
 C:\Users\Ayrton\source\repos\HelloApp1\HelloApp1\obj\Debug\UserControl1.baml
 C:\Users\Ayrton\source\repos\HelloApp1\HelloApp1\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.csprojAssemblyReference.cache
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Config.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\MainWindow.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\SimWindow.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\UserControl1.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Window2.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\App.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.cache
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.lref
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.exe
+C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.pdb

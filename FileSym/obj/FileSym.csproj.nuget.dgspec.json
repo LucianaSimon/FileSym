@@ -1,25 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Filesim\\FileSym.csproj": {}
+    "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\FileSym\\FileSym.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Filesim\\FileSym.csproj": {
+    "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\FileSym\\FileSym.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Filesim\\FileSym.csproj",
+        "projectUniqueName": "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\FileSym\\FileSym.csproj",
         "projectName": "FileSym",
-        "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Filesim\\FileSym.csproj",
-        "packagesPath": "C:\\Users\\Federico\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Filesim\\obj\\",
+        "projectPath": "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\FileSym\\FileSym.csproj",
+        "packagesPath": "C:\\Users\\Rocío\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\FileSym\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Federico\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\Rocío\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.0"

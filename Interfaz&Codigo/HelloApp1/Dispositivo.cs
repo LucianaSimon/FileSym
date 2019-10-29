@@ -18,10 +18,11 @@ namespace FireSim
         private int tLectura;
         private int tEscritura;
         private int tSeek;
-        private int tamBloques;
+        private int tamBloque;
         private int tamDispositivo;
         private int cantBloques;
         private int tProcesamiento;
+        private int tamIndice;
         private Bloque[] TablaBloques;  //arreglo fijo, dispositivo no puede crecer en tamaño fisico
 
         public Dispositivo(int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, int tProcesamiento)
@@ -51,7 +52,7 @@ namespace FireSim
         }
 
         public int estadoBloque(int numBloque)
-        {   
+        {
             //Con este numero en la interfaz se comprueba si el bloque esta completo o no, x la cantidad de uA
             return (this.TablaBloques[numBloque].uAOcupado + this.TablaBloques[numBloque].uABurocracia);
         }
@@ -72,9 +73,73 @@ namespace FireSim
          * ya sea agregando direcciones o realocando todo el archivo y modificandola por completo.
          */
 
-        public int GetLibres(int BloquesDeseado, string OrgaFisica, ArrayList tDirecciones)
+        public int GetLibres(int uAdeseada, string OrgaFisica, ref Archivo arch)
         {
-            return 1;
+            int tiempo;
+            
+            if (OrgaFisica.Equals("contigua"))
+            { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
+                int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
+
+            }
+            else if (OrgaFisica.Equals("enlazada"))
+            {
+                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque);
+                arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Obtengo Array List de los bloques libres
+            }
+            else if (OrgaFisica.Equals("indexado"))
+            {
+                int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
+                arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Actualizo direcciones
+                arch.TablaDirecciones.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch));
+            }
+            return tiempo;
+        }
+
+
+        public ArrayList getDireccionBloqueLibreIndice( int BloquesDeseados, Archivo arch )
+        {
+
+
+          //  int cantI = (int)Math.Ceiling((decimal)BloquesDeseados / (decimal)tamIndice);
+            //int cantBloquesI = (int)Math.Ceiling((decimal)tamBloque / (decimal)cantI);
+            ArrayList bloquesLibres = new ArrayList();
+            if (arch.TablaDireccionesIndice.Count == 0 )
+            {
+                
+            }
+
+
+        }
+
+        public ArrayList getDireccionBloqueLibre ( int bloquesDeseados ) // solo valido para indexada/ enlazada
+        {
+            ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+            int aux = 0;
+            int contaTabla = 0;
+
+            while ((aux <= bloquesDeseados) && (contaTabla < cantBloques))
+            {
+               if (!TablaBloques[contaTabla].estadoReserva) // este valor devuelve true si no esta reservado
+                {
+                    bloquesLibres[aux] = contaTabla;
+                    aux++;
+                }
+                contaTabla++;
+            }
+            if ( aux < bloquesDeseados ) // No alcanzan los bloques disponibles para almacenar el archivo. Debo cortar la funcion
+            {
+                throw new Exception("No hay suficiente espacio de almacenamiento para el archivo solicitado");
+            }
+            else
+            {
+                for (int i = 0; i < aux; i++)
+                {
+                    TablaBloques[(int)bloquesLibres[i]].estadoReserva = true; ///Reservo los bloques 
+                }
+            }
+          
+            return bloquesLibres;
         }
 
         public int GetCantBloques()
@@ -129,12 +194,12 @@ namespace FireSim
 
         public int GetTamBloques()
         {
-            return tamBloques;
+            return tamBloque;
         }
 
         private void SetTamBloques(int value)
         {
-            tamBloques = value;
+            tamBloque = value;
         }
 
         public int GetTprocesamient()
