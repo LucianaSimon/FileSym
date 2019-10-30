@@ -23,7 +23,7 @@ namespace FireSim
         private int tamDispositivo;
         private int tamIndice; //tamanio que ocupa un indice --> burocracia
         private int cantBloques;
-        private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaÃ±o fisico
+        private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaño fisico
 
         public Dispositivo(int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, int tProcesamiento)
         {
@@ -33,7 +33,7 @@ namespace FireSim
             this.SetTseek(tSeek);
             this.SetTamBloques(tamBloques);
             this.SetTamDispositivo(tamDispositivo);
-            this.SetCantBloques((int)Math.Ceiling((decimal)tamDispositivo / (decimal)tamBloques)); //DUDA @lu: estaria bien asi?
+            this.SetCantBloques((int)Math.Truncate((decimal)tamDispositivo / (decimal)tamBloques)); //DUDA @lu: estaria bien asi?
             this.SetTprocesamiento(tProcesamiento);
 
             //Creo el arreglo de bloques para almacenar los diferentes estados de cada bloque
@@ -67,60 +67,96 @@ namespace FireSim
             this.TablaBloques[numBloque].uABurocracia = modificar_uA;
         }
 
-        /*
-         * Devuelve el tiempo de gestion para buscar los bloques libres necesarios basado en la
-         * organizacion fisica y el tiempo de realocar. Tambien modifica la tDirecciones enviada,
-         * ya sea agregando direcciones o realocando todo el archivo y modificandola por completo.
-         */
-
-        public int GetLibres(int uAdeseada, string OrgaFisica, string AdminLibres, ref Archivo arch)
+        ///devuelve el t q llevaria buscar bloques libres segun el metodo de Adminitracion elegido x usuario
+        /////el segundo parametro solo se usa en el segundo metodo --> en los otros pasar cero
+        ///@AYRTON fijate de pasar estos parametros x interfaz escritos igual! 
+        public int TprocesamientoBloquesLibres(string AdminLibres, int uAdeseada) 
         {
-            int tiempo = -1;
-            // TODO: Falta hacer las cuentas de los tiempos para cada organizacion, para eso se usa AdminLibres
-            // Fede: creo que realocar para contigua se tiene que hacer en un metodo aparte
+            int tiempo = 0;
 
-            if (OrgaFisica.Equals("contigua"))
-            { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
-                int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
-                arch.TablaDirecciones.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
-
-                ///DUDA: convendria pasar tiempo como referencia en getDireccionesBloqueContiguo??? por si hay que realocar
-                ///arch.TablaDirecciones.AddRange(getDireccionBloqueContiguo(bloquesDeseados, ref tiempo)); 
-
-            }
-            else if (OrgaFisica.Equals("enlazada"))
+            switch(AdminLibres)
             {
-                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque);
-                arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Obtengo Array List de los bloques libres
-               
-                // Asigno el tamaÃ±o del indice a las uABurocracia de cada bloque asignado
-                for (int i=0; i< bloquesDeseados; i++)
-                {
-                    // Obtengo la posicion del bloque
-                    int posBloque = (int)arch.TablaDirecciones[i];
-                    TablaBloques[posBloque].uABurocracia = tamIndice;
-                    TablaBloques[posBloque].uAOcupado = tamBloque - tamIndice; //DUDA: deberiamos asignar esto aca??
-                }
+                case "mapa de bits":
+                    tiempo = GetTprocesamient();
+                    break;
 
-                tiempo = this.GetTprocesamient()*bloquesDeseados; //DUDA: para enlazada y fisica seria el mismo calculo??
+                case "lista de libres":
+                    int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
+                    tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados;
+                    break;
 
-            }
-            else if (OrgaFisica.Equals("indexado"))
-            {
-                int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
-                if (checkStorage(bloquesDeseados, arch.TablaDireccionesIndice))
-                {
-                    arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Actualizo direcciones
-                    arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.TablaDireccionesIndice));
-                }
-
-                tiempo = this.GetTprocesamient()*bloquesDeseados;
+                case "lista de libres de principio y cuenta":
+                    tiempo = 2 * GetTprocesamient();
+                    break;
 
             }
 
             return tiempo;
         }
 
+        //Devuelve true si se pudo asignar el espacio necesitado (bloques libres) y false sino pudo
+        public bool GetLibres(int uAdeseada, string OrgaFisica, ref Archivo arch)
+        {
+            bool ObtuveLibres = false;
+
+            if (OrgaFisica.Equals("contigua"))
+            { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
+                int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
+
+                ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+                bloquesLibres.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
+
+                if (bloquesLibres.Count != 0)
+                {
+                    ObtuveLibres = true; //si obtuve libres devuelvo verdadero
+                    arch.TablaDirecciones.AddRange(bloquesLibres);
+                }//sino devuelve false
+
+            }
+            else if (OrgaFisica.Equals("enlazada"))
+            {
+                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque);
+
+                ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+                bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
+
+                if (bloquesLibres.Count != 0)
+                {
+                    ObtuveLibres = true; //si obtuve libres devuelvo verdadero
+                    arch.TablaDirecciones.AddRange(bloquesLibres);
+
+                    // Asigno el tamaño del indice a las uABurocracia de cada bloque asignado
+                    for (int i = 0; i < bloquesDeseados; i++)
+                    {
+                        // Obtengo la posicion del bloque
+                        int posBloque = (int)arch.TablaDirecciones[i];
+                        TablaBloques[posBloque].uABurocracia = tamIndice;
+                    //TablaBloques[posBloque].uAOcupado = tamBloque - tamIndice; 
+                    //DUDA: esto de arriba iria??? o cuando asignamos este espacio ocupado???
+                    }
+                }//sino devuelve false 
+
+            }
+            else if (OrgaFisica.Equals("indexado"))
+            {
+                int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
+
+                if (checkStorage(bloquesDeseados, arch.TablaDireccionesIndice))
+                {
+                    ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+                    bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
+
+                    if (bloquesLibres.Count != 0) // DUDA: habria que comprobar tambien aca los indices???
+                    {
+                        ObtuveLibres = true; //si obtuve libres devuelvo verdadero
+                        arch.TablaDirecciones.AddRange(bloquesLibres);
+                        arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.TablaDireccionesIndice));
+                    }//sino devuelve false
+                }
+            }
+
+            return ObtuveLibres;
+        }
 
         private ArrayList getDireccionBloqueLibreIndice( int BloquesDeseados, ArrayList TablaIndices )
         {
@@ -134,7 +170,7 @@ namespace FireSim
                 
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 int cant_uaI = BloquesDeseados * tamIndice;
-                // Se divide la cantidad anterior por el tamaÃ±o de bloque para obtener cuantos bloques
+                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
                 // son necesarios para almacenar todos los indices necesarios
                 int cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
 
@@ -302,12 +338,13 @@ namespace FireSim
             int posBloque = GetCantBloques();
             int cant_uaI = 0;
             int cant_bloquesI = 0;
+
             if (TablaIndices.Count == 0)
             {
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 cant_uaI = bloquesdeseados * tamIndice;
-                // Se divide la cantidad anterior por el tamaÃ±o de bloque para obtener cuantos bloques
-                // son necesarios para almacenar todos los indices necesarios
+                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+                // son necesarios para almacenar los indices 
                 cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
             }
             else
@@ -315,6 +352,7 @@ namespace FireSim
                 int ultimoIndice = TablaIndices.Count;
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 cant_uaI = bloquesdeseados * tamIndice;
+
                 // Compruebo si la cantidad de uA para indice que necesito entra en el ulimo indice
                 // si es asi agrego cant_uaI a uABurocracia del ultimo indice y la tabla no se modifica
                 if ((tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia) >= cant_uaI)
