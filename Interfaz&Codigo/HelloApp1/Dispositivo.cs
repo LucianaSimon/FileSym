@@ -98,8 +98,12 @@ namespace FireSim
             else if (OrgaFisica.Equals("indexado"))
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
-                arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Actualizo direcciones
-                arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.TablaDireccionesIndice));
+                if (checkStorage(bloquesDeseados, arch.TablaDireccionesIndice))
+                {
+                    arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Actualizo direcciones
+                    arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.TablaDireccionesIndice));
+                }
+                
             }
             return tiempo;
         }
@@ -131,6 +135,7 @@ namespace FireSim
                     {
                         bloquesLibresIndices[posIndice] = posBloque;
                     }
+                    posBloque--;
                 }
                 if (posIndice == cant_bloquesI)
                 {
@@ -277,6 +282,53 @@ namespace FireSim
             return bloquesContiguos;
         }
         
+        private bool checkStorage(int bloquesdeseados, ArrayList TablaIndices)
+        {
+            int bloquesDisponibles = 0;
+            int posBloque = GetCantBloques();
+            int cant_uaI = 0;
+            int cant_bloquesI = 0;
+            if (TablaIndices.Count == 0)
+            {
+                //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
+                cant_uaI = bloquesdeseados * tamIndice;
+                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+                // son necesarios para almacenar todos los indices necesarios
+                cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
+            }
+            else
+            {
+                int ultimoIndice = TablaIndices.Count;
+                //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
+                cant_uaI = bloquesdeseados * tamIndice;
+                // Compruebo si la cantidad de uA para indice que necesito entra en el ulimo indice
+                // si es asi agrego cant_uaI a uABurocracia del ultimo indice y la tabla no se modifica
+                if ((tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia) >= cant_uaI)
+                {
+                    TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia += cant_uaI;
+                }
+                else // Busco la cantidad de bloques indice que necesito extra
+                {
+                    int diff = (tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia);
+
+                    // cant_bloquesI en este caso es la cantidad de indices que voy a necesitar (no bloques, indices)
+                    cant_bloquesI = (int)Math.Ceiling((decimal)(cant_uaI - diff) / (decimal)tamIndice);
+                }
+            }
+
+            while ((bloquesDisponibles < (cant_bloquesI + bloquesdeseados) && (posBloque >= 0)))
+            {
+                if (!TablaBloques[posBloque].estadoReserva)
+                {
+                    bloquesDisponibles++;
+                }
+            }
+            if ((bloquesdeseados + cant_bloquesI) == bloquesDisponibles)
+            {
+                return true;
+            }
+            return false;
+        }
         public int GetCantBloques()
         {
             return cantBloques;
