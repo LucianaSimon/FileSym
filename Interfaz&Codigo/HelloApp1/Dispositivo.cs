@@ -18,12 +18,12 @@ namespace FireSim
         private int tLectura;
         private int tEscritura;
         private int tSeek;
+        private int tProcesamiento;
         private int tamBloque;
         private int tamDispositivo;
+        private int tamIndice; //tamanio que ocupa un indice --> burocracia
         private int cantBloques;
-        private int tProcesamiento;
-        private int tamIndice;
-        private Bloque[] TablaBloques;  //arreglo fijo, dispositivo no puede crecer en tamaño fisico
+        private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaÃ±o fisico
 
         public Dispositivo(int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, int tProcesamiento)
         {
@@ -33,7 +33,7 @@ namespace FireSim
             this.SetTseek(tSeek);
             this.SetTamBloques(tamBloques);
             this.SetTamDispositivo(tamDispositivo);
-            this.SetCantBloques(tamDispositivo / tamBloques);
+            this.SetCantBloques((int)Math.Ceiling((decimal)tamDispositivo / (decimal)tamBloques)); //DUDA @lu: estaria bien asi?
             this.SetTprocesamiento(tProcesamiento);
 
             //Creo el arreglo de bloques para almacenar los diferentes estados de cada bloque
@@ -41,19 +41,19 @@ namespace FireSim
 
         }
 
-        public bool isBloqueReservado(int numBloque)
+        public bool isBloqueReservado(int numBloque) //comprueba el estado del bloque
         {
             return this.TablaBloques[numBloque].estadoReserva;
         }
 
         public void CambiarEstadoReserva(int numBloque, bool reserva)
         {
-            this.TablaBloques[numBloque].estadoReserva = reserva;
+            this.TablaBloques[numBloque].estadoReserva = reserva; 
         }
 
         public int estadoBloque(int numBloque)
         {
-            //Con este numero en la interfaz se comprueba si el bloque esta completo o no, x la cantidad de uA
+            //@AYRTON Con este numero en la interfaz se comprueba si el bloque esta completo o no, x la cantidad de uA
             return (this.TablaBloques[numBloque].uAOcupado + this.TablaBloques[numBloque].uABurocracia);
         }
 
@@ -78,22 +78,32 @@ namespace FireSim
             int tiempo = -1;
             // TODO: Falta hacer las cuentas de los tiempos para cada organizacion, para eso se usa AdminLibres
             // Fede: creo que realocar para contigua se tiene que hacer en un metodo aparte
+
             if (OrgaFisica.Equals("contigua"))
             { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
                 arch.TablaDirecciones.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
+
+                ///DUDA: convendria pasar tiempo como referencia en getDireccionesBloqueContiguo??? por si hay que realocar
+                ///arch.TablaDirecciones.AddRange(getDireccionBloqueContiguo(bloquesDeseados, ref tiempo)); 
+
             }
             else if (OrgaFisica.Equals("enlazada"))
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque);
                 arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Obtengo Array List de los bloques libres
-                // Asigno el tamaño del indice a las uABurocracia de cada bloque asignado
+               
+                // Asigno el tamaÃ±o del indice a las uABurocracia de cada bloque asignado
                 for (int i=0; i< bloquesDeseados; i++)
                 {
                     // Obtengo la posicion del bloque
                     int posBloque = (int)arch.TablaDirecciones[i];
                     TablaBloques[posBloque].uABurocracia = tamIndice;
+                    TablaBloques[posBloque].uAOcupado = tamBloque - tamIndice; //DUDA: deberiamos asignar esto aca??
                 }
+
+                tiempo = this.GetTprocesamient()*bloquesDeseados; //DUDA: para enlazada y fisica seria el mismo calculo??
+
             }
             else if (OrgaFisica.Equals("indexado"))
             {
@@ -103,8 +113,11 @@ namespace FireSim
                     arch.TablaDirecciones.AddRange(getDireccionBloqueLibre(bloquesDeseados)); //Actualizo direcciones
                     arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.TablaDireccionesIndice));
                 }
-                
+
+                tiempo = this.GetTprocesamient()*bloquesDeseados;
+
             }
+
             return tiempo;
         }
 
@@ -121,7 +134,7 @@ namespace FireSim
                 
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 int cant_uaI = BloquesDeseados * tamIndice;
-                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+                // Se divide la cantidad anterior por el tamaÃ±o de bloque para obtener cuantos bloques
                 // son necesarios para almacenar todos los indices necesarios
                 int cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
 
@@ -129,11 +142,12 @@ namespace FireSim
                 //(No se, se me ocurrio a mi, sino aca se pude usar el metodo getDireccionBloqueLibre)(FEDE)
                 int posBloque = GetCantBloques();
                 int posIndice = 0;
+
                 while ((posIndice < cant_bloquesI) && (posBloque >= 0))
                 {
                     if (!TablaBloques[posBloque].estadoReserva)
                     {
-                        bloquesLibresIndices[posIndice] = posBloque;
+                        bloquesLibresIndices[posIndice] = posBloque; 
                     }
                     posBloque--;
                 }
@@ -292,7 +306,7 @@ namespace FireSim
             {
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 cant_uaI = bloquesdeseados * tamIndice;
-                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+                // Se divide la cantidad anterior por el tamaÃ±o de bloque para obtener cuantos bloques
                 // son necesarios para almacenar todos los indices necesarios
                 cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
             }
