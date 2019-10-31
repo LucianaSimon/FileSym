@@ -18,23 +18,28 @@ namespace FireSim
         private int tLectura;
         private int tEscritura;
         private int tSeek;
+        private int tAcceso;
         private int tProcesamiento;
+        //private int espacioLibre; //que haria?
         private int tamBloque;
         private int tamDispositivo;
         private int tamIndice; //tamanio que ocupa un indice --> burocracia
         private int cantBloques;
-        private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaño fisico
+        private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaÃ±o fisico
 
-        public Dispositivo(int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, int tProcesamiento)
+        public Dispositivo(int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int tProcesamiento,
+                          int espacioLibre)
         {
             //seteamos los parametros de entrada
             this.SetTlectura(tLectura);
             this.SetTescritura(tEscritura);
             this.SetTseek(tSeek);
+            this.SetTAcceso(tAcceso);
             this.SetTamBloques(tamBloques);
             this.SetTamDispositivo(tamDispositivo);
             this.SetCantBloques((int)Math.Truncate((decimal)tamDispositivo / (decimal)tamBloques)); //DUDA @lu: estaria bien asi?
             this.SetTprocesamiento(tProcesamiento);
+            //this.SetEspacioLibre(espacioLibre); Lo vamos a usar?
 
             //Creo el arreglo de bloques para almacenar los diferentes estados de cada bloque
             this.TablaBloques = new Bloque[this.GetCantBloques()];
@@ -125,7 +130,7 @@ namespace FireSim
                     ObtuveLibres = true; //si obtuve libres devuelvo verdadero
                     arch.TablaDirecciones.AddRange(bloquesLibres);
 
-                    // Asigno el tamaño del indice a las uABurocracia de cada bloque asignado
+                    // Asigno el tamaÃ±o del indice a las uABurocracia de cada bloque asignado
                     for (int i = 0; i < bloquesDeseados; i++)
                     {
                         // Obtengo la posicion del bloque
@@ -170,7 +175,7 @@ namespace FireSim
                 
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 int cant_uaI = BloquesDeseados * tamIndice;
-                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+                // Se divide la cantidad anterior por el tamaÃ±o de bloque para obtener cuantos bloques
                 // son necesarios para almacenar todos los indices necesarios
                 int cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
 
@@ -343,7 +348,7 @@ namespace FireSim
             {
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 cant_uaI = bloquesdeseados * tamIndice;
-                // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
+                // Se divide la cantidad anterior por el tamaÃ±o de bloque para obtener cuantos bloques
                 // son necesarios para almacenar los indices 
                 cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
             }
@@ -409,6 +414,26 @@ namespace FireSim
         private void SetTlectura(int value)
         {
             tLectura = value;
+        }
+        
+        public int GetTAcceso()
+        {
+            return tAcceso;
+        }
+
+        private void SetTAcceso(int value)
+        {
+            tAcceso = value;
+        }
+        
+        public int GetEspacioLibre()
+        {
+            return espacioLibre;
+        }
+
+        private void SetEspacioLibre(int value)
+        {
+            espacioLibre = value;
         }
 
         public int GetTescritura()
