@@ -24,9 +24,11 @@ namespace HelloApp1
         public MainWindow()
         {
             InitializeComponent();
+            //Se inicializa las variables globales por defecto
+            Globales.Inicializar();
         }
 
-
+        //boton Archivo!
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             // Create OpenFileDialog 
@@ -45,9 +47,10 @@ namespace HelloApp1
             }
         }
 
+        //boton configuracion
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Config subWindow = new Config();
+            Config subWindow = new Config(configuracionActual);
             //this.WindowState = WindowState.Minimized;
             this.Topmost = false;
             subWindow.Show();
@@ -55,6 +58,7 @@ namespace HelloApp1
             
         }
 
+        //boton Comenzar
         private void btnComenzar_Click(object sender, RoutedEventArgs e)
         {
             Window1 subWindow = new Window1();

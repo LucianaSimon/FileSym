@@ -20,6 +20,7 @@
             <Button x:Name="btnComenzar" Content="Comenzar" Width="130" Padding="5,10" FontWeight="Bold" Margin="0,20,0,0" FontSize="19" FontFamily="/HelloApp1;component/Font/#Ubuntu" Click="btnComenzar_Click"/>
 
             <Label x:Name="textArchivoSelec" Content="Archivo seleccionado: " Style="{StaticResource lblDesign}" FontFamily="/HelloApp1;component/Font/#Ubuntu Light" Margin="0,10,0,0"/>
+            <Label x:Name="configuracionActual" Content="Config actual: " Style="{StaticResource lblDesign}" FontFamily="/HelloApp1;component/Font/#Ubuntu Light" Margin="0,10,0,0"/>
 
 
         </WrapPanel>

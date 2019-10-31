@@ -10,60 +10,60 @@
 
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Organización física" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <ComboBox Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
+            <ComboBox  x:Name="cOrgFisica" Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
                 <ComboBox.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FFFFF0B7" Offset="0"/>
                         <GradientStop Color="#FFFFD433" Offset="1"/>
                     </LinearGradientBrush>
                 </ComboBox.Background>
-                <ComboBoxItem HorizontalAlignment="Center">Contigua</ComboBoxItem>
-                <ComboBoxItem HorizontalAlignment="Center">Enlazada</ComboBoxItem>
-                <ComboBoxItem HorizontalAlignment="Center">Indexada</ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center" Content="Contigua" IsSelected="True"></ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center" Content="Enlazada"></ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center" Content="Indexada"></ComboBoxItem>
             </ComboBox>
 
         </WrapPanel>
 
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Administración de espacios libres" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <ComboBox Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
+            <ComboBox x:Name="cAdmLibre" Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
                 <ComboBox.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FFFFF0B7" Offset="0"/>
                         <GradientStop Color="#FFFFD433" Offset="1"/>
                     </LinearGradientBrush>
                 </ComboBox.Background>
-                <ComboBoxItem HorizontalAlignment="Center">Lista de libres</ComboBoxItem>
-                <ComboBoxItem HorizontalAlignment="Center">Lista de libres de principio y vuelta</ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center" IsSelected="True">Lista de libres</ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center">Lista de libres de principio y cuenta</ComboBoxItem>
                 <ComboBoxItem HorizontalAlignment="Center">Mapa de bits</ComboBoxItem>
             </ComboBox>
         </WrapPanel>
 
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Modo de acceso" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <ComboBox Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
+            <ComboBox x:Name="cModoAcceso" Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
                 <ComboBox.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FFFFF0B7" Offset="0"/>
                         <GradientStop Color="#FFFFD433" Offset="1"/>
                     </LinearGradientBrush>
                 </ComboBox.Background>
-                <ComboBoxItem>Lista de libres</ComboBoxItem>
-                <ComboBoxItem>Lista de libres de principio y vuelta</ComboBoxItem>
-                <ComboBoxItem>Mapa de bits</ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center" IsSelected="True">Secuencial</ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center">Directa</ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center">Indexada</ComboBoxItem>
             </ComboBox>
         </WrapPanel>
 
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Algoritmo de busqueda" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <ComboBox Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
+            <ComboBox x:Name="cAlgBusqueda" Width="190" Margin="0,12,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="14" FontWeight="Bold">
                 <ComboBox.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FFFFF0B7" Offset="0"/>
                         <GradientStop Color="#FFFFD433" Offset="1"/>
                     </LinearGradientBrush>
                 </ComboBox.Background>
-                <ComboBoxItem HorizontalAlignment="Center">Contigua</ComboBoxItem>
+                <ComboBoxItem HorizontalAlignment="Center" IsSelected="True">Contigua</ComboBoxItem>
                 <ComboBoxItem HorizontalAlignment="Center">Directa</ComboBoxItem>
                 <ComboBoxItem HorizontalAlignment="Center">Indexada</ComboBoxItem>
             </ComboBox>
@@ -71,61 +71,61 @@
 
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de acceso" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="ttAcceso" Text="{Binding ElementName=stAcceso, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
-            <Slider Name="slValue" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
+            <Slider Name="stAcceso" TickFrequency="1" Width="190" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de seek" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue1, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="ttSeek" Text="{Binding ElementName=stSeek, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
-            <Slider Name="slValue1" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
+            <Slider Name="stSeek" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de lectura" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue2, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="ttLectura" Text="{Binding ElementName=stLectura, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
-            <Slider Name="slValue2" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
+            <Slider Name="stLectura" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de escritura" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue3, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="ttEscritura" Text="{Binding ElementName=stEscritura, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
-            <Slider Name="slValue3" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
+            <Slider Name="stEscritura" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de procesamiento" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue4, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="ttProcesamiento" Text="{Binding ElementName=stProcesamiento, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
-            <Slider Name="slValue4" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
+            <Slider Name="stProcesamiento" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Espacio inicial" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue5, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="tEspacioInicial" Text="{Binding ElementName=slValue5, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
             
 
         </WrapPanel>
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Tamaño del bloque" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue6, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="ttamBloque" Text="{Binding ElementName=slValue6, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
-            
+
 
         </WrapPanel>
         <WrapPanel Height="50" Width="600" Orientation="Vertical">
             <Label Content="Tamaño del dispositivo" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox Text="{Binding ElementName=slValue7, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
+            <TextBox x:Name="ttamDisp" Text="{Binding ElementName=slValue7, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
 
         </WrapPanel>
-        <Button Content="Aceptar" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="175,15,50,0" Height="30"/>
-        <Button Content="Cancelar" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="0,15,0,0" Height="30"/>
+        <Button Content="Aceptar" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="175,15,50,0" Height="30" Click="Button_Click"/>
+        <Button Content="Cancelar" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="0,15,0,0" Height="30" Click="Button_Click_1"/>
 
     </WrapPanel>
 </Window>
