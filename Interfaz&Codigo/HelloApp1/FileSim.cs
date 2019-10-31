@@ -29,9 +29,9 @@ namespace FireSim
         private ArrayList TablaArchivos;
         private Dictionary<string, Indicadores> indicadorArchivo; //para cada 
                                                                   //string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
-        
+       
         public FileSim(int tProc, string orgFisica, string algBusqueda, string admEspacio, int metAcceso,
-                       int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, string ruta)
+                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta)
         {
             // En el constructor de FileSim se crearia el array de operaciones (vacio)
             this.TablaOperaciones = new ArrayList();
@@ -45,7 +45,7 @@ namespace FireSim
             SetMetocoAcceso(metAcceso);
 
             //Se crea el dispositivo 
-            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tamBloques, tamDispositivo, tProc);
+            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc, espacioLibre);
 
             CargarOperaciones(ruta);
 
