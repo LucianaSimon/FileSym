@@ -20,7 +20,7 @@ namespace FireSim
         private int tSeek;
         private int tAcceso;
         private int tProcesamiento;
-        //private int espacioLibre; //que haria?
+        private int espacioLibre; //que haria?
         private int tamBloque;
         private int tamDispositivo;
         private int tamIndice; //tamanio que ocupa un indice --> burocracia
@@ -108,13 +108,13 @@ namespace FireSim
             { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
-                ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+                List<int> bloquesLibres = new List<int>(bloquesDeseados);
                 bloquesLibres.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
 
                 if (bloquesLibres.Count != 0)
                 {
                     ObtuveLibres = true; //si obtuve libres devuelvo verdadero
-                    arch.TablaDirecciones.AddRange(bloquesLibres);
+                    arch.TablaDireccion_AddRange(bloquesLibres);
                 }//sino devuelve false
 
             }
@@ -122,22 +122,23 @@ namespace FireSim
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque);
 
-                ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+                List<int> bloquesLibres = new List<int>(bloquesDeseados);
                 bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
 
                 if (bloquesLibres.Count != 0)
                 {
                     ObtuveLibres = true; //si obtuve libres devuelvo verdadero
-                    arch.TablaDirecciones.AddRange(bloquesLibres);
+                    arch.TablaDireccion_AddRange(bloquesLibres);
 
                     // Asigno el tamaño del indice a las uABurocracia de cada bloque asignado
                     for (int i = 0; i < bloquesDeseados; i++)
                     {
                         // Obtengo la posicion del bloque
-                        int posBloque = (int)arch.TablaDirecciones[i];
+                        int posBloque = (int)arch.getTablaDireccion()[i];
                         TablaBloques[posBloque].uABurocracia = tamIndice;
                     //TablaBloques[posBloque].uAOcupado = tamBloque - tamIndice; 
                     //DUDA: esto de arriba iria??? o cuando asignamos este espacio ocupado???
+                    // No, se asigna el espacio ocupado cuando se va a escribir en el archivo(Fede)
                     }
                 }//sino devuelve false 
 
@@ -146,16 +147,16 @@ namespace FireSim
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
-                if (checkStorage(bloquesDeseados, arch.TablaDireccionesIndice))
+                if (checkStorage(bloquesDeseados, arch.getTablaIndices()))
                 {
-                    ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+                    List<int> bloquesLibres = new List<int>(bloquesDeseados);
                     bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
 
                     if (bloquesLibres.Count != 0) // DUDA: habria que comprobar tambien aca los indices???
                     {
                         ObtuveLibres = true; //si obtuve libres devuelvo verdadero
-                        arch.TablaDirecciones.AddRange(bloquesLibres);
-                        arch.TablaDireccionesIndice.AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.TablaDireccionesIndice));
+                        arch.TablaDireccion_AddRange(bloquesLibres);
+                        arch.TablaIndice_AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.getTablaIndices()));
                     }//sino devuelve false
                 }
             }
@@ -163,9 +164,9 @@ namespace FireSim
             return ObtuveLibres;
         }
 
-        private ArrayList getDireccionBloqueLibreIndice( int BloquesDeseados, ArrayList TablaIndices )
+        private List<int> getDireccionBloqueLibreIndice( int BloquesDeseados, List<int> TablaIndices )
         {
-            ArrayList bloquesLibresIndices = new ArrayList();
+            List<int> bloquesLibresIndices = new List<int>();
             if (TablaIndices.Count == 0 )
             {
                 /* 
@@ -238,9 +239,9 @@ namespace FireSim
 
                     // bloqueNecesitado en este caso es la cantidad de indices que voy a necesitar (no bloques, indices)
                     int bloqueNecesitado = (int)Math.Ceiling((decimal)(cant_uaI - diff) / (decimal)tamIndice);
-                    
+
                     // En aux se van a guardar los nuevos bloques indices que se van a anexar a la tabla original
-                    ArrayList aux = new ArrayList();
+                    List<int> aux = new List<int>();
 
                     // Agrego la Tabla de indices original para no perderla
                     bloquesLibresIndices.AddRange(TablaIndices);
@@ -262,9 +263,9 @@ namespace FireSim
 
         }
 
-        private ArrayList getDireccionBloqueLibre ( int bloquesDeseados ) // solo valido para indexada/ enlazada
+        private List<int> getDireccionBloqueLibre ( int bloquesDeseados ) // solo valido para indexada/ enlazada
         {
-            ArrayList bloquesLibres = new ArrayList(bloquesDeseados);
+            List<int> bloquesLibres = new List<int>(bloquesDeseados);
             int aux = 0;
             int contaTabla = 0;
 
@@ -292,9 +293,9 @@ namespace FireSim
             return bloquesLibres;
         }
 
-        private ArrayList getDireccionBloqueContiguo(int bloquesDeseados)
+        private List<int> getDireccionBloqueContiguo(int bloquesDeseados)
         {
-            ArrayList bloquesContiguos = new ArrayList();
+            List<int> bloquesContiguos = new List<int>();
             
             // Para verificar que existan la cantidad de bloques deseados contiguos
             int contiguos = 0;
@@ -325,7 +326,7 @@ namespace FireSim
             {
                 for (int i=0; i<contiguos; i++)
                 {
-                    bloquesContiguos.Add(TablaBloques[posInicial + i]);
+                    bloquesContiguos.Add(posInicial + i);
                     TablaBloques[posInicial + i].estadoReserva = true;
                 }
             }
@@ -337,7 +338,7 @@ namespace FireSim
             return bloquesContiguos;
         }
         
-        private bool checkStorage(int bloquesdeseados, ArrayList TablaIndices)
+        private bool checkStorage(int bloquesdeseados, List<int> TablaIndices)
         {
             int bloquesDisponibles = 0;
             int posBloque = GetCantBloques();

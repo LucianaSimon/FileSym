@@ -5,16 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 
 
-
-public struct Archivo
-{
-    public string nombreArchivo;
-    public int estado;
-    public int cant_uA;
-    public ArrayList TablaDirecciones;
-    public ArrayList TablaDireccionesIndice; // Se utiliza en el caso de indexada unicamente
-}
-
 namespace FireSim
 {
     public class FileSim
@@ -26,7 +16,7 @@ namespace FireSim
         private ArrayList TablaOperaciones;
         private Dispositivo disp;
         private int ContadorOp;
-        private ArrayList TablaArchivos;
+        private List<Archivo> TablaArchivos;
         private Dictionary<string, Indicadores> indicadorArchivo; //para cada 
                                                                   //string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
        
@@ -35,7 +25,7 @@ namespace FireSim
         {
             // En el constructor de FileSim se crearia el array de operaciones (vacio)
             this.TablaOperaciones = new ArrayList();
-            this.TablaArchivos = new ArrayList();
+            this.TablaArchivos = new List<Archivo>();
             this.SetContadorOp(0);
        
             //setters parametros fileSim
@@ -117,17 +107,17 @@ namespace FireSim
                     }
                 case 'D':
                     {
-                        Delete();
+                        Delete(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
                 case 'O':
                     {
-                        Open();
+                        Open(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
                 case 'C':
                     {
-                        Close();
+                        Close(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
                 case 'R':
@@ -152,12 +142,12 @@ namespace FireSim
 
         public void Create(int idProc, int offset, int cant_uA, string name)
         {
-            Archivo archivo;
-            archivo.nombreArchivo = name;
-            archivo.cant_uA = cant_uA;
-            archivo.estado = -1; // Se creo pero no esta abierto
-            archivo.TablaDirecciones = new ArrayList();
-            archivo.TablaDireccionesIndice = new ArrayList();
+            Archivo archivo = new Archivo();
+            archivo.setNombre(name);
+            archivo.setCant_uA(cant_uA);
+            archivo.setEstado(-1); // Se creo pero no esta abierto
+            archivo.setTablaDireccion(new List<int>());
+            archivo.setTablaIndices(new List<int>());
             disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo); 
         }
 
@@ -171,19 +161,54 @@ namespace FireSim
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public void Delete()
+        public void Delete(string nameArchivo, int processID)
         {
-            throw new Exception("The method or operation is not implemented.");
+            int numBloque = 0;
+            for (int i=0; i<TablaArchivos.Count; i++)
+            {
+                // Corroboro que el archivo se encuentre en la tabla (por nombre) y que el proceso que se encuentre cerrado
+                if (nameArchivo == TablaArchivos[i].getNombre() && TablaArchivos[i].getEstado() == -1)
+                {
+                    // Dejo cada bloque como libre
+                    for (int j=0; i<TablaArchivos[i].getTablaDireccion().Count; i++)
+                    {
+                        numBloque = TablaArchivos[i].getTablaDireccion()[j];
+                        disp.CambiarEstadoOcupado(numBloque, 0);
+                        // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
+                        disp.CambiarEstadoBurocracia(numBloque, 0);
+                        disp.CambiarEstadoReserva(numBloque, false);
+                    }
+
+                    // Lo quito de la tabla de archivos
+                    TablaArchivos.RemoveAt(i);
+                }
+            }
         }
 
-        public void Open()
+        public void Open(string nameArchivo, int processID)
         {
-            throw new Exception("The method or operation is not implemented.");
+            for (int i = 0; i < TablaArchivos.Count; i++)
+            {
+                // Si el archivo se encuentra en la tabla, y si el estado es -1, lo abro cambiando el numero de estado por 
+                // el numero de proceso que lo quiere abrir.
+                if (TablaArchivos[i].getNombre() == nameArchivo && TablaArchivos[i].getEstado() == -1)
+                {
+                    TablaArchivos[i].setEstado(processID);
+                }
+            }
         }
 
-        public void Close()
+        public void Close(string nameArchivo, int processID)
         {
-            throw new Exception("The method or operation is not implemented.");
+            for (int i=0; i<TablaArchivos.Count; i++)
+            {
+                // Si el archivo se encuentra en la tabla, y si el num de proceso que quiere cerrarlo es el que lo tiene
+                // abierto, lo cierro cambiando el estado a -1
+                if (TablaArchivos[i].getNombre() == nameArchivo && TablaArchivos[i].getEstado() == processID)
+                {
+                    TablaArchivos[i].setEstado(-1);
+                }
+            }
         }
 
         /**
