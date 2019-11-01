@@ -54,7 +54,7 @@ namespace FireSim
                 Operacion opAux = new Operacion();
                 foreach (var linea in lineas)
                 {
-                    var valores = linea.Split(";");
+                    var valores = linea.Split(';');
                     opAux.NombreArchivo = valores[0];
                     opAux.IdOperacion = char.Parse(valores[1]);
                     opAux.NumProceso = Int32.Parse(valores[2]);
@@ -107,7 +107,7 @@ namespace FireSim
                     }
                 case 'D':
                     {
-                        Delete(nextOp.NombreArchivo, nextOp.NumProceso);
+                        Delete(nextOp.NombreArchivo);
                         break;
                     }
                 case 'O':
@@ -142,6 +142,7 @@ namespace FireSim
 
         public void Create(int idProc, int offset, int cant_uA, string name)
         {
+
             Archivo archivo = new Archivo();
             archivo.setNombre(name);
             archivo.setCant_uA(cant_uA);
@@ -161,18 +162,37 @@ namespace FireSim
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public void Delete(string nameArchivo, int processID)
+                // Función que te busca un archivo en la Tabla por el nombre
+        public int BuscaArch (string nameArchivo)
+        {
+            int posArch = -1;
+
+            for (int i = 0; i < TablaArchivos.Count; i++)
+            {
+               
+                if (nameArchivo == TablaArchivos[i].getNombre())
+                {
+                    return i;
+                }
+              
+            }
+
+            return posArch; //Si devuelve -1 es que no está en la tabla
+        }
+
+        public void Delete(string nameArchivo)
         {
             int numBloque = 0;
-            for (int i=0; i<TablaArchivos.Count; i++)
-            {
+
+            int posArch = BuscaArch(nameArchivo);
+  
                 // Corroboro que el archivo se encuentre en la tabla (por nombre) y que el proceso que se encuentre cerrado
-                if (nameArchivo == TablaArchivos[i].getNombre() && TablaArchivos[i].getEstado() == -1)
+                if ( posArch != -1 && TablaArchivos[posArch].getEstado() == -1) //Estado -1 significa que el archivo está cerrado
                 {
                     // Dejo cada bloque como libre
-                    for (int j=0; i<TablaArchivos[i].getTablaDireccion().Count; i++)
+                    for (int j=0; j<TablaArchivos[posArch].getTablaDireccion().Count; j++)
                     {
-                        numBloque = TablaArchivos[i].getTablaDireccion()[j];
+                        numBloque = TablaArchivos[posArch].getTablaDireccion()[j];
                         disp.CambiarEstadoOcupado(numBloque, 0);
                         // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
                         disp.CambiarEstadoBurocracia(numBloque, 0);
@@ -180,9 +200,8 @@ namespace FireSim
                     }
 
                     // Lo quito de la tabla de archivos
-                    TablaArchivos.RemoveAt(i);
+                    TablaArchivos.RemoveAt(posArch);
                 }
-            }
         }
 
         public void Open(string nameArchivo, int processID)
