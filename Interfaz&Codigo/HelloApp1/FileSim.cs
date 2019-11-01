@@ -167,7 +167,7 @@ namespace FireSim
 
         public void Delete(string nameArchivo, int processID)
         {
-            int numBloque = 0;
+            int numBloque;
             for (int i=0; i<TablaArchivos.Count; i++)
             {
                 // Corroboro que el archivo se encuentre en la tabla (por nombre) y que el proceso que se encuentre cerrado
