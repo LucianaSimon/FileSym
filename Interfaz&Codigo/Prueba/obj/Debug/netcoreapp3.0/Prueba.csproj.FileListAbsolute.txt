@@ -1,0 +1,11 @@
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\Prueba.exe
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\Prueba.deps.json
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\Prueba.runtimeconfig.json
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\Prueba.runtimeconfig.dev.json
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\Prueba.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\Prueba.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.csprojAssemblyReference.cache
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.AssemblyInfoInputs.cache
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.AssemblyInfo.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.pdb

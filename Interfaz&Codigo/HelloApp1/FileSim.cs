@@ -58,7 +58,7 @@ namespace FireSim
                 Operacion opAux = new Operacion();
                 foreach (var linea in lineas)
                 {
-                    var valores = linea.Split(";");
+                    var valores = linea.Split(';');
                     opAux.NombreArchivo = valores[0];
                     opAux.IdOperacion = char.Parse(valores[1]);
                     opAux.NumProceso = Int32.Parse(valores[2]);
