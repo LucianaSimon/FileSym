@@ -7,6 +7,7 @@ using System.IO;
 
 namespace FireSim
 {
+    public enum Libres { MapadeBits, ListadeLibres, ListadeLibresdePrincipioyCuenta };
     public class FileSim
     {
         private string organizacionFisica;
@@ -60,7 +61,6 @@ namespace FireSim
                     opAux.NumProceso = Int32.Parse(valores[2]);
                     opAux.Tarribo = Int32.Parse(valores[3]);
                     opAux.Offset = Int32.Parse(valores[4]);
-                    opAux.Estado = 0;
                     TablaOperaciones.Add(opAux);
                 }
 
@@ -70,7 +70,7 @@ namespace FireSim
                 foreach(Operacion op in TablaOperaciones)
                 {
                     Console.WriteLine(op.NombreArchivo + " " + op.IdOperacion + " " + op.NumProceso + " " +
-                        op.Tarribo + " " + op.Offset + " " + op.Estado);
+                        op.Tarribo + " " + op.Offset + " " );
                 }
                 
 
