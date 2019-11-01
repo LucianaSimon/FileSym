@@ -1,2 +1,2 @@
 # FireSim
- Un simulador de sistema de archivos que simula diferentes tiempos!
+ Un simulador de sistema de archivos, devuelve diferentes indicadores relacionados con el mismo.

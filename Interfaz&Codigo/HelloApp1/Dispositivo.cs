@@ -23,7 +23,7 @@ namespace FireSim
         private int espacioLibre; //que haria?
         private int tamBloque;
         private int tamDispositivo;
-        private int tamIndice; //tamanio que ocupa un indice --> burocracia
+        private int tamIndice = 1; //tamanio que ocupa un indice --> burocracia
         private int cantBloques;
         private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaño fisico
 
@@ -75,22 +75,22 @@ namespace FireSim
         ///devuelve el t q llevaria buscar bloques libres segun el metodo de Adminitracion elegido x usuario
         /////el segundo parametro solo se usa en el segundo metodo --> en los otros pasar cero
         ///@AYRTON fijate de pasar estos parametros x interfaz escritos igual! 
-        public int TprocesamientoBloquesLibres(string AdminLibres, int uAdeseada) 
+        public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada) 
         {
             int tiempo = 0;
 
             switch(AdminLibres)
             {
-                case "mapa de bits":
+                case Libres.MapadeBits:
                     tiempo = GetTprocesamient();
                     break;
 
-                case "lista de libres":
+                case Libres.ListadeLibres:
                     int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
                     tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados;
                     break;
 
-                case "lista de libres de principio y cuenta":
+                case Libres.ListadeLibresdePrincipioyCuenta:
                     tiempo = 2 * GetTprocesamient();
                     break;
 
@@ -342,7 +342,7 @@ namespace FireSim
         {
             int bloquesDisponibles = 0;
             int posBloque = GetCantBloques();
-            int cant_uaI = 0;
+            int cant_uaI;
             int cant_bloquesI = 0;
 
             if (TablaIndices.Count == 0)
@@ -476,7 +476,6 @@ namespace FireSim
         {
             tProcesamiento = value;
         }
-
     }
 }
 
