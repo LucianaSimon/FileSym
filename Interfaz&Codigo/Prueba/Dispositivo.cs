@@ -75,22 +75,22 @@ namespace FireSim
         ///devuelve el t q llevaria buscar bloques libres segun el metodo de Adminitracion elegido x usuario
         /////el segundo parametro solo se usa en el segundo metodo --> en los otros pasar cero
         ///@AYRTON fijate de pasar estos parametros x interfaz escritos igual! 
-        public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada) 
+        public int TprocesamientoBloquesLibres(string AdminLibres, int uAdeseada) 
         {
             int tiempo = 0;
 
             switch(AdminLibres)
             {
-                case Libres.MapadeBits:
+                case "mapa de bits":
                     tiempo = GetTprocesamient();
                     break;
 
-                case Libres.ListadeLibres:
+                case "lista de libres":
                     int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
                     tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados;
                     break;
 
-                case Libres.ListadeLibresdePrincipioyCuenta:
+                case "lista de libres de principio y cuenta":
                     tiempo = 2 * GetTprocesamient();
                     break;
 

@@ -52,3 +52,15 @@ C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfa
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.lref
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.exe
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.csprojAssemblyReference.cache
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Config.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\MainWindow.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\SimWindow.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\UserControl1.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Window2.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\App.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.cache
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.lref
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.exe
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.pdb

@@ -6,11 +6,7 @@ using System.IO;
 
 
 namespace FireSim
-{ 
-    public enum Libres { MapadeBits, ListadeLibres, ListadeLibresdePrincipioyCuenta };
-
-
-
+{
     public class FileSim
     {
         private string organizacionFisica;
