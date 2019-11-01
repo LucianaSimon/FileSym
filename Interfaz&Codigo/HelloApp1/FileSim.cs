@@ -9,8 +9,6 @@ namespace FireSim
 { 
     public enum Libres { MapadeBits, ListadeLibres, ListadeLibresdePrincipioyCuenta };
 
-
-
     public class FileSim
     {
         private string organizacionFisica;
@@ -25,7 +23,7 @@ namespace FireSim
                                                                   //string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
        
         public FileSim(int tProc, string orgFisica, string algBusqueda, string admEspacio, int metAcceso,
-                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta)
+                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta, int tamIndice)
         {
             // En el constructor de FileSim se crearia el array de operaciones (vacio)
             this.TablaOperaciones = new ArrayList();

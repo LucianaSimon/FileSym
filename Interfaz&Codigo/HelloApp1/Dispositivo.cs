@@ -23,12 +23,12 @@ namespace FireSim
         private int espacioLibre; //que haria?
         private int tamBloque;
         private int tamDispositivo;
-        private int tamIndice; //tamanio que ocupa un indice --> burocracia
+        private int tamIndice = 1; //tamanio que ocupa un indice --> burocracia
         private int cantBloques;
         private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaño fisico
 
         public Dispositivo(int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int tProcesamiento,
-                          int espacioLibre, int tamIndice)
+                          int espacioLibre)
         {
             //seteamos los parametros de entrada
             this.SetTlectura(tLectura);
@@ -39,7 +39,6 @@ namespace FireSim
             this.SetTamDispositivo(tamDispositivo);
             this.SetCantBloques((int)Math.Truncate((decimal)tamDispositivo / (decimal)tamBloques)); //DUDA @lu: estaria bien asi?
             this.SetTprocesamiento(tProcesamiento);
-            this.SetTamIndice(tamIndice);
             //this.SetEspacioLibre(espacioLibre); Lo vamos a usar?
 
             //Creo el arreglo de bloques para almacenar los diferentes estados de cada bloque
@@ -476,16 +475,6 @@ namespace FireSim
         private void SetTprocesamiento(int value)
         {
             tProcesamiento = value;
-        }
-
-        public int GetTamIndice()
-        {
-            return tamIndice;
-        }
-
-        private void SetTamIndice(int value)
-        {
-            tamIndice = value;
         }
     }
 }
