@@ -52,6 +52,7 @@ C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfa
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.lref
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.exe
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.pdb
+<<<<<<< HEAD
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\HelloApp1.exe.config
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\HelloApp1.exe
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\HelloApp1.pdb
@@ -82,3 +83,47 @@ C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfa
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.Properties.Resources.resources
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.csproj.GenerateResource.cache
 C:\Users\Rocío\Documents\Diseño de Sistemas Operativos\firesim\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.csproj.CopyComplete
+=======
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.csprojAssemblyReference.cache
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Config.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\MainWindow.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\SimWindow.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\UserControl1.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Window2.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\App.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.cache
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1_MarkupCompile.lref
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.exe
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\HelloApp1.exe.config
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\HelloApp1.exe
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\HelloApp1.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\FontAwesome.WPF.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\LiveCharts.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\LiveCharts.Wpf.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Tavant.XToolkit.PieChart.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Core.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Platform.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Xaml.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\FontAwesome.WPF.xml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\LiveCharts.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\LiveCharts.xml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\LiveCharts.Wpf.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\LiveCharts.Wpf.xml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Core.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Core.xml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Platform.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Xaml.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\bin\Debug\Xamarin.Forms.Xaml.xml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\App.baml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Config.baml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\MainWindow.baml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\SimWindow.baml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\UserControl1.baml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\Window2.baml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.g.resources
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.Properties.Resources.resources
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.csproj.GenerateResource.cache
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\HelloApp1\obj\Debug\HelloApp1.csproj.CopyComplete
+>>>>>>> 096232423c5661a6ea158b5b8d7e612858d00803

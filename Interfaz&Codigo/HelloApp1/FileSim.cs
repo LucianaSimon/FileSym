@@ -195,7 +195,17 @@ namespace FireSim
                         numBloque = TablaArchivos[posArch].getTablaDireccion()[j];
                         disp.CambiarEstadoOcupado(numBloque, 0);
                         // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
+                        
+
+                    if (organizacionFisica == "contigua")
+                    {
                         disp.CambiarEstadoBurocracia(numBloque, 0);
+                    }
+                    else
+                    {
+                        disp.CambiarEstadoBurocracia(numBloque, 0);
+                    }
+                        
                         disp.CambiarEstadoReserva(numBloque, false);
                     }
 
