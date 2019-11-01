@@ -6,7 +6,7 @@ using System.IO;
 
 
 namespace FireSim
-{ 
+{
     public enum Libres { MapadeBits, ListadeLibres, ListadeLibresdePrincipioyCuenta };
 
     public class FileSim
@@ -21,15 +21,15 @@ namespace FireSim
         private List<Archivo> TablaArchivos;
         private Dictionary<string, Indicadores> indicadorArchivo; //para cada 
                                                                   //string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
-       
+
         public FileSim(int tProc, string orgFisica, string algBusqueda, string admEspacio, int metAcceso,
-                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta, int tamIndice)
+                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta)
         {
             // En el constructor de FileSim se crearia el array de operaciones (vacio)
             this.TablaOperaciones = new ArrayList();
             this.TablaArchivos = new List<Archivo>();
             this.SetContadorOp(0);
-       
+
             //setters parametros fileSim
             SetOrganizacionFisica(orgFisica);
             SetAlgoritmoBusqueda(algBusqueda);
@@ -47,12 +47,12 @@ namespace FireSim
         {
             // Lee el archivo, se cargan las operaciones en this.TablaOperaciones y se ordena por tArribo
             // Se genera el mapa
-            
+
             try
             {
                 // El metodo ReadAllLines de File, cierra el archivo automaticamente.
                 string[] lineas = File.ReadAllLines(ruta);
-            
+
                 Operacion opAux = new Operacion();
                 foreach (var linea in lineas)
                 {
@@ -62,19 +62,20 @@ namespace FireSim
                     opAux.NumProceso = Int32.Parse(valores[2]);
                     opAux.Tarribo = Int32.Parse(valores[3]);
                     opAux.Offset = Int32.Parse(valores[4]);
-                    opAux.Estado = 0;
+                    opAux.CantidadUA = Int32.Parse(valores[5]);
                     TablaOperaciones.Add(opAux);
                 }
 
+               
                 TablaOperaciones.Sort(new ComparaOp());
-                
+
                 /*  Bloque solo de testeo de metodo Sort*/
-                foreach(Operacion op in TablaOperaciones)
+                foreach (Operacion op in TablaOperaciones)
                 {
                     Console.WriteLine(op.NombreArchivo + " " + op.IdOperacion + " " + op.NumProceso + " " +
-                        op.Tarribo + " " + op.Offset + " " + op.Estado);
+                        op.Tarribo + " " + op.Offset + " " + op.CantidadUA);
                 }
-                
+
 
             }
             catch (Exception e)
@@ -91,7 +92,7 @@ namespace FireSim
 
         // EstadoBloque devuelve un float de 0 a 1 indicando el estado del bloque
         // si es 0 el bloque esta vacio, si es 1 esta lleno, lo demas es el porcentaje de ocupacion del bloque
-        public float EstadoBloque(int bloque) 
+        public float EstadoBloque(int bloque)
         {
             return disp.estadoBloque(bloque);
         }
@@ -150,7 +151,7 @@ namespace FireSim
             archivo.setEstado(-1); // Se creo pero no esta abierto
             archivo.setTablaDireccion(new List<int>());
             archivo.setTablaIndices(new List<int>());
-            disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo); 
+            disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo);
         }
 
         public void Write()
@@ -166,13 +167,13 @@ namespace FireSim
         public void Delete(string nameArchivo, int processID)
         {
             int numBloque;
-            for (int i=0; i<TablaArchivos.Count; i++)
+            for (int i = 0; i < TablaArchivos.Count; i++)
             {
                 // Corroboro que el archivo se encuentre en la tabla (por nombre) y que el proceso que se encuentre cerrado
                 if (nameArchivo == TablaArchivos[i].getNombre() && TablaArchivos[i].getEstado() == -1)
                 {
                     // Dejo cada bloque como libre
-                    for (int j=0; i<TablaArchivos[i].getTablaDireccion().Count; i++)
+                    for (int j = 0; i < TablaArchivos[i].getTablaDireccion().Count; i++)
                     {
                         numBloque = TablaArchivos[i].getTablaDireccion()[j];
                         disp.CambiarEstadoOcupado(numBloque, 0);
@@ -202,7 +203,7 @@ namespace FireSim
 
         public void Close(string nameArchivo, int processID)
         {
-            for (int i=0; i<TablaArchivos.Count; i++)
+            for (int i = 0; i < TablaArchivos.Count; i++)
             {
                 // Si el archivo se encuentra en la tabla, y si el num de proceso que quiere cerrarlo es el que lo tiene
                 // abierto, lo cierro cambiando el estado a -1
@@ -280,20 +281,21 @@ namespace FireSim
             metocoAcceso = value;
         }
     }
-}
 
 
-public class ComparaOp : IComparer
-{
-    public int Compare(object x, object y)
+
+    public class ComparaOp : IComparer
     {
-        if (((Operacion)y).Tarribo > ((Operacion)x).Tarribo)
+        public int Compare(object x, object y)
         {
-            return 0;
-        }
-        else
-        {
-            return 1;
+            if (((Operacion)y).Tarribo > ((Operacion)x).Tarribo)
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
         }
     }
 }

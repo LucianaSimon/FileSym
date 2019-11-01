@@ -3,13 +3,6 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum estadoOp
-{
-    Espera = 0,
-    Ejecutando = 1,
-    Finalizado = 2
-}
-
 public struct Operacion
 {
     public string NombreArchivo;
@@ -18,6 +11,5 @@ public struct Operacion
     public int Tarribo;
     public int Offset;
     public int CantidadUA;
-    public estadoOp Estado;
 }
 

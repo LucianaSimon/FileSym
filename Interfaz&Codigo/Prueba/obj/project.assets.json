@@ -1,11 +1,29 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.0": {}
+    ".NETCoreApp,Version=v3.0": {
+      "HelloApp1/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/HelloApp1.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/HelloApp1.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "HelloApp1/1.0.0": {
+      "type": "project",
+      "path": "../HelloApp1/HelloApp1.csproj",
+      "msbuildProject": "../HelloApp1/HelloApp1.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.0": []
+    ".NETCoreApp,Version=v3.0": [
+      "HelloApp1 >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Federico\\.nuget\\packages\\": {},
@@ -37,7 +55,11 @@
       },
       "frameworks": {
         "netcoreapp3.0": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj": {
+              "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -9,3 +9,13 @@ C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\n
 C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.AssemblyInfo.cs
 C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.dll
 C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\HelloApp1.exe
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\LiveCharts.Wpf.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\LiveCharts.dll
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\HelloApp1.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\HelloApp1.exe.config
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\LiveCharts.Wpf.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\LiveCharts.Wpf.xml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\LiveCharts.pdb
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\bin\Debug\netcoreapp3.0\LiveCharts.xml
+C:\Users\Federico\Documents\Proyectos\FileSym\Interfaz&Codigo\Prueba\obj\Debug\netcoreapp3.0\Prueba.csproj.CopyComplete

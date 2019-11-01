@@ -4,6 +4,17 @@
     "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\Prueba\\Prueba.csproj": {}
   },
   "projects": {
+    "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj",
+        "projectName": "HelloApp1",
+        "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj"
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
     "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\Prueba\\Prueba.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -30,7 +41,11 @@
         },
         "frameworks": {
           "netcoreapp3.0": {
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj": {
+                "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
