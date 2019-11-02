@@ -194,7 +194,7 @@ namespace FireSim
             return ObtuveLibres;
         }
 
-        private List<int> getDireccionBloqueLibreIndice( int BloquesDeseados, List<int> TablaIndices )
+        public List<int> getDireccionBloqueLibreIndice( int BloquesDeseados, List<int> TablaIndices )
         {
             List<int> bloquesLibresIndices = new List<int>();
             if (TablaIndices.Count == 0 )
@@ -376,10 +376,11 @@ namespace FireSim
             return bloquesContiguos;
         }
         
-        private bool checkStorage(int bloquesdeseados, List<int> TablaIndices)
+        public bool checkStorage(int bloquesdeseados, List<int> TablaIndices)
         {
+            
             int bloquesDisponibles = 0;
-            int posBloque = GetCantBloques();
+            int posBloque = GetCantBloques() - 1;
             int cant_uaI;
             int cant_bloquesI = 0;
 
@@ -410,7 +411,7 @@ namespace FireSim
                     int diff = (tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia);
 
                     // cant_bloquesI en este caso es la cantidad de indices que voy a necesitar (no bloques, indices)
-                    cant_bloquesI = (int)Math.Ceiling((decimal)(cant_uaI - diff) / (decimal)tamIndice);
+                    cant_bloquesI = (int)Math.Ceiling((decimal)(cant_uaI - diff) / (decimal)tamBloque);
                 }
             }
 
@@ -420,6 +421,7 @@ namespace FireSim
                 {
                     bloquesDisponibles++;
                 }
+                posBloque--;
             }
             if ((bloquesdeseados + cant_bloquesI) == bloquesDisponibles)
             {
@@ -427,6 +429,7 @@ namespace FireSim
             }
             return false;
         }
+        
         public int GetCantBloques()
         {
             return cantBloques;

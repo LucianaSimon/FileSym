@@ -16,8 +16,7 @@ namespace FireSim
              * FileSim file = new FileSim(1, "indexada", "scan", "mapa de bits", 1, 1, 1, 1, 1, 1, 100, 100, ruta);
             */
 
-            /*
-             * Prueba Metodo GetDireccionBloqueLibreIndice (Funciono) (Hacer metodo publico siquieren probrarlo)
+            /* Prueba Metodo GetDireccionBloqueLibreIndice (Funciono) (Hacer metodo publico siquieren probrarlo)
 
             Dispositivo disp = new Dispositivo(1, 1, 2, 2, 5, 100, 1, 100);
             // Caso con TablaIndice vacia
@@ -92,6 +91,40 @@ namespace FireSim
                 Console.WriteLine(b.uAOcupado + " " + b.uABurocracia + " " + b.estadoReserva);
             }
 
+            */
+
+
+            /* Prueba Metodo checkStorage (Funciono) (Hacer publico metodo para probar)
+             
+            Dispositivo disp = new Dispositivo(1, 1, 2, 2, 5, 100, 1, 100);
+
+            // Caso TablaIndice vacia
+            
+            if (disp.checkStorage(16, new List<int>()))
+            {
+                Console.WriteLine("Espacio suficiente");
+            }
+            else
+            {
+                Console.WriteLine("Espacio insuficiente");
+            }
+            
+            List<int> TablaIndice = new List<int>();
+            TablaIndice = disp.getDireccionBloqueLibreIndice(16, TablaIndice);
+
+            // Caso TablaIndice ocupada
+            if (disp.checkStorage(15, TablaIndice))
+            {
+                Console.WriteLine("Espacio suficiente");
+            }
+            else
+            {
+                Console.WriteLine("Espacio insuficiente");
+            }
+            foreach (Bloque b in disp.getTablaBloques())
+            {
+                Console.WriteLine(b.uAOcupado + " " + b.uABurocracia + " " + b.estadoReserva);
+            }
             */
 
 
