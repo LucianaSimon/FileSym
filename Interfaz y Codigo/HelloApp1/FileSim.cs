@@ -12,7 +12,7 @@ namespace FireSim
     {
         private string organizacionFisica;
         private string algoritmoBusqueda;
-        private string adminEspacio;
+        private Libres adminEspacio;
         private int metocoAcceso;
         private ArrayList TablaOperaciones;
         private Dispositivo disp;
@@ -21,22 +21,23 @@ namespace FireSim
         private Dictionary<string, Indicadores> indicadorArchivo; //para cada 
                                                                   //string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
        
-        public FileSim(int tProc, string orgFisica, string algBusqueda, string admEspacio, int metAcceso,
+        public FileSim(int tProc, string orgFisica, string algBusqueda, Libres admEspacio, int metAcceso,
                        int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta)
         {
             // En el constructor de FileSim se crearia el array de operaciones (vacio)
             this.TablaOperaciones = new ArrayList();
             this.TablaArchivos = new List<Archivo>();
             this.SetContadorOp(0);
-       
+
+            //Se crea el dispositivo 
+            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc, espacioLibre);
+
             //setters parametros fileSim
             SetOrganizacionFisica(orgFisica);
             SetAlgoritmoBusqueda(algBusqueda);
             SetAdminEspacio(admEspacio);
             SetMetocoAcceso(metAcceso);
 
-            //Se crea el dispositivo 
-            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc, espacioLibre);
 
             CargarOperaciones(ruta);
 
@@ -143,15 +144,13 @@ namespace FireSim
 
         public void Create(int idProc, int offset, int cant_uA, string name)
         {
-            if (BuscaArch(name) != -1)
+            if (BuscaArch(name) == -1)
             {
-                Archivo archivo = new Archivo();
-                archivo.setNombre(name);
-                archivo.setCant_uA(cant_uA);
-                archivo.setEstado(-1); // Se creo pero no esta abierto
-                archivo.setTablaDireccion(new List<int>());
-                archivo.setTablaIndices(new List<int>());
-                disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo);
+                Archivo archivo = new Archivo(name, cant_uA);
+                if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
+                {
+                    TablaArchivos.Add(archivo);
+                }
             }
             else
             {
@@ -289,13 +288,39 @@ namespace FireSim
             algoritmoBusqueda = value;
         }
 
-        public string GetAdminEspacio()
+        public Libres GetAdminEspacio()
         {
             return adminEspacio;
         }
 
-        public void SetAdminEspacio(string value)
+        public void SetAdminEspacio(Libres value)
         {
+            switch(value)
+            {
+                case Libres.MapadeBits:
+                    {
+                        // Reservo un bloque al final para el mapa de bits, y lo marco lleno de uA de Burocracia
+                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 1, true);
+                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 1, disp.GetTamBloques());
+                        break;
+                    }
+                case Libres.ListadeLibres:
+                    {
+                        // @FEDE 
+                        // Aca no estaria entendiendo como se "guarda" la lista de libres
+                        break;
+                    }
+                case Libres.ListadeLibresdePrincipioyCuenta:
+                    {
+                        // Reservo 2 bloques al final para la lista y lo marco lleno de uA de Burocracia
+                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 2, true);
+                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 2, disp.GetTamBloques());
+                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 2, true);
+                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 2, disp.GetTamBloques());
+
+                        break;
+                    }
+            }
             adminEspacio = value;
         }
 
@@ -307,6 +332,16 @@ namespace FireSim
         public void SetMetocoAcceso(int value)
         {
             metocoAcceso = value;
+        }
+
+        public Bloque[] getTablaBloques()
+        {
+            return disp.getTablaBloques();
+        }
+
+        public ArrayList getTablaOperaciones()
+        {
+            return TablaOperaciones;
         }
     }
 }

@@ -127,7 +127,29 @@ namespace FireSim
             }
             */
 
+            /* Prueba Metodo GetLibres con Create (Funciona con las 3 orgaFisica con mapa de bits)
+             */
+            string ruta = "../../../Datos-Create.csv";
+            FileSim filesim = new FileSim(2, "indexado", "scan", Libres.MapadeBits, 2, 2, 2, 2, 2, 5, 100, 100, ruta);
 
+            try 
+            {
+                for (int i = 0; i < filesim.GetCantidadOp(); i++)
+                {
+                    filesim.SimularSiguienteOp();
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Error: " + e);
+            }
+            
+            
+            
+            foreach (Bloque b in filesim.getTablaBloques())
+            {
+                Console.WriteLine(b.uAOcupado + " " + b.uABurocracia + " " + b.estadoReserva);
+            }
         }
     }
 } 

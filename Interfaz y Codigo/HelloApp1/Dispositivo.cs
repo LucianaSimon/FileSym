@@ -120,7 +120,15 @@ namespace FireSim
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
                 List<int> bloquesLibres = new List<int>(bloquesDeseados);
-                bloquesLibres.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
+
+                try
+                {
+                    bloquesLibres.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error: " + e);
+                }
 
                 if (bloquesLibres.Count != 0)
                 {
@@ -138,11 +146,19 @@ namespace FireSim
                 /// int tamBloqueEnlazada = tamBloque - tamIndice ----------->>> AGREGAR: normalizas los bloques, ajustandolos a enlazada
 
                 // Rocio, si creo que tenes razon, deberia quedar algo asi me parece:
-                // int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)(tamBloque-tamIndice));
+                 int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)(tamBloque-tamIndice));
                 // si estan de acuerdo, descomentamos la de arriba y borramos la de abajo
-                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)tamBloque); ////----------------------> eliminar
+                //int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)tamBloque); ////----------------------> eliminar
                 List<int> bloquesLibres = new List<int>(bloquesDeseados);
-                bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
+
+                try
+                {
+                    bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error: " + e);
+                }
 
              /// NO LEAN ESTE COMMENT ES PARA ROCIO NOMAS  ELIMINAR LLEGUE A NORMALIZAR LOS BLOQUES ME FALTA ANALIZAR LA ASIGNACION
 
@@ -180,13 +196,29 @@ namespace FireSim
                 if (checkStorage(bloquesDeseados, arch.getTablaIndices()))
                 {
                     List<int> bloquesLibres = new List<int>(bloquesDeseados);
-                    bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
+
+                    try
+                    {
+                        bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Error: " + e);
+                    }
 
                     if (bloquesLibres.Count != 0) // DUDA: habria que comprobar tambien aca los indices??? VER COMENTARIO ROCIO
                     {                             // Ya se sabe que hay espacio para los bloques deseados del usuario y para los del indice (@RESPUESTA ROCIO)
                         ObtuveLibres = true; //si obtuve libres devuelvo verdadero
                         arch.TablaDireccion_AddRange(bloquesLibres);
-                        arch.TablaIndice_AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.getTablaIndices()));
+
+                        try
+                        {
+                            arch.TablaIndice_AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.getTablaIndices()));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error: " + e);
+                        }
                     }//sino devuelve false
                 }
             }
