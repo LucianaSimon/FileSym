@@ -83,6 +83,11 @@ namespace FireSim
             /// En el caso en que tengamos  enlazada, no estas considerando el tamaño que te ocupa el indice en cada bloque
             /// En el caso en que tengamos indexada, no estas considerando si necesitas buscar un bloque extra para el indice.
             /// Diganme si me equivoco.
+            /// 
+            // Claro pero aca lo unico que haces es ver el tiempo de administracion de espacios libre, lo que tardas en buscar
+            // espacios libres, lo que vos decis ya es asignarle el espacio libre a un archivo, eso ya es parte del tiempo
+            // de otra funcion (creo que va a ser del Create y Write)
+
             int tiempo = 0;
 
             switch(AdminLibres)
@@ -131,7 +136,11 @@ namespace FireSim
                 ///Chicos, aca vos le estas sumando, a las unidades de almacenamiento deseado totales, UNA sola vez el tamaño de UN indice. Me huele a que estamos haciendolo mal
                 ////Posible solucion
                 /// int tamBloqueEnlazada = tamBloque - tamIndice ----------->>> AGREGAR: normalizas los bloques, ajustandolos a enlazada
-                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque); ////----------------------> eliminar
+
+                // Rocio, si creo que tenes razon, deberia quedar algo asi me parece:
+                // int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)(tamBloque-tamIndice));
+                // si estan de acuerdo, descomentamos la de arriba y borramos la de abajo
+                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)tamBloque); ////----------------------> eliminar
                 List<int> bloquesLibres = new List<int>(bloquesDeseados);
                 bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
 
@@ -160,6 +169,7 @@ namespace FireSim
             ////*****************@ROCIO *************************/////////
             ///Cuando hacemos el check storage no chequeamos que haya espacio extra para los bloques indices.
             ///Posible solución: ver lineas comentadas con flecha nueva!!!!!!
+            /// Busca lo que dice @RESPUESTA ROCIO en la funcion checkStorage, lo mismo que pusiste esta implementado ya
             else if (OrgaFisica.Equals("indexado"))
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
@@ -173,7 +183,7 @@ namespace FireSim
                     bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
 
                     if (bloquesLibres.Count != 0) // DUDA: habria que comprobar tambien aca los indices??? VER COMENTARIO ROCIO
-                    {
+                    {                             // Ya se sabe que hay espacio para los bloques deseados del usuario y para los del indice (@RESPUESTA ROCIO)
                         ObtuveLibres = true; //si obtuve libres devuelvo verdadero
                         arch.TablaDireccion_AddRange(bloquesLibres);
                         arch.TablaIndice_AddRange(getDireccionBloqueLibreIndice(bloquesDeseados, arch.getTablaIndices()));
@@ -372,6 +382,7 @@ namespace FireSim
                 // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
                 // son necesarios para almacenar los indices 
                 cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
+                // @RESPUESTA ROCIO
             }
             else
             {
@@ -394,7 +405,7 @@ namespace FireSim
                 }
             }
 
-            while ((bloquesDisponibles < (cant_bloquesI + bloquesdeseados) && (posBloque >= 0)))
+            while ((bloquesDisponibles < (cant_bloquesI + bloquesdeseados) && (posBloque >= 0))) // @RESPUESTA ROCIO
             {
                 if (!TablaBloques[posBloque].estadoReserva)
                 {
