@@ -8,28 +8,36 @@ using System.IO;
 namespace FireSim
 {
     public enum Libres { MapadeBits, ListadeLibres, ListadeLibresdePrincipioyCuenta };
+
     public class FileSim
     {
         private string organizacionFisica;
-        private string algoritmoBusqueda;
+        private string algoritmoBusqueda; 
         private Libres adminEspacio;
         private int metocoAcceso;
         private ArrayList TablaOperaciones;
+        private List<Operacion> ColaEspera; //DUDA @LU : tendria que ser array list como tabla de operaciones??
+                                            //esta lista almacenaria todas las operaciones que no se pudieron realizar
+                                            //porque en su tarribo ya 
         private Dispositivo disp;
         private int ContadorOp;
         private List<Archivo> TablaArchivos;
-        private Dictionary<string, Indicadores> indicadorArchivo; //para cada 
-                                                                  //string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
+        private Dictionary<string, Indicadores> indicadorArchivo; 
+        //c/ string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
        
         public FileSim(int tProc, string orgFisica, string algBusqueda, Libres admEspacio, int metAcceso,
                        int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta)
         {
-            // En el constructor de FileSim se crearia el array de operaciones (vacio)
+            //Crea las listas de operaciones, tabla de archivos y la cola de espera (vacias!)
             this.TablaOperaciones = new ArrayList();
             this.TablaArchivos = new List<Archivo>();
+            this.ColaEspera = new List<Operacion>();
             this.SetContadorOp(0);
 
-            //Se crea el dispositivo 
+            //DUDA @LU : el mapa se inicializaria aca vacio tambn???
+            this.indicadorArchivo = new Dictionary<string, Indicadores>();
+
+            //Se crea el dispositivo --> se le pasan los parametros configurables relacionados con disp
             this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc, espacioLibre);
 
             //setters parametros fileSim
@@ -38,7 +46,7 @@ namespace FireSim
             SetAdminEspacio(admEspacio);
             SetMetocoAcceso(metAcceso);
 
-
+            //Carga las operaciones desde el archivo ingresado x usuario --> las almacena en la tabla operaciones
             CargarOperaciones(ruta);
 
         }
@@ -46,7 +54,6 @@ namespace FireSim
         private void CargarOperaciones(string ruta)
         {
             // Lee el archivo, se cargan las operaciones en this.TablaOperaciones y se ordena por tArribo
-            // Se genera el mapa
             
             try
             {
@@ -144,12 +151,27 @@ namespace FireSim
 
         public void Create(int idProc, int offset, int cant_uA, string name)
         {
-            if (BuscaArch(name) == -1)
+            if (BuscaArch(name) == -1) //comprueba que el archivo esta cerrado
             {
                 Archivo archivo = new Archivo(name, cant_uA);
+                Indicadores indicador = new Indicadores();
+
                 if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
                 {
                     TablaArchivos.Add(archivo);
+
+                    indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(this.GetAdminEspacio(), cant_uA);
+                    indicador.tEscritura = 0; ///DUDA @lu: Aca me surgio la re duda de si estos tiempos estarian todos en cero......
+                                              ///porque en el metodo TprocesamientoBloquesLibres estamos actualizando tiempos
+                                              ///capaz lo que tendriamos que hacer es actualizar los indicadores desde la otra funcion???
+                    indicador.tLectura = 0;
+                    indicador.tSatisfaccion = 0;
+                    indicador.tMax = 0;
+                    indicador.tMin = 0;
+
+                    this.indicadorArchivo.Add(archivo.getNombre(),indicador);
+
+
                 }
             }
             else

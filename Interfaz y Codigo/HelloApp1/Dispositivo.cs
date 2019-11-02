@@ -74,7 +74,6 @@ namespace FireSim
 
         ///devuelve el t q llevaria buscar bloques libres segun el metodo de Adminitracion elegido x usuario
         /////el segundo parametro solo se usa en el segundo metodo --> en los otros pasar cero
-        ///@AYRTON fijate de pasar estos parametros x interfaz escritos igual! 
         public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada) 
         {
             /*************** @ROCIO*****************/
@@ -86,25 +85,25 @@ namespace FireSim
             /// 
             // Claro pero aca lo unico que haces es ver el tiempo de administracion de espacios libre, lo que tardas en buscar
             // espacios libres, lo que vos decis ya es asignarle el espacio libre a un archivo, eso ya es parte del tiempo
-            // de otra funcion (creo que va a ser del Create y Write)
+            // de otra funcion (creo que va a ser del Create y Write) 
 
             int tiempo = 0;
 
             switch(AdminLibres)
             {
                 case Libres.MapadeBits:
-                    tiempo = GetTprocesamient();
+                    tiempo = GetTseek() + GetTlectura() + GetTprocesamient(); 
                     break;
 
                 case Libres.ListadeLibres:
                     int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque); 
                     tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados;
-                    break;
+                    break; //DUDA @LU: tengo dudas con estos tiempos, los de gestion al final aca no se sumaban, no? 
+                           //porque segun entendi en este caso el tiempo deprocesamiento viene dado x lectura.....
 
                 case Libres.ListadeLibresdePrincipioyCuenta:
-                    tiempo = 2 * GetTprocesamient();
+                    tiempo = GetTseek()  + 2*(GetTlectura() + GetTprocesamient());
                     break;
-
             }
 
             return tiempo;
@@ -173,9 +172,6 @@ namespace FireSim
                         // Obtengo la posicion del bloque
                         int posBloque = (int)arch.getTablaDireccion()[i];
                         TablaBloques[posBloque].uABurocracia = tamIndice;
-                    //TablaBloques[posBloque].uAOcupado = tamBloque - tamIndice; 
-                    //DUDA: esto de arriba iria??? o cuando asignamos este espacio ocupado???
-                    // No, se asigna el espacio ocupado cuando se va a escribir en el archivo(Fede)
                     }
                 }//sino devuelve false 
 
