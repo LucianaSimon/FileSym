@@ -26,20 +26,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Rocío\\.nuget\\packages\\": {}
+    "C:\\Users\\Federico\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\Interfaz&Codigo\\Prueba\\Prueba.csproj",
+      "projectUniqueName": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
       "projectName": "Prueba",
-      "projectPath": "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\Interfaz&Codigo\\Prueba\\Prueba.csproj",
-      "packagesPath": "C:\\Users\\Rocío\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\Interfaz&Codigo\\Prueba\\obj\\",
+      "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
+      "packagesPath": "C:\\Users\\Federico\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Rocío\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Federico\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.0"
@@ -51,8 +56,8 @@
       "frameworks": {
         "netcoreapp3.0": {
           "projectReferences": {
-            "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj": {
-              "projectPath": "C:\\Users\\Rocío\\Documents\\Diseño de Sistemas Operativos\\firesim\\FileSym\\Interfaz&Codigo\\HelloApp1\\HelloApp1.csproj"
+            "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj": {
+              "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj"
             }
           }
         }

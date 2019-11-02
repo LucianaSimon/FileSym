@@ -61,6 +61,7 @@ namespace FireSim
                     opAux.NumProceso = Int32.Parse(valores[2]);
                     opAux.Tarribo = Int32.Parse(valores[3]);
                     opAux.Offset = Int32.Parse(valores[4]);
+                    opAux.CantidadUA = Int32.Parse(valores[5]);
                     TablaOperaciones.Add(opAux);
                 }
 
@@ -70,7 +71,7 @@ namespace FireSim
                 foreach(Operacion op in TablaOperaciones)
                 {
                     Console.WriteLine(op.NombreArchivo + " " + op.IdOperacion + " " + op.NumProceso + " " +
-                        op.Tarribo + " " + op.Offset + " " );
+                        op.Tarribo + " " + op.Offset + " " + opAux.CantidadUA);
                 }
                 
 
