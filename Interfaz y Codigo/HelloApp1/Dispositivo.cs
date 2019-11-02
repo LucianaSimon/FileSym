@@ -212,14 +212,15 @@ namespace FireSim
 
                 // Se recorre desde el final al principio para dejar los indices en el final de la tabla de bloques
                 //(No se, se me ocurrio a mi, sino aca se pude usar el metodo getDireccionBloqueLibre)(FEDE)
-                int posBloque = GetCantBloques();
+                int posBloque = GetCantBloques() - 1;
                 int posIndice = 0;
 
                 while ((posIndice < cant_bloquesI) && (posBloque >= 0))
                 {
                     if (!TablaBloques[posBloque].estadoReserva)
                     {
-                        bloquesLibresIndices[posIndice] = posBloque; 
+                        bloquesLibresIndices.Add(posBloque);
+                        posIndice++;
                     }
                     posBloque--;
                 }
@@ -227,11 +228,12 @@ namespace FireSim
                 {
                     for (int i=0; i<posIndice; i++)
                     {
-                        TablaBloques[(int)bloquesLibresIndices[posIndice]].estadoReserva = true;
+                        int numBloque = (int)bloquesLibresIndices[i];
+                        TablaBloques[numBloque].estadoReserva = true;
                         // Voy agregando "indices" al bloque indice hasta llenarlo o ya no necesitar guardar indices
-                        while((TablaBloques[posIndice].uABurocracia <= tamBloque) && (cant_uaI > 0))
+                        while((TablaBloques[numBloque].uABurocracia < tamBloque) && (cant_uaI > 0))
                         {
-                            TablaBloques[posIndice].uABurocracia += tamIndice;
+                            TablaBloques[numBloque].uABurocracia += tamIndice;
                             cant_uaI -= tamIndice;
                         }
                     }
@@ -251,7 +253,7 @@ namespace FireSim
                  * y luego crear la cantidad de bloques de indices necesarios nuevos y completarlos con la 
                  * cantidad de bloque indice restantes
                  */
-                int ultimoIndice = TablaIndices.Count;
+                int ultimoIndice = TablaIndices.Count - 1;
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 int cant_uaI = BloquesDeseados * tamIndice;
                 // Compruebo si la cantidad de uA para indice que necesito entra en el ulimo indice
@@ -259,6 +261,7 @@ namespace FireSim
                 if ((tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia) >= cant_uaI)
                 {
                     TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia += cant_uaI;
+                    bloquesLibresIndices = TablaIndices;
                 }
                 else // Si no, tengo que agregar la diferencia y buscar un nuevo indice
                 {
@@ -299,11 +302,11 @@ namespace FireSim
             int aux = 0;
             int contaTabla = 0;
 
-            while ((aux <= bloquesDeseados) && (contaTabla < cantBloques))
+            while ((aux < bloquesDeseados) && (contaTabla < cantBloques))
             {
                if (!TablaBloques[contaTabla].estadoReserva) // este valor devuelve true si no esta reservado
                 {
-                    bloquesLibres[aux] = contaTabla;
+                    bloquesLibres.Add(contaTabla);
                     aux++;
                 }
                 contaTabla++;
@@ -342,7 +345,11 @@ namespace FireSim
                 {
                     // Aumento el contador de bloques contiguos encontrados
                     contiguos++;
-                    posInicial = posBloque;                
+                    if (posInicial == -1)
+                    {
+                        posInicial = posBloque;
+                    }
+                    
                 }
                 else
                 {
@@ -351,6 +358,7 @@ namespace FireSim
                     contiguos = 0;
                     posInicial = -1;
                 }
+                posBloque++;
             }
             if (contiguos == bloquesDeseados)
             {
@@ -386,7 +394,7 @@ namespace FireSim
             }
             else
             {
-                int ultimoIndice = TablaIndices.Count;
+                int ultimoIndice = TablaIndices.Count - 1;
                 //Se obtienen la cantidad de uA que ocupan los indices para los BloquesDeseados
                 cant_uaI = bloquesdeseados * tamIndice;
 
@@ -394,7 +402,8 @@ namespace FireSim
                 // si es asi agrego cant_uaI a uABurocracia del ultimo indice y la tabla no se modifica
                 if ((tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia) >= cant_uaI)
                 {
-                    TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia += cant_uaI;
+                    // No necesito ningun bloque extra para indices
+                    cant_bloquesI = 0;
                 }
                 else // Busco la cantidad de bloques indice que necesito extra
                 {
@@ -506,6 +515,11 @@ namespace FireSim
         private void SetTprocesamiento(int value)
         {
             tProcesamiento = value;
+        }
+
+        public Bloque[] getTablaBloques()
+        {
+            return TablaBloques;
         }
     }
 }
