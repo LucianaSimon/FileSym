@@ -42,7 +42,7 @@ namespace FireSim
 
         }
 
-        public void CargarOperaciones(string ruta)
+        private void CargarOperaciones(string ruta)
         {
             // Lee el archivo, se cargan las operaciones en this.TablaOperaciones y se ordena por tArribo
             // Se genera el mapa
@@ -143,14 +143,20 @@ namespace FireSim
 
         public void Create(int idProc, int offset, int cant_uA, string name)
         {
-
-            Archivo archivo = new Archivo();
-            archivo.setNombre(name);
-            archivo.setCant_uA(cant_uA);
-            archivo.setEstado(-1); // Se creo pero no esta abierto
-            archivo.setTablaDireccion(new List<int>());
-            archivo.setTablaIndices(new List<int>());
-            disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo); 
+            if (BuscaArch(name) != -1)
+            {
+                Archivo archivo = new Archivo();
+                archivo.setNombre(name);
+                archivo.setCant_uA(cant_uA);
+                archivo.setEstado(-1); // Se creo pero no esta abierto
+                archivo.setTablaDireccion(new List<int>());
+                archivo.setTablaIndices(new List<int>());
+                disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo);
+            }
+            else
+            {
+                Console.WriteLine("Error: El archivo ya se encuentra creado!");
+            }
         }
 
         public void Write()
@@ -160,6 +166,7 @@ namespace FireSim
 
         public void Read()
         {
+            // Aca solo irian calculos de tiempo no?
             throw new Exception("The method or operation is not implemented.");
         }
 
@@ -170,12 +177,10 @@ namespace FireSim
 
             for (int i = 0; i < TablaArchivos.Count; i++)
             {
-               
                 if (nameArchivo == TablaArchivos[i].getNombre())
                 {
                     return i;
-                }
-              
+                } 
             }
 
             return posArch; //Si devuelve -1 es que no está en la tabla
@@ -196,17 +201,16 @@ namespace FireSim
                         numBloque = TablaArchivos[posArch].getTablaDireccion()[j];
                         disp.CambiarEstadoOcupado(numBloque, 0);
                         // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
-                        
 
-                    if (organizacionFisica == "contigua")
-                    {
-                        disp.CambiarEstadoBurocracia(numBloque, 0);
-                    }
-                    else
-                    {
-                        disp.CambiarEstadoBurocracia(numBloque, 0);
-                    }
-                        
+                        if (organizacionFisica == "contigua")
+                        {
+                            disp.CambiarEstadoBurocracia(numBloque, 0);
+                        }
+                        else
+                        {
+                            disp.CambiarEstadoBurocracia(numBloque, 0);
+                        }
+
                         disp.CambiarEstadoReserva(numBloque, false);
                     }
 
@@ -217,27 +221,24 @@ namespace FireSim
 
         public void Open(string nameArchivo, int processID)
         {
-            for (int i = 0; i < TablaArchivos.Count; i++)
+            int posArch = BuscaArch(nameArchivo);
+            // Si el archivo se encuentra en la tabla, y si el estado es -1, lo abro cambiando el numero de estado por 
+            // el numero de proceso que lo quiere abrir.
+            if (posArch != -1 && TablaArchivos[posArch].getEstado() == -1)
             {
-                // Si el archivo se encuentra en la tabla, y si el estado es -1, lo abro cambiando el numero de estado por 
-                // el numero de proceso que lo quiere abrir.
-                if (TablaArchivos[i].getNombre() == nameArchivo && TablaArchivos[i].getEstado() == -1)
-                {
-                    TablaArchivos[i].setEstado(processID);
-                }
+                TablaArchivos[posArch].setEstado(processID);
             }
         }
 
         public void Close(string nameArchivo, int processID)
         {
-            for (int i=0; i<TablaArchivos.Count; i++)
+            int posArch = BuscaArch(nameArchivo);
+
+            // Si el archivo se encuentra en la tabla, y si el num de proceso que quiere cerrarlo es el que lo tiene
+            // abierto, lo cierro cambiando el estado a -1
+            if (posArch != -1 && TablaArchivos[posArch].getEstado() == processID)
             {
-                // Si el archivo se encuentra en la tabla, y si el num de proceso que quiere cerrarlo es el que lo tiene
-                // abierto, lo cierro cambiando el estado a -1
-                if (TablaArchivos[i].getNombre() == nameArchivo && TablaArchivos[i].getEstado() == processID)
-                {
-                    TablaArchivos[i].setEstado(-1);
-                }
+                TablaArchivos[posArch].setEstado(-1);
             }
         }
 
@@ -325,7 +326,7 @@ public class ComparaOp : IComparer
         }
         else
         {
-            return 1;
+            return 1; 
         }
     }
 }
