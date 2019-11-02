@@ -71,7 +71,7 @@ namespace FireSim
                 foreach(Operacion op in TablaOperaciones)
                 {
                     Console.WriteLine(op.NombreArchivo + " " + op.IdOperacion + " " + op.NumProceso + " " +
-                        op.Tarribo + " " + op.Offset + " " + opAux.CantidadUA);
+                        op.Tarribo + " " + op.Offset + " " + op.CantidadUA);
                 }
                 
 
@@ -315,7 +315,11 @@ public class ComparaOp : IComparer
 {
     public int Compare(object x, object y)
     {
-        if (((Operacion)y).Tarribo > ((Operacion)x).Tarribo)
+        if (((Operacion)x).Tarribo < ((Operacion)y).Tarribo)
+        {
+            return -1;
+        }
+        else if (((Operacion)x).Tarribo == ((Operacion)y).Tarribo)
         {
             return 0;
         }
