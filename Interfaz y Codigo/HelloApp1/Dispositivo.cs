@@ -77,6 +77,12 @@ namespace FireSim
         ///@AYRTON fijate de pasar estos parametros x interfaz escritos igual! 
         public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada) 
         {
+            /*************** @ROCIO*****************/
+            /// Chicos no se si esta bien esta función. El problema está en LISTA DE LIBRES. Especificamente la linea de codifo que haces:
+            /// " int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque); "
+            /// En el caso en que tengamos  enlazada, no estas considerando el tamaño que te ocupa el indice en cada bloque
+            /// En el caso en que tengamos indexada, no estas considerando si necesitas buscar un bloque extra para el indice.
+            /// Diganme si me equivoco.
             int tiempo = 0;
 
             switch(AdminLibres)
@@ -86,7 +92,7 @@ namespace FireSim
                     break;
 
                 case Libres.ListadeLibres:
-                    int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
+                    int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque); 
                     tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados;
                     break;
 
@@ -99,7 +105,7 @@ namespace FireSim
             return tiempo;
         }
 
-        //Devuelve true si se pudo asignar el espacio necesitado (bloques libres) y false sino pudo
+        //Devuelve true si se pudo asignar el espacio necesitado (bloques libres) y false si no pudo
         public bool GetLibres(int uAdeseada, string OrgaFisica, ref Archivo arch)
         {
             bool ObtuveLibres = false;
@@ -120,10 +126,16 @@ namespace FireSim
             }
             else if (OrgaFisica.Equals("enlazada"))
             {
-                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque);
 
+                //// ************************ @ROCIO ***************************////
+                ///Chicos, aca vos le estas sumando, a las unidades de almacenamiento deseado totales, UNA sola vez el tamaño de UN indice. Me huele a que estamos haciendolo mal
+                ////Posible solucion
+                /// int tamBloqueEnlazada = tamBloque - tamIndice ----------->>> AGREGAR: normalizas los bloques, ajustandolos a enlazada
+                int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada+tamIndice) / (decimal)tamBloque); ////----------------------> eliminar
                 List<int> bloquesLibres = new List<int>(bloquesDeseados);
                 bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
+
+             /// NO LEAN ESTE COMMENT ES PARA ROCIO NOMAS  ELIMINAR LLEGUE A NORMALIZAR LOS BLOQUES ME FALTA ANALIZAR LA ASIGNACION
 
                 if (bloquesLibres.Count != 0)
                 {
@@ -143,16 +155,24 @@ namespace FireSim
                 }//sino devuelve false 
 
             }
+
+
+            ////*****************@ROCIO *************************/////////
+            ///Cuando hacemos el check storage no chequeamos que haya espacio extra para los bloques indices.
+            ///Posible solución: ver lineas comentadas con flecha nueva!!!!!!
             else if (OrgaFisica.Equals("indexado"))
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
+
+                ///     int cantUAindice = bloquesDeseados * tamIndice; ------------------------------------------>nueva
+                ///     bloquesDeseados += (int)Math.Ceiling((decimal)cantUAindice / (decimal)tamBloque); -----------> nueva
 
                 if (checkStorage(bloquesDeseados, arch.getTablaIndices()))
                 {
                     List<int> bloquesLibres = new List<int>(bloquesDeseados);
                     bloquesLibres.AddRange(getDireccionBloqueLibre(bloquesDeseados));
 
-                    if (bloquesLibres.Count != 0) // DUDA: habria que comprobar tambien aca los indices???
+                    if (bloquesLibres.Count != 0) // DUDA: habria que comprobar tambien aca los indices??? VER COMENTARIO ROCIO
                     {
                         ObtuveLibres = true; //si obtuve libres devuelvo verdadero
                         arch.TablaDireccion_AddRange(bloquesLibres);

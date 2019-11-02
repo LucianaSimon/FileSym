@@ -10,6 +10,8 @@ namespace FireSim
 {
     public class Archivo
     {
+
+        // Por cada archivo almacenamos lo basico, el nombre
         private string nombreArchivo;
         private int estado;
         private int cant_uA;
