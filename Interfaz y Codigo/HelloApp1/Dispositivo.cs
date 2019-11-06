@@ -20,15 +20,14 @@ namespace FireSim
         private int tSeek;
         private int tAcceso;
         private int tProcesamiento;
-        private int espacioLibre; //que haria?
+        
         private int tamBloque;
         private int tamDispositivo;
         private int tamIndice = 1; //tamanio que ocupa un indice --> burocracia
         private int cantBloques;
         private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaño fisico
 
-        public Dispositivo(int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int tProcesamiento,
-                          int espacioLibre)
+        public Dispositivo(int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int tProcesamiento)
         {
             //seteamos los parametros de entrada
             this.SetTlectura(tLectura);
@@ -110,11 +109,11 @@ namespace FireSim
         }
 
         //Devuelve true si se pudo asignar el espacio necesitado (bloques libres) y false si no pudo
-        public bool GetLibres(int uAdeseada, string OrgaFisica, ref Archivo arch)
+        public bool GetLibres(int uAdeseada, Org OrgaFisica, ref Archivo arch)
         {
             bool ObtuveLibres = false;
 
-            if (OrgaFisica.Equals("contigua"))
+            if (OrgaFisica == Org.Contigua)
             { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
@@ -136,7 +135,7 @@ namespace FireSim
                 }//sino devuelve false
 
             }
-            else if (OrgaFisica.Equals("enlazada"))
+            else if (OrgaFisica == Org.Enlazada)
             {
 
                 //// ************************ @ROCIO ***************************////
@@ -182,7 +181,7 @@ namespace FireSim
             ///Cuando hacemos el check storage no chequeamos que haya espacio extra para los bloques indices.
             ///Posible solución: ver lineas comentadas con flecha nueva!!!!!!
             /// Busca lo que dice @RESPUESTA ROCIO en la funcion checkStorage, lo mismo que pusiste esta implementado ya
-            else if (OrgaFisica.Equals("indexado"))
+            else if (OrgaFisica == Org.Indexada)
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
@@ -497,16 +496,7 @@ namespace FireSim
         {
             tAcceso = value;
         }
-        
-        public int GetEspacioLibre()
-        {
-            return espacioLibre;
-        }
-
-        private void SetEspacioLibre(int value)
-        {
-            espacioLibre = value;
-        }
+       
 
         public int GetTescritura()
         {

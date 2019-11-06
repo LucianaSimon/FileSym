@@ -41,16 +41,18 @@ namespace HelloApp1
             
             if (result == true)
             {
-                string filename = dlg.FileName;
-                textArchivoSelec.Content = textArchivoSelec.Content + filename;
+                Globales.rutaArchivo = dlg.FileName;
+                //textArchivoSelec.Content = textArchivoSelec.Content + Globales.rutaArchivo;
+
                 //Crear evento para habilitar el boton 'Comenzar
+                btnComenzar.IsEnabled = true;
             }
         }
 
         //boton configuracion
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Config subWindow = new Config(configuracionActual);
+            Config subWindow = new Config();
             //this.WindowState = WindowState.Minimized;
             this.Topmost = false;
             subWindow.Show();
@@ -61,12 +63,20 @@ namespace HelloApp1
         //boton Comenzar
         private void btnComenzar_Click(object sender, RoutedEventArgs e)
         {
-            Window1 subWindow = new Window1();
-            //this.WindowState = WindowState.Minimized;
-            this.Topmost = false;
-            subWindow.Show();
-            subWindow.Activate();
-            this.Close();
+            if(Globales.orgFisica.Equals("") || Globales.admLibre.Equals("") || Globales.modoAcceso.Equals(""))
+            {
+                MessageBox.Show("Selecione las configuraciones necesarias para la simulación");
+            }
+            else
+            {
+                Window1 subWindow = new Window1();
+                //this.WindowState = WindowState.Minimized;
+                this.Topmost = false;
+                subWindow.Show();
+                subWindow.Activate();
+                this.Close();
+            }
+            
         }
     }
 }

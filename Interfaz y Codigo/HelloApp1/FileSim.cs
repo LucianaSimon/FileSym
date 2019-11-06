@@ -7,14 +7,15 @@ using System.IO;
 
 namespace FireSim
 {
-    public enum Libres { MapadeBits, ListadeLibres, ListadeLibresdePrincipioyCuenta };
+    public enum Libres { MapadeBits, ListadeLibres, ListadeLibresdePrincipioyCuenta, Vacio = -1 };
+    public enum Acceso { Secuencial, Directo, Indexado, Vacio = -1 };
+    public enum Org { Contigua, Enlazada, Indexada, Vacio = -1 };
 
     public class FileSim
     {
-        private string organizacionFisica;
-        private string algoritmoBusqueda; 
+        private Org organizacionFisica;
         private Libres adminEspacio;
-        private int metocoAcceso;
+        private Acceso metodoAcceso;
         private ArrayList TablaOperaciones;
         private List<Operacion> ColaEspera; //DUDA @LU : tendria que ser array list como tabla de operaciones??
                                             //esta lista almacenaria todas las operaciones que no se pudieron realizar
@@ -25,8 +26,8 @@ namespace FireSim
         private Dictionary<string, Indicadores> indicadorArchivo; 
         //c/ string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
        
-        public FileSim(int tProc, string orgFisica, string algBusqueda, Libres admEspacio, int metAcceso,
-                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int espacioLibre, string ruta)
+        public FileSim(int tProc, Org orgFisica, Libres admEspacio, Acceso metAcceso,
+                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, string ruta)
         {
             //Crea las listas de operaciones, tabla de archivos y la cola de espera (vacias!)
             this.TablaOperaciones = new ArrayList();
@@ -38,13 +39,12 @@ namespace FireSim
             this.indicadorArchivo = new Dictionary<string, Indicadores>();
 
             //Se crea el dispositivo --> se le pasan los parametros configurables relacionados con disp
-            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc, espacioLibre);
+            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc);
 
             //setters parametros fileSim
             SetOrganizacionFisica(orgFisica);
-            SetAlgoritmoBusqueda(algBusqueda);
             SetAdminEspacio(admEspacio);
-            SetMetocoAcceso(metAcceso);
+            SetMetodoAcceso(metAcceso);
 
             //Carga las operaciones desde el archivo ingresado x usuario --> las almacena en la tabla operaciones
             CargarOperaciones(ruta);
@@ -223,7 +223,7 @@ namespace FireSim
                         disp.CambiarEstadoOcupado(numBloque, 0);
                         // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
 
-                        if (organizacionFisica == "contigua")
+                        if (organizacionFisica == Org.Contigua)
                         {
                             disp.CambiarEstadoBurocracia(numBloque, 0);
                         }
@@ -290,24 +290,14 @@ namespace FireSim
         //Una vez cargada la configuracion vamos a permitir cambiarla, porq esto significa que
         //vamos a tener que modificar al dispositivo tambien (no solo en el constructor de FileSim)!!!
         // No entendi (Fede)
-        public string GetOrganizacionFisica()
+        public Org GetOrganizacionFisica()
         {
             return organizacionFisica;
         }
 
-        public void SetOrganizacionFisica(string value)
+        public void SetOrganizacionFisica(Org value)
         {
             organizacionFisica = value;
-        }
-
-        public string GetAlgoritmoBusqueda()
-        {
-            return algoritmoBusqueda;
-        }
-
-        public void SetAlgoritmoBusqueda(string value)
-        {
-            algoritmoBusqueda = value;
         }
 
         public Libres GetAdminEspacio()
@@ -346,14 +336,14 @@ namespace FireSim
             adminEspacio = value;
         }
 
-        public int GetMetocoAcceso()
+        public Acceso GetMetodoAcceso()
         {
-            return metocoAcceso;
+            return metodoAcceso;
         }
 
-        public void SetMetocoAcceso(int value)
+        public void SetMetodoAcceso(Acceso value)
         {
-            metocoAcceso = value;
+            metodoAcceso = value;
         }
 
         public Bloque[] getTablaBloques()
