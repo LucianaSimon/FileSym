@@ -19,8 +19,7 @@ namespace FireSim
         private int tEscritura;
         private int tSeek;
         private int tAcceso;
-        private int tProcesamiento;
-        
+        private int tProcesamiento;        
         private int tamBloque;
         private int tamDispositivo;
         private int tamIndice = 1; //tamanio que ocupa un indice --> burocracia
@@ -96,7 +95,7 @@ namespace FireSim
 
                 case Libres.ListadeLibres:
                     int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque); 
-                    tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados;
+                    tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados + GetTprocesamient();
                     break; //DUDA @LU: tengo dudas con estos tiempos, los de gestion al final aca no se sumaban, no? 
                            //porque segun entendi en este caso el tiempo deprocesamiento viene dado x lectura.....
 
