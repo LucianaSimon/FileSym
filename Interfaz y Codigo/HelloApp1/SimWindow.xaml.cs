@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -37,14 +39,12 @@ namespace HelloApp1
             dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)
 
             //informacion adicional cambiante por cada operacion simulada
-            info_adicional.Text = Globales.modoAcceso.ToString() + Globales.admLibre.ToString() + Globales.orgFisica.ToString();
-                /*"prueba prueba" +
-                "prueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba prueba" +
-                "prueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba prueba";
-                */
+            info_adicional.Text = "A rellenar con indicadores!";
+                
         }
 
         //@toDO - Revisar dibujado de bloques de manera dinámica.
+        //Tambien se debe poder mostrar los bloques que estan siendo modificados por la operación actual.
         public void dibujarBloques(int pagina)
         {
             //Antes de dibujar todos los cuadrados necesito poner en blanco canvas
@@ -124,6 +124,25 @@ namespace HelloApp1
                 dibujarBloques(pagActual);
             }
         }
+        
+
+        private void Button_Click_mostrarConfig(object sender, RoutedEventArgs e)
+        {
+            //Mostrar las configuraciones seleccionadas
+            MessageBoxResult result = System.Windows.MessageBox.Show("Las configuraciones para la simulacion son:\n\n" +
+                "* Organización física: " + Globales.orgFisica + "\n" +
+                "* Modo de acceso: " + Globales.modoAcceso + "\n" +
+                "* Administración de espacios libres: " + Globales.admLibre + "\n" +
+                "* Tiempo de acceso: " + Globales.tAcceso + "\n" +
+                "* Tiempo de seek: " + Globales.tSeek + "\n" +
+                "* Tiempo de lectura: " + Globales.tLectura + "\n" +
+                "* Tiempo de escritura: " + Globales.tEscritura + "\n" +
+                "* Tiempo de procesamiento: " + Globales.tProcesamiento + "\n" +
+                "* Tamaño de bloque: " + Globales.tamBloque + " uA" + "\n" +
+                "* Tamaño de dispositivo: " + Globales.tamDispositivo + " uA" + "\n",
+                "* Configuraciones seleccionadas", MessageBoxButton.OK);
+        }
+
 
         private void Button_Click_PasoAPaso(object sender, RoutedEventArgs e)
         {
@@ -240,6 +259,12 @@ namespace HelloApp1
             }
             
             opActual++;
-        }  
+        }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
     }
 }

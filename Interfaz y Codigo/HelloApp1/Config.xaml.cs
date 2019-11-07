@@ -25,8 +25,11 @@ namespace HelloApp1
 
 
         public static void Inicializar() //valores x defecto
-        { 
-            
+        {
+            orgFisica = Org.Vacio;
+            admLibre = Libres.Vacio;
+            modoAcceso = Acceso.Vacio;
+
             tAcceso = 10;
             tSeek = 10;
             tLectura = 10;
@@ -49,11 +52,28 @@ namespace HelloApp1
         public Config()
         {
             InitializeComponent();
-            
+
             //Cada vez que se inicia la pantalla de configuracion se cargan los valores globales
             //La primera vez seran los valores por defecto. A medida que el usuario realice cambios 
             //estos serán persistidos.
-            
+
+            //Para los RadioButtons!
+            if (Globales.orgFisica == Org.Contigua) Org_Contigua.IsChecked = true;
+            else if (Globales.orgFisica == Org.Enlazada) Org_Enlazada.IsChecked = true;
+            else if (Globales.orgFisica == Org.Indexada) Org_Indexada.IsChecked = true;
+            else //No checkeo nada;
+
+            if  (Globales.admLibre == Libres.ListadeLibres) Adm_Lista.IsChecked = true;
+            else if (Globales.admLibre == Libres.ListadeLibresdePrincipioyCuenta) Adm_Cuenta.IsChecked = true ;
+            else if (Globales.admLibre == Libres.MapadeBits) Adm_Mapa.IsChecked = true ;
+            else //;
+
+            if (Globales.modoAcceso == Acceso.Directo) Acceso_Directo.IsChecked = true ;
+            else if (Globales.modoAcceso == Acceso.Indexado) Acceso_Indexado.IsChecked = true ;
+            else if (Globales.modoAcceso == Acceso.Secuencial) Acceso_Secuencial.IsChecked = true ;
+            else //;
+
+
             //Sliders (s)
             stAcceso.Value = Globales.tAcceso;
             stLectura.Value = Globales.tLectura;

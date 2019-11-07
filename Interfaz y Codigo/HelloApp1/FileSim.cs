@@ -66,6 +66,27 @@ namespace FireSim
                     var valores = linea.Split(';');
                     opAux.NombreArchivo = valores[0];
                     opAux.IdOperacion = char.Parse(valores[1]);
+                    switch (opAux.IdOperacion.ToString())
+                    {
+                        case "N":
+                            opAux.NombreOperacion = "CREATE";
+                            break;
+                        case "C": 
+                            opAux.NombreOperacion = "CLOSE";
+                            break;
+                        case "O":
+                            opAux.NombreOperacion = "OPEN";
+                            break;
+                        case "D":
+                            opAux.NombreOperacion = "DELETE";
+                            break;
+                        case "W":
+                            opAux.NombreOperacion = "WRITE";
+                            break;
+                        case "R":
+                            opAux.NombreOperacion = "READ";
+                            break;
+                    }
                     opAux.NumProceso = Int32.Parse(valores[2]);
                     opAux.Tarribo = Int32.Parse(valores[3]);
                     opAux.Offset = Int32.Parse(valores[4]);

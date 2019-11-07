@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using FireSim;
+
 
 namespace HelloApp1
 {
@@ -63,9 +53,12 @@ namespace HelloApp1
         //boton Comenzar
         private void btnComenzar_Click(object sender, RoutedEventArgs e)
         {
-            if(Globales.orgFisica.Equals("") || Globales.admLibre.Equals("") || Globales.modoAcceso.Equals(""))
+            if(Globales.orgFisica == Org.Vacio || Globales.admLibre == Libres.Vacio 
+                || Globales.modoAcceso == Acceso.Vacio)
             {
-                MessageBox.Show("Selecione las configuraciones necesarias para la simulación");
+                //MessageBox.Show("Selecione las configuraciones necesarias para la simulación");
+                MessageBoxResult result = System.Windows.MessageBox.Show("Selecione las configuraciones necesarias para la simulación", 
+                    "Error de configuración", MessageBoxButton.OK);
             }
             else
             {
