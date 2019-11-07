@@ -21,7 +21,7 @@ namespace HelloApp1
             Globales.tLectura, Globales.tEscritura, Globales.tSeek, Globales.tAcceso, Globales.tamBloque, Globales.tamDispositivo, Globales.rutaArchivo);
 
         int pagActual = 0;
-        int opActual = 0;
+        int opActual = 0; //este atributo quedara reemplazada x simulador.GetContadorOp
 
         DispatcherTimer timer = new DispatcherTimer(); //para poder ejecutar operaciones x tiempo
         
@@ -61,38 +61,48 @@ namespace HelloApp1
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Rectangle bloque = new Rectangle();
-                    bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //de que color? tengo que verificar con el bloque que corresponda
-                    bloque.Width = 20;
-                    bloque.Height = 20;
-                    bloque.StrokeThickness = 1;
-                    bloque.Stroke = Brushes.Black;
-                    Canvas.SetTop(bloque, i * 25 + 25);
-                    Canvas.SetLeft(bloque, j * 30 + 35);
-                    miLienzo.Children.Add(bloque);
+                    int numBloque = j + i * 10 + pagina * 130;  //numero de bloque a dibujar
 
-                    //Para dibujar los numeros del eje y
-                    if (j == 0)
+                    if (numBloque < simulador.GetDispositivo().GetCantBloques()) //si corresponde dibujar el bloque
                     {
-                        //Pagina = 9 bloques x 12 bloques = 117 bloques
-                        TextBlock txt1 = new TextBlock();
-                        txt1.FontSize = 14;
-                        txt1.Text = Convert.ToString(i * 10 + pagina * 130);
-                        Canvas.SetTop(txt1, i * 25 + 25);
-                        Canvas.SetLeft(txt1, 0);
-                        miLienzo.Children.Add(txt1);
-                    }
+                        Rectangle bloque = new Rectangle();
+                        
+                        if(simulador.GetDispositivo().estadoBloque(numBloque) == 0) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //LIBRE
+                        else if(simulador.GetDispositivo().estadoBloque(numBloque) == 1) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF1181A1")); //OCUPADO
+                        else bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#0ddbac"));
 
-                    //Para dibujar los numeros del eje x (0,1...,9)
-                    if (i == 0)
-                    {
-                        TextBlock txt1 = new TextBlock();
-                        txt1.FontSize = 14;
-                        txt1.Text = Convert.ToString(j);
-                        Canvas.SetTop(txt1, 0);
-                        Canvas.SetLeft(txt1, j * 30 + 35);
-                        miLienzo.Children.Add(txt1);
+                        bloque.Width = 20;
+                        bloque.Height = 20;
+                        bloque.StrokeThickness = 1;
+                        bloque.Stroke = Brushes.Black;
+                        Canvas.SetTop(bloque, i * 25 + 25);
+                        Canvas.SetLeft(bloque, j * 30 + 35);
+                        miLienzo.Children.Add(bloque);
+
+                        //Para dibujar los numeros del eje y
+                        if (j == 0)
+                        {
+                            //Pagina = 9 bloques x 12 bloques = 117 bloques
+                            TextBlock txt1 = new TextBlock();
+                            txt1.FontSize = 14;
+                            txt1.Text = Convert.ToString(i * 10 + pagina * 130);
+                            Canvas.SetTop(txt1, i * 25 + 25);
+                            Canvas.SetLeft(txt1, 0);
+                            miLienzo.Children.Add(txt1);
+                        }
+
+                        //Para dibujar los numeros del eje x (0,1...,9)
+                        if (i == 0)
+                        {
+                            TextBlock txt1 = new TextBlock();
+                            txt1.FontSize = 14;
+                            txt1.Text = Convert.ToString(j);
+                            Canvas.SetTop(txt1, 0);
+                            Canvas.SetLeft(txt1, j * 30 + 35);
+                            miLienzo.Children.Add(txt1);
+                        }
                     }
+                    
                 }
             }
         }
@@ -112,9 +122,8 @@ namespace HelloApp1
 
         private void btn_der(object sender, RoutedEventArgs e)
         {
-            int cantBloques = 300;
             //dibuja una pagina antes
-            if (pagActual == (cantBloques/130))
+            if (pagActual == (simulador.getTablaBloques().Length / 130))
             {
 
             }
@@ -139,7 +148,8 @@ namespace HelloApp1
                 "* Tiempo de escritura: " + Globales.tEscritura + "\n" +
                 "* Tiempo de procesamiento: " + Globales.tProcesamiento + "\n" +
                 "* Tamaño de bloque: " + Globales.tamBloque + " uA" + "\n" +
-                "* Tamaño de dispositivo: " + Globales.tamDispositivo + " uA" + "\n",
+                "* Tamaño de dispositivo: " + Globales.tamDispositivo + " uA" + "\n" +
+                "* Cantidad de bloques: " + simulador.GetDispositivo().GetCantBloques(),
                 "* Configuraciones seleccionadas", MessageBoxButton.OK);
         }
 
@@ -220,6 +230,8 @@ namespace HelloApp1
             if (opActual < simulador.GetCantidadOp())
             {
                 ejecutarSiguienteOp();
+                //Tambien voy a tener que dibujar (mostrar) los bloques que esten siendo modificados
+                //en la operacion actual.
             }
 
             if(opActual == simulador.GetCantidadOp())

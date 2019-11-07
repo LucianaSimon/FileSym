@@ -53,7 +53,7 @@
 
                 <Label FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="348" Canvas.Top="139" FontSize="14" FontWeight="Bold" Height="30" Width="163">Tiempo de simulación</Label>
                 <fa:ImageAwesome Icon="ClockOutline"  Width="19" Foreground="#ff422c" Canvas.Left="348" Canvas.Top="169"/>
-                <Label x:Name="tSimu" FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="372" Canvas.Top="161" FontSize="18" Height="30" Width="99" FontWeight="Bold">12 uT</Label>
+                <Label x:Name="tSimu" FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="372" Canvas.Top="161" FontSize="18" Height="30" Width="99" FontWeight="Bold">00 uT</Label>
 
                 <Button x:Name="mostrarConfig" Content="Mostrar configuración" Width="144" FontFamily="/HelloApp1;component/Font/#Ubuntu" Height="30" IsDefault="True" Click="Button_Click_mostrarConfig" Canvas.Left="354" Canvas.Top="207" FontWeight="Bold"/>
 

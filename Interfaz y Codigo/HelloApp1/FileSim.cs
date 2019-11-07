@@ -308,6 +308,11 @@ namespace FireSim
             return (Operacion)this.TablaOperaciones[this.ContadorOp];
         }
 
+        public Dispositivo GetDispositivo()
+        {
+            return this.disp;
+        }
+
         //Una vez cargada la configuracion vamos a permitir cambiarla, porq esto significa que
         //vamos a tener que modificar al dispositivo tambien (no solo en el constructor de FileSim)!!!
         // No entendi (Fede)
