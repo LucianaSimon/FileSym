@@ -11,8 +11,8 @@
         <DockPanel Width="600">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Archivo">
-                    <MenuItem Header="_Exportar" />
-                    <MenuItem Header="_Salir" />
+                    <MenuItem Header="_Exportar" Click="MenuItem_Click" />
+                    <MenuItem Header="_Salir" Click="MenuItem_Click_1" />
                 </MenuItem>
             </Menu>
         </DockPanel>

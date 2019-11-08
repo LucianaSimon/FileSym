@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using FireSim;
+
 
 namespace HelloApp1
 {
@@ -41,16 +31,18 @@ namespace HelloApp1
             
             if (result == true)
             {
-                string filename = dlg.FileName;
-                textArchivoSelec.Content = textArchivoSelec.Content + filename;
+                Globales.rutaArchivo = dlg.FileName;
+                //textArchivoSelec.Content = textArchivoSelec.Content + Globales.rutaArchivo;
+
                 //Crear evento para habilitar el boton 'Comenzar
+                btnComenzar.IsEnabled = true;
             }
         }
 
         //boton configuracion
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Config subWindow = new Config(configuracionActual);
+            Config subWindow = new Config();
             //this.WindowState = WindowState.Minimized;
             this.Topmost = false;
             subWindow.Show();
@@ -61,12 +53,23 @@ namespace HelloApp1
         //boton Comenzar
         private void btnComenzar_Click(object sender, RoutedEventArgs e)
         {
-            Window1 subWindow = new Window1();
-            //this.WindowState = WindowState.Minimized;
-            this.Topmost = false;
-            subWindow.Show();
-            subWindow.Activate();
-            this.Close();
+            if(Globales.orgFisica == Org.Vacio || Globales.admLibre == Libres.Vacio 
+                || Globales.modoAcceso == Acceso.Vacio)
+            {
+                //MessageBox.Show("Selecione las configuraciones necesarias para la simulación");
+                MessageBoxResult result = System.Windows.MessageBox.Show("Selecione las configuraciones necesarias para la simulación", 
+                    "Error de configuración", MessageBoxButton.OK);
+            }
+            else
+            {
+                Window1 subWindow = new Window1();
+                //this.WindowState = WindowState.Minimized;
+                this.Topmost = false;
+                subWindow.Show();
+                subWindow.Activate();
+                this.Close();
+            }
+            
         }
     }
 }

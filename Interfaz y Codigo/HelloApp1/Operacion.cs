@@ -5,11 +5,12 @@ using System.Collections.Generic;
 
 public struct Operacion
 {
-    public string NombreArchivo;
-    public char IdOperacion;
-    public int NumProceso;
-    public int Tarribo;
-    public int Offset;
-    public int CantidadUA;
+    public string NombreArchivo { get; set; }
+    public char IdOperacion { get; set; }
+    public string NombreOperacion { get; set; }
+    public int NumProceso { get; set; }
+    public int Tarribo{ get; set; }
+    public int Offset { get; set; }
+    public int CantidadUA { get; set; }
 }
 

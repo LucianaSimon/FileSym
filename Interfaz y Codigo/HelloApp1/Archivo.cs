@@ -27,6 +27,14 @@ namespace FireSim
             this.TablaDireccionesIndice = new List<int>();
         }
 
+        public Archivo(string name, int cant_uA)
+        {
+            this.setNombre(name);
+            this.setCant_uA(cant_uA);
+            this.setEstado(-1); // Se creo pero no esta abierto
+            this.setTablaDireccion(new List<int>());
+            this.setTablaIndices(new List<int>());
+        }
         public void TablaDireccion_AddRange(List<int> value)
         {
             this.TablaDirecciones.AddRange(value);
@@ -84,7 +92,7 @@ namespace FireSim
 
         public void setTablaIndices(List<int> value)
         {
-            this.TablaDirecciones = value;
+            this.TablaDireccionesIndice = value;
         }
     }
 }

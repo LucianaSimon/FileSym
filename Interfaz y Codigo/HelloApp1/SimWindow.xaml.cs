@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using FireSim;
 
 namespace HelloApp1
 {
@@ -20,47 +17,34 @@ namespace HelloApp1
     /// </summary>
     public partial class Window1 : Window
     {
-        int cantBloques = 455; // (455/130) = 3.5 -> 3 [0,1,2,3]
-        int pagActual = 0;
+        FileSim simulador = new FileSim(Globales.tProcesamiento, Globales.orgFisica, Globales.admLibre, Globales.modoAcceso,
+            Globales.tLectura, Globales.tEscritura, Globales.tSeek, Globales.tAcceso, Globales.tamBloque, Globales.tamDispositivo, Globales.rutaArchivo);
 
+        int pagActual = 0;
+        int opActual = 0; //este atributo quedara reemplazada x simulador.GetContadorOp
+
+        DispatcherTimer timer = new DispatcherTimer(); //para poder ejecutar operaciones x tiempo
+        
         public Window1()
         {
             InitializeComponent();
-            
-            
-            //para la tabla de operaciones
-            List<Operacion> operaciones = new List<Operacion>();
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 3, arribo = 12, offset = 50, archivo = "file.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 5, arribo = 0, offset = 50, archivo = "file1.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 6, arribo = 11, offset = 50, archivo = "file2.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 7, arribo = 50, offset = 50, archivo = "file3.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 13, arribo = 32, offset = 50, archivo = "file4.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 11, arribo = 20, offset = 50, archivo = "file5.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 2, arribo = 50, offset = 50, archivo = "file6.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 3, arribo = 12, offset = 50, archivo = "file.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 5, arribo = 0, offset = 50, archivo = "file1.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 6, arribo = 11, offset = 50, archivo = "file2.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 7, arribo = 50, offset = 50, archivo = "file3.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 13, arribo = 32, offset = 50, archivo = "file4.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 11, arribo = 20, offset = 50, archivo = "file5.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 2, arribo = 50, offset = 50, archivo = "file6.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 3, arribo = 12, offset = 50, archivo = "file.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 5, arribo = 0, offset = 50, archivo = "file1.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 6, arribo = 11, offset = 50, archivo = "file2.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 7, arribo = 50, offset = 50, archivo = "file3.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 13, arribo = 32, offset = 50, archivo = "file4.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 11, arribo = 20, offset = 50, archivo = "file5.txt" });
-            operaciones.Add(new Operacion() { Nombre = "CREATE", n_proceso = 2, arribo = 50, offset = 50, archivo = "file6.txt" });
-            lvDataBinding.ItemsSource = operaciones;
+            //Cada cierto tiempo se presiona el boton siguiente operación
+            timer.Tick += (s, ev) => btn_SiguientePaso.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+            LEjecutando.Content = "Esperando usuario";
+            Spinner.Spin = false;
+
+            lvDataBinding.ItemsSource = simulador.getTablaOperaciones();
 
             dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)
 
             //informacion adicional cambiante por cada operacion simulada
-            info_adicional.Text = "prueba prueba" +
-                "prueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba prueba" +
-                "prueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba pruebaprueba prueba";
+            info_adicional.Text = "A rellenar con indicadores!";
+                
         }
 
+        //@toDO - Revisar dibujado de bloques de manera dinámica.
+        //Tambien se debe poder mostrar los bloques que estan siendo modificados por la operación actual.
         public void dibujarBloques(int pagina)
         {
             //Antes de dibujar todos los cuadrados necesito poner en blanco canvas
@@ -77,83 +61,49 @@ namespace HelloApp1
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Rectangle bloque = new Rectangle();
-                    bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //de que color? tengo que verificar con el bloque que corresponda
-                    bloque.Width = 20;
-                    bloque.Height = 20;
-                    bloque.StrokeThickness = 1;
-                    bloque.Stroke = Brushes.Black;
-                    Canvas.SetTop(bloque, i * 25 + 25);
-                    Canvas.SetLeft(bloque, j * 30 + 35);
-                    miLienzo.Children.Add(bloque);
+                    int numBloque = j + i * 10 + pagina * 130;  //numero de bloque a dibujar
 
-                    //Para dibujar los numeros del eje y
-                    if (j == 0)
+                    if (numBloque < simulador.GetDispositivo().GetCantBloques()) //si corresponde dibujar el bloque
                     {
-                        //Pagina = 9 bloques x 12 bloques = 117 bloques
-                        TextBlock txt1 = new TextBlock();
-                        txt1.FontSize = 14;
-                        txt1.Text = Convert.ToString(i * 10 + pagina * 130);
-                        Canvas.SetTop(txt1, i * 25 + 25);
-                        Canvas.SetLeft(txt1, 0);
-                        miLienzo.Children.Add(txt1);
-                    }
+                        Rectangle bloque = new Rectangle();
+                        
+                        if(simulador.GetDispositivo().estadoBloque(numBloque) == 0) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //LIBRE
+                        else if(simulador.GetDispositivo().estadoBloque(numBloque) == 1) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF1181A1")); //OCUPADO
+                        else bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#0ddbac"));
 
-                    //Para dibujar los numeros del eje x (0,1...,9)
-                    if (i == 0)
-                    {
-                        TextBlock txt1 = new TextBlock();
-                        txt1.FontSize = 14;
-                        txt1.Text = Convert.ToString(j);
-                        Canvas.SetTop(txt1, 0);
-                        Canvas.SetLeft(txt1, j * 30 + 35);
-                        miLienzo.Children.Add(txt1);
+                        bloque.Width = 20;
+                        bloque.Height = 20;
+                        bloque.StrokeThickness = 1;
+                        bloque.Stroke = Brushes.Black;
+                        Canvas.SetTop(bloque, i * 25 + 25);
+                        Canvas.SetLeft(bloque, j * 30 + 35);
+                        miLienzo.Children.Add(bloque);
+
+                        //Para dibujar los numeros del eje y
+                        if (j == 0)
+                        {
+                            //Pagina = 9 bloques x 12 bloques = 117 bloques
+                            TextBlock txt1 = new TextBlock();
+                            txt1.FontSize = 14;
+                            txt1.Text = Convert.ToString(i * 10 + pagina * 130);
+                            Canvas.SetTop(txt1, i * 25 + 25);
+                            Canvas.SetLeft(txt1, 0);
+                            miLienzo.Children.Add(txt1);
+                        }
+
+                        //Para dibujar los numeros del eje x (0,1...,9)
+                        if (i == 0)
+                        {
+                            TextBlock txt1 = new TextBlock();
+                            txt1.FontSize = 14;
+                            txt1.Text = Convert.ToString(j);
+                            Canvas.SetTop(txt1, 0);
+                            Canvas.SetLeft(txt1, j * 30 + 35);
+                            miLienzo.Children.Add(txt1);
+                        }
                     }
+                    
                 }
-            }
-        }
-            
-	//Esta clase la habia hecho yo antes de que pensaramos en el diagrama de clase, la idea es usar FileSim (clase)
-        public class Operacion
-        {
-            public string Nombre { get; set; }
-            public int n_proceso { get; set; }
-            public int arribo { get; set; }
-            public int offset { get; set; }
-            public string archivo { get; set; }
-
-            public override string ToString()
-            {
-                return this.Nombre + ", " + this.n_proceso + " " + this.arribo + " " + this.offset + " Archivo: " + this.archivo;
-            }
-        }
-
-
-        public class Bloque
-        {
-            public int numeroBloque { get; set; }
-            public string estado { get; set; }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Window2 subWindow = new Window2();
-            //this.WindowState = WindowState.Minimized;
-            this.Topmost = false;
-            subWindow.Show();
-            subWindow.Activate();
-            this.Close();
-        }
-
-        private void btn_P_Click(object sender, RoutedEventArgs e)
-        {
-            if (btn_P.Content.Equals("Pausar"))
-            {
-                btn_P.Content = "Continuar";
-            }
-            else
-            {
-                btn_P.Content = "Pausar";
             }
         }
 
@@ -168,12 +118,12 @@ namespace HelloApp1
                 pagActual--;
                 dibujarBloques(pagActual);
             }
-            
         }
 
         private void btn_der(object sender, RoutedEventArgs e)
-        {   //dibuja una pagina antes
-            if (pagActual == (cantBloques/130))
+        {
+            //dibuja una pagina antes
+            if (pagActual == (simulador.getTablaBloques().Length / 130))
             {
 
             }
@@ -182,6 +132,151 @@ namespace HelloApp1
                 pagActual++;
                 dibujarBloques(pagActual);
             }
+        }
+        
+
+        private void Button_Click_mostrarConfig(object sender, RoutedEventArgs e)
+        {
+            //Mostrar las configuraciones seleccionadas
+            MessageBoxResult result = System.Windows.MessageBox.Show("Las configuraciones para la simulacion son:\n\n" +
+                "* Organización física: " + Globales.orgFisica + "\n" +
+                "* Modo de acceso: " + Globales.modoAcceso + "\n" +
+                "* Administración de espacios libres: " + Globales.admLibre + "\n" +
+                "* Tiempo de acceso: " + Globales.tAcceso + "\n" +
+                "* Tiempo de seek: " + Globales.tSeek + "\n" +
+                "* Tiempo de lectura: " + Globales.tLectura + "\n" +
+                "* Tiempo de escritura: " + Globales.tEscritura + "\n" +
+                "* Tiempo de procesamiento: " + Globales.tProcesamiento + "\n" +
+                "* Tamaño de bloque: " + Globales.tamBloque + " uA" + "\n" +
+                "* Tamaño de dispositivo: " + Globales.tamDispositivo + " uA" + "\n" +
+                "* Cantidad de bloques: " + simulador.GetDispositivo().GetCantBloques(),
+                "* Configuraciones seleccionadas", MessageBoxButton.OK);
+        }
+
+
+        private void Button_Click_PasoAPaso(object sender, RoutedEventArgs e)
+        {
+            tTiempoS.IsEnabled = true;
+
+            if (!btn_Todo.IsEnabled)
+            {
+                btn_Todo.IsEnabled = true;
+            }
+            btn_PasoAPaso.IsEnabled = false;
+            btn_SiguientePaso.IsEnabled = true;
+            btn_P.IsEnabled = false; //No se puede pausar ya que es paso a paso!
+
+            LEjecutando.Content = "Presione el botón de siguiente operación";
+        }
+
+        private void Button_Click_Todo(object sender, RoutedEventArgs e)
+        {
+            Spinner.Spin = true;
+            tTiempoS.IsEnabled = false;
+
+            btn_P.IsEnabled = true;
+            btn_PasoAPaso.IsEnabled = false;
+            btn_Todo.IsEnabled = false;
+            btn_SiguientePaso.IsEnabled = false;
+
+            timer.Interval = TimeSpan.FromSeconds(Int32.Parse(tTiempoS.Text));
+            timer.Start();
+
+            //TextBox de tiempo de simulacion
+            tTiempoS.IsEnabled = false;
+
+        }
+
+        //boton de Pausar y Continuar
+        private void btn_P_Click(object sender, RoutedEventArgs e)
+        {
+            if (btn_P.Content.Equals("Pausar"))
+            {
+                //Se presiona el boton pausar!
+                btn_P.Content = "Continuar";
+                tTiempoS.IsEnabled = true;
+                btn_SiguientePaso.IsEnabled = false;
+                btn_Todo.IsEnabled = false;
+                btn_PasoAPaso.IsEnabled = true;
+                timer.Stop();
+            }
+            else
+            {
+                btn_P.Content = "Pausar";
+                tTiempoS.IsEnabled = false;
+                btn_SiguientePaso.IsEnabled = false;
+                btn_Todo.IsEnabled = false;
+                btn_PasoAPaso.IsEnabled = false;
+
+                timer.Interval = TimeSpan.FromSeconds(Int32.Parse(tTiempoS.Text));
+                timer.Start();
+            }
+        }
+
+        //boton de Siguiente Paso
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (btn_SiguientePaso.Content.Equals("Resultados"))
+            {
+                /*  Para la ventana de resultados!*/
+                Window2 subWindow = new Window2();
+                //this.WindowState = WindowState.Minimized;
+                this.Topmost = false;
+                subWindow.Show();
+                subWindow.Activate();
+                this.Close();
+            }
+
+            if (opActual < simulador.GetCantidadOp())
+            {
+                ejecutarSiguienteOp();
+                //Tambien voy a tener que dibujar (mostrar) los bloques que esten siendo modificados
+                //en la operacion actual.
+            }
+
+            if(opActual == simulador.GetCantidadOp())
+            {
+                LEjecutando.Content = "Simulación completa";
+                btn_SiguientePaso.Content = "Resultados";
+                timer.Stop();
+
+                tTiempoS.IsEnabled = false;
+                btn_SiguientePaso.IsEnabled = true;
+                btn_Todo.IsEnabled = false;
+                btn_PasoAPaso.IsEnabled = false;
+                btn_P.IsEnabled = false;
+            }
+
+        }
+
+        private void ejecutarSiguienteOp()
+        {
+            //Esta metodo llama a algun metodo de la clase FileSim que realizara la operacion
+            //correspondiente, almacenando los resultados.
+            //Por ahora solo aumenta una variable global que indica en que operacion estamos.
+            Spinner.Spin = true;
+            LEjecutando.Content = "Ejecutando operación " + (opActual + 1) + " de " + simulador.GetCantidadOp();
+
+            //Tambien en la tabla tiene que mostrarse la operacion actual
+            if(opActual < simulador.GetCantidadOp())
+            {
+                lvDataBinding.SelectedItem = lvDataBinding.Items[opActual];
+                lvDataBinding.UpdateLayout(); // Pre-generates item containers 
+
+                var listBoxItem = (ListBoxItem)lvDataBinding
+                                            .ItemContainerGenerator
+                                            .ContainerFromItem(lvDataBinding.SelectedItem);
+
+                listBoxItem.Focus();
+            }
+            
+            opActual++;
+        }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

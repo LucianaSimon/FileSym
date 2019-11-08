@@ -12,17 +12,17 @@
 
 
         <WrapPanel>
-            <fa:ImageAwesome Icon="Spinner" Spin="True" Margin="25,5,0,0" SpinDuration="3" Width="19" Foreground="#ff422c"/>
-            <Label Content="Ejecutando instrucción 3 de 16" Style="{StaticResource lblDesign}" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="1,10,0,0" Width="200" FontWeight="Bold"/>
+            <fa:ImageAwesome x:Name="Spinner" Icon="Spinner" Spin="True" Margin="25,5,0,0" SpinDuration="3" Width="19" Foreground="#ff422c"/>
+            <Label x:Name="LEjecutando" Content="" Style="{StaticResource lblDesign}" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="1,10,0,0" Width="266" FontWeight="Bold"/>
 
-            <Button Content="Paso a paso" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="65,10,0,0" Height="30"/>
-            <Button Content="Todo" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="15,10,0,0" Height="30"/>
-            <Button x:Name="btn_P" Content="Pausar" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="15,10,7,0" Height="30" Click="btn_P_Click"/>
+            <Button x:Name="btn_PasoAPaso" Content="Paso a paso" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="5,10,0,0" Height="30" IsDefault="True" Click="Button_Click_PasoAPaso"/>
+            <Button x:Name="btn_Todo" Content="Todo" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="15,10,0,0" Height="30" Click="Button_Click_Todo"/>
+            <Button x:Name="btn_P" Content="Pausar" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="15,10,7,0" Height="30" Click="btn_P_Click" IsEnabled="False"/>
 
             <Label Content="Tiempo (seg)" Style="{StaticResource lblDesign}" FontSize="12" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="0,10,0,0" Width="83" FontWeight="Bold"/>
-            <TextBox Height="25" TextWrapping="Wrap" Text="10" Width="26" Margin="0,10,10,0" FontFamily="/HelloApp1;component/Font/#Ubuntu"/>
+            <TextBox x:Name="tTiempoS" PreviewTextInput="NumberValidationTextBox" Height="25" TextWrapping="Wrap" Text="2" Width="26" Margin="0,10,10,0" FontFamily="/HelloApp1;component/Font/#Ubuntu"/>
 
-            <Button Content="Siguiente paso" Width="125" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="85,10,15,0" Height="30" FontWeight="Bold" Click="Button_Click"/>
+            <Button x:Name="btn_SiguientePaso" Content="Siguiente operación" Width="125" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="85,10,15,0" Height="30" FontWeight="Bold" Click="Button_Click" IsEnabled="False"/>
 
             <Border BorderBrush="#FF1181A1" BorderThickness="1" Margin="5,10,0,0" Height="1" Width="1000"/>
 
@@ -32,18 +32,18 @@
             <ListView Margin="25,5,0,0" Width="460" Height="350" Name="lvDataBinding" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="15">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Operacion" Width="100" DisplayMemberBinding="{Binding Nombre}" />
-                        <GridViewColumn Header="Archivo" Width="120" DisplayMemberBinding="{Binding archivo}" />
-                        <GridViewColumn Header="NP" Width="70" DisplayMemberBinding="{Binding n_proceso}" />
-                        <GridViewColumn Header="Arribo" Width="70" DisplayMemberBinding="{Binding arribo}" />
-                        <GridViewColumn Header="Offset" Width="90" DisplayMemberBinding="{Binding offset}" />
+                        <GridViewColumn Header="Operación" Width="95" DisplayMemberBinding="{Binding NombreOperacion}" />
+                        <GridViewColumn Header="Archivo" Width="166" DisplayMemberBinding="{Binding NombreArchivo}" />
+                        <GridViewColumn Header="N° P" Width="65" DisplayMemberBinding="{Binding NumProceso}" />
+                        <GridViewColumn Header="Arribo" Width="65" DisplayMemberBinding="{Binding Tarribo}" />
+                        <GridViewColumn Header="Offset" Width="65" DisplayMemberBinding="{Binding Offset}" />
                     </GridView>
                 </ListView.View>
             </ListView>
 
             <Canvas x:Name="miLienzo" Margin="10,5,0,0" Width="495" Height="350">
-                
-                <Label FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="365" Canvas.Top="34" FontSize="14" FontWeight="Bold" Height="30" Width="97">Referencia:</Label>
+
+                <Label FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="348" Canvas.Top="34" FontSize="14" FontWeight="Bold" Height="30" Width="97">Referencia:</Label>
                 <Label FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="365" Canvas.Top="59" FontSize="13" Height="28" Width="83">Disponible</Label>
                 <Rectangle Fill="#ffd433" Canvas.Left="348" Canvas.Top="64" Width="17" Height="17" Stroke="Black" />
                 <Label FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="366" Canvas.Top="83" FontSize="13" Height="28" Width="71">Ocupado</Label>
@@ -51,14 +51,19 @@
                 <Rectangle Fill="#FF1181A1" Canvas.Left="348" Canvas.Top="86" Width="17" Height="17" Stroke="Black" />
                 <Rectangle Fill="#0ddbac" Canvas.Left="348" Canvas.Top="109" Width="17" Height="17" Stroke="Black" />
 
+                <Label FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="348" Canvas.Top="139" FontSize="14" FontWeight="Bold" Height="30" Width="163">Tiempo de simulación</Label>
+                <fa:ImageAwesome Icon="ClockOutline"  Width="19" Foreground="#ff422c" Canvas.Left="348" Canvas.Top="169"/>
+                <Label x:Name="tSimu" FontFamily="/HelloApp1;component/Font/#Ubuntu" Canvas.Left="372" Canvas.Top="161" FontSize="18" Height="30" Width="99" FontWeight="Bold">00 uT</Label>
 
-                <Button Background="{x:Null}" Canvas.Left="364" Canvas.Top="292" Foreground="{x:Null}" BorderBrush="{x:Null}" Click="btn_izq">
-                    <fa:ImageAwesome Icon="ArrowCircleLeft" Width="50" Foreground="#ff422c"/>
+                <Button x:Name="mostrarConfig" Content="Mostrar configuración" Width="144" FontFamily="/HelloApp1;component/Font/#Ubuntu" Height="30" IsDefault="True" Click="Button_Click_mostrarConfig" Canvas.Left="354" Canvas.Top="207" FontWeight="Bold"/>
+
+                <Button Background="White" Canvas.Left="348" Canvas.Top="273" Foreground="{x:Null}" BorderBrush="{x:Null}" Click="btn_izq">
+                    <fa:ImageAwesome Icon="ArrowUp" Width="30" Foreground="#ff422c"/>
                 </Button>
-                <Button Background="White" Foreground="White" BorderBrush="White" Canvas.Left="428" Canvas.Top="292" Click="btn_der">
-                    <fa:ImageAwesome Icon="ArrowCircleRight" Width="50" Foreground="#ff422c"/>
+                <Button Background="White" Foreground="White" BorderBrush="White" Canvas.Left="348" Canvas.Top="314" Click="btn_der">
+                    <fa:ImageAwesome Icon="ArrowDown" Width="30" Foreground="#ff422c"/>
                 </Button>
-                
+
             </Canvas>
 
 

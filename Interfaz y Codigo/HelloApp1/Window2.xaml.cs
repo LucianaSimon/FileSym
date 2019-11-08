@@ -31,5 +31,18 @@ namespace HelloApp1
             grafico.RefreshData(63.2); //para actualizar el grafico torta
             
         }
+
+        //Exportar
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            //Con los resultados obtenidos de la simulacion se crea un File
+            //con un nombre generico? y se almacenan los indicadores para cada operacion.
+        }
+
+        //Salir
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
