@@ -32,11 +32,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Luciana\\Desktop\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
+      "projectUniqueName": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
       "projectName": "Prueba",
-      "projectPath": "C:\\Users\\Luciana\\Desktop\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
+      "projectPath": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
       "packagesPath": "C:\\Users\\Luciana\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Luciana\\Desktop\\Interfaz y Codigo\\Prueba\\obj\\",
+      "outputPath": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -55,8 +55,8 @@
       "frameworks": {
         "netcoreapp3.0": {
           "projectReferences": {
-            "C:\\Users\\Luciana\\Desktop\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj": {
-              "projectPath": "C:\\Users\\Luciana\\Desktop\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj"
+            "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj": {
+              "projectPath": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj"
             }
           }
         }

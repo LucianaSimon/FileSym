@@ -73,35 +73,26 @@ namespace FireSim
 
         ///devuelve el t q llevaria buscar bloques libres segun el metodo de Adminitracion elegido x usuario
         /////el segundo parametro solo se usa en el segundo metodo --> en los otros pasar cero
-        public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada) 
+        public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada, ref Indicadores indicadores) 
         {
-            /*************** @ROCIO*****************/
-            /// Chicos no se si esta bien esta función. El problema está en LISTA DE LIBRES. Especificamente la linea de codifo que haces:
-            /// " int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque); "
-            /// En el caso en que tengamos  enlazada, no estas considerando el tamaño que te ocupa el indice en cada bloque
-            /// En el caso en que tengamos indexada, no estas considerando si necesitas buscar un bloque extra para el indice.
-            /// Diganme si me equivoco.
-            /// 
-            // Claro pero aca lo unico que haces es ver el tiempo de administracion de espacios libre, lo que tardas en buscar
-            // espacios libres, lo que vos decis ya es asignarle el espacio libre a un archivo, eso ya es parte del tiempo
-            // de otra funcion (creo que va a ser del Create y Write) 
-
             int tiempo = 0;
 
             switch(AdminLibres)
             {
                 case Libres.MapadeBits:
-                    tiempo = GetTseek() + GetTlectura() + GetTprocesamient(); 
+                    tiempo = GetTseek() + GetTlectura() + GetTprocesamient();
+                    indicadores.tLectoEscritura = GetTlectura();
                     break;
 
                 case Libres.ListadeLibres:
                     int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque); 
                     tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados + GetTprocesamient();
-                    break; //DUDA @LU: tengo dudas con estos tiempos, los de gestion al final aca no se sumaban, no? 
-                           //porque segun entendi en este caso el tiempo deprocesamiento viene dado x lectura.....
+                    indicadores.tLectoEscritura = GetTlectura()*bloquesDeseados;
+                    break;
 
                 case Libres.ListadeLibresdePrincipioyCuenta:
                     tiempo = GetTseek()  + 2*(GetTlectura() + GetTprocesamient());
+                    indicadores.tLectoEscritura = 2 * GetTlectura();
                     break;
             }
 

@@ -17,7 +17,7 @@ namespace FireSim
         private Libres adminEspacio;
         private Acceso metodoAcceso;
         private List<Operacion> TablaOperaciones;
-        private List<int> ColaEspera; //DUDA @LU : tendria que ser array list como tabla de operaciones??
+        private List<int> ColaEspera; 
                                             //esta lista almacenaria las posiciones en la TablaOperaciones de las operaciones que 
                                             // no se pudieron realizar todavia (por ejemplo una operacion esta esperando que se cierre un archivo)
                                              
@@ -36,6 +36,7 @@ namespace FireSim
             this.TablaArchivos = new List<Archivo>();
             this.ColaEspera = new List<int>();
             this.SetContadorOp(0);
+
             // Por cada operacion se agrega un objeto Indicadores a la lista
             this.indicadoresOP = new List<Indicadores>();
 
@@ -105,7 +106,6 @@ namespace FireSim
                     Console.WriteLine(op.NombreArchivo + " " + op.IdOperacion + " " + op.NumProceso + " " +
                         op.Tarribo + " " + op.Offset + " " + op.CantidadUA);
                 }
-                
 
             }
             catch (Exception e)
@@ -176,19 +176,21 @@ namespace FireSim
         public int Create(int idProc, int offset, int cant_uA, string name)
         {
             int tOP = 0;
+
             if (BuscaArch(name) == -1) //comprueba que el archivo no este creado ya
             {
                 Archivo archivo = new Archivo(name, cant_uA);
 
                 if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
                 {
-                    TablaArchivos.Add(archivo);
+                    TablaArchivos.Add(archivo); //agregamos el nuevo archivo a la tabla 
+
                     // tOP = ;
                     // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
                     // opRealizada(0,0,0,0,"CREATE");
                 }
             }
-            else
+            else //si el archivo ya esta creado
             {
                 Console.WriteLine("Error: El archivo ya se encuentra creado!");
             }
@@ -256,16 +258,19 @@ namespace FireSim
         {
             int posArch = BuscaArch(nameArchivo);
             int tOP = 0;
+
             // Si el archivo se encuentra en la tabla, y si el estado es -1, lo abro cambiando el numero de estado por 
             // el numero de proceso que lo quiere abrir.
             if (posArch != -1 && TablaArchivos[posArch].getEstado() == -1)
             {
                 Indicadores indicador = new Indicadores();
 
+                indicador.tGestionTotal = disp.GetTprocesamient(); //DUDA lu: no se si esto esta bien!
+                indicador.tipoOp = 'O';
+
                 TablaArchivos[posArch].setEstado(processID);
                 tOP = disp.GetTprocesamient();
                 // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
-                // opRealizada(0,0,0,0,"OPEN");
             }
             else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo ya se encuentra abierto, agrego esta operacion a la cola de espera
             {
@@ -279,10 +284,16 @@ namespace FireSim
         {
             int posArch = BuscaArch(nameArchivo);
             int tOP = 0;
+
             // Si el archivo se encuentra en la tabla, y si el num de proceso que quiere cerrarlo es el que lo tiene
             // abierto, lo cierro cambiando el estado a -1
             if (posArch != -1 && TablaArchivos[posArch].getEstado() == processID)
             {
+                Indicadores indicador = new Indicadores();
+
+                indicador.tGestionTotal = disp.GetTprocesamient(); //DUDA lu: no se si esto esta bien!
+                indicador.tipoOp = 'C';
+
                 TablaArchivos[posArch].setEstado(-1);
 
                 tOP = disp.GetTprocesamient();
@@ -314,7 +325,7 @@ namespace FireSim
             return posArch; //Si devuelve -1 es que no está en la tabla
         }
 
-        private void opRealizada(int tGestion, int tSatis, int tLE, int tOP, string OP)
+       /* private void opRealizada(int tGestion, int tSatis, int tLE, int tOP, string OP)
         {
             Indicadores ind = new Indicadores();
             switch(OP)
@@ -416,7 +427,7 @@ namespace FireSim
                         break;
                     }
             }
-        }
+        }**/
         
         /**
          * Getters y Setters
