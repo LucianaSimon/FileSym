@@ -17,7 +17,9 @@ namespace FireSim
         private Libres adminEspacio;
         private Acceso metodoAcceso;
         private List<Operacion> TablaOperaciones;
-        private List<int> ColaEspera; 
+        private List<int> ColaEspera;
+        private int contColaEspera;
+        private int opActual;
                                             //esta lista almacenaria las posiciones en la TablaOperaciones de las operaciones que 
                                             // no se pudieron realizar todavia (por ejemplo una operacion esta esperando que se cierre un archivo)
                                              
@@ -36,6 +38,8 @@ namespace FireSim
             this.TablaArchivos = new List<Archivo>();
             this.ColaEspera = new List<int>();
             this.SetContadorOp(0);
+            this.contColaEspera = 0;
+            this.opActual = 0;
 
             // Por cada operacion se agrega un objeto Indicadores a la lista
             this.indicadoresOP = new List<Indicadores>();
@@ -129,21 +133,23 @@ namespace FireSim
 
         public void SimularSiguienteOp()
         {
-            SimularColaEspera();
-            SimularOp();  
-        }
-
-        public void SimularColaEspera()
-        {
-            if (ColaEspera.Count != 0)
+            if (GetContadorOp() < GetContadorOp())
             {
-                
+                SimularOp(GetContadorOp());
+                SetContadorOp(GetContadorOp() + 1);
             }
+            else if (contColaEspera < ColaEspera.Count)
+            {
+                SimularOp(contColaEspera);
+                contColaEspera++;
+            }
+            opActual++;
         }
 
-        public void SimularOp()
+
+        public void SimularOp(int op)
         {
-            Operacion nextOp = TablaOperaciones[GetContadorOp()];
+            Operacion nextOp = TablaOperaciones[op];
             // Todos los metodos deben devolver el tiempo que tardo en ejecutarse la operacion
             switch (nextOp.IdOperacion)
             {
@@ -191,7 +197,7 @@ namespace FireSim
                         break;
                     }
             }
-            SetContadorOp(GetContadorOp() + 1);
+            
         }
         public int Create(int idProc, int cant_uA, string name)
         {
@@ -203,8 +209,14 @@ namespace FireSim
 
                 if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
                 {
+                    Indicadores indicador = new Indicadores();
                     TablaArchivos.Add(archivo); //agregamos el nuevo archivo a la tabla 
-                    // Tespera = Tsimualcion - Tarribo; 
+                    indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), cant_uA);
+                    indicador.tLectoEscritura = 0;
+                    indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
+                    indicador.tipoOp = 'N';
+                    indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tGestionTotal + indicador.tEspera;
+                    tOP = indicador.tGestionTotal + indicador.tLectoEscritura;
                 }
             }
             else //si el archivo ya esta creado
@@ -280,7 +292,10 @@ namespace FireSim
                 }
                 else
                 {
-                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
+                    if (!Find(ColaEspera, GetContadorOp()))
+                    {
+                        ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
+                    }
                 }
             }
 
@@ -347,7 +362,10 @@ namespace FireSim
                 }
                 else // Si el archivo esta abierto x otro proceso --> lo agrego a la cola de espera
                 {
-                    ColaEspera.Add(GetContadorOp());
+                    if (!Find(ColaEspera, GetContadorOp()))
+                    {
+                        ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
+                    }
                 }
             }
             return tOP;
@@ -387,7 +405,10 @@ namespace FireSim
             }
             else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo se encuentra abierto por algun proceso, lo agrego a la cola de espera
             {
-                ColaEspera.Add(GetContadorOp());
+                if (!Find(ColaEspera, GetContadorOp()))
+                {
+                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
+                }
             }
 
             return tOP;
@@ -413,7 +434,10 @@ namespace FireSim
             }
             else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo ya se encuentra abierto, agrego esta operacion a la cola de espera
             {
-                ColaEspera.Add(GetContadorOp());
+                if (!Find(ColaEspera, GetContadorOp()))
+                {
+                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
+                }
             }
 
             return tOP;
@@ -440,7 +464,10 @@ namespace FireSim
             }
             else if (TablaArchivos[posArch].getEstado() != -processID) // si el archivo lo tiene abierto otro proceso, agrego esta operacion a la cola de espera
             {
-                ColaEspera.Add(GetContadorOp());
+                if (!Find(ColaEspera, GetContadorOp()))
+                {
+                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
+                }
             }
 
             return tOP;
@@ -517,6 +544,12 @@ namespace FireSim
         /**
          * Getters y Setters
         **/
+        // @ Ayrton, llama a este para indicar que operacion se esta ejecutando en la interfaz
+        public int getOpActual()
+        {
+            return this.opActual;
+        }
+
 
         public int GetCantidadOp()
         {
@@ -613,6 +646,18 @@ namespace FireSim
         public List<Operacion> getTablaOperaciones()
         {
             return TablaOperaciones;
+        }
+
+        public bool Find(List<int> cola, int val)
+        {
+            for (int i=0; i<cola.Count; i++)
+            {
+                if (cola[i] == val)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
