@@ -73,7 +73,7 @@ namespace FireSim
 
         ///devuelve el t q llevaria buscar bloques libres segun el metodo de Adminitracion elegido x usuario
         /////el segundo parametro solo se usa en el segundo metodo --> en los otros pasar cero
-        public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada, ref Indicadores indicadores) 
+        public int TprocesamientoBloquesLibres(Libres AdminLibres, int uAdeseada) 
         {
             int tiempo = 0;
 
@@ -81,18 +81,15 @@ namespace FireSim
             {
                 case Libres.MapadeBits:
                     tiempo = GetTseek() + GetTlectura() + GetTprocesamient();
-                    indicadores.tLectoEscritura = GetTlectura();
                     break;
 
                 case Libres.ListadeLibres:
                     int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque); 
                     tiempo = (GetTseek() + GetTlectura()) * bloquesDeseados + GetTprocesamient();
-                    indicadores.tLectoEscritura = GetTlectura()*bloquesDeseados;
                     break;
 
                 case Libres.ListadeLibresdePrincipioyCuenta:
                     tiempo = GetTseek()  + 2*(GetTlectura() + GetTprocesamient());
-                    indicadores.tLectoEscritura = 2 * GetTlectura();
                     break;
             }
 

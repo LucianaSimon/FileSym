@@ -318,8 +318,7 @@ namespace FireSim
                 // Lo quito de la tabla de archivos
                 TablaArchivos.RemoveAt(posArch);
                 tOP = disp.GetTprocesamient();
-                // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
-                // opRealizada(0,0,0,0,"DELETE");
+
             }
             else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo se encuentra abierto por algun proceso, lo agrego a la cola de espera
             {
@@ -372,8 +371,7 @@ namespace FireSim
                 TablaArchivos[posArch].setEstado(-1);
 
                 tOP = disp.GetTprocesamient();
-                // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
-                // opRealizada(0,0,0,0,"CLOSE");
+           
             }
             else if (TablaArchivos[posArch].getEstado() != -processID) // si el archivo lo tiene abierto otro proceso, agrego esta operacion a la cola de espera
             {
@@ -400,110 +398,42 @@ namespace FireSim
             return posArch; //Si devuelve -1 es que no está en la tabla
         }
 
-       /* private void opRealizada(int tGestion, int tSatis, int tLE, int tOP, string OP)
+        public int ObtenerTmax(char tipo) //funcion para obtener el maximo dependiento el tiempo de operacion
         {
-            Indicadores ind = new Indicadores();
-            switch(OP)
-            {
-                case "CREATE":
-                    {
-                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
-                        ind.tGestionTotal = tGestion;
-                        ind.tLectoEscritura = tLE;
-                        ind.tSatisfaccion = tSatis;
-                        ind.tOperaciones.Add(tOP);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        indicadoresOP.Add(ind);
-                        break;
-                    }
-                case "DELETE":
-                    {
-                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
-                        ind.tGestionTotal = tGestion;
-                        ind.tLectoEscritura = tLE;
-                        ind.tSatisfaccion = tSatis;
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(tOP);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        indicadoresOP.Add(ind);
-                        break;
-                    }
-                case "OPEN":
-                    {
-                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
-                        ind.tGestionTotal = tGestion;
-                        ind.tLectoEscritura = tLE;
-                        ind.tSatisfaccion = tSatis;
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(tOP);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        indicadoresOP.Add(ind);
-                        break;
-                    }
-                case "CLOSE":
-                    {
-                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
-                        ind.tGestionTotal = tGestion;
-                        ind.tLectoEscritura = tLE;
-                        ind.tSatisfaccion = tSatis;
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(tOP);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        indicadoresOP.Add(ind);
-                        break;
-                    }
-                case "READ":
-                    {
-                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
-                        ind.tGestionTotal = tGestion;
-                        ind.tLectoEscritura = tLE;
-                        ind.tSatisfaccion = tSatis;
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(tOP);
-                        ind.tOperaciones.Add(0);
-                        indicadoresOP.Add(ind);
-                        break;
-                    }
-                case "WRITE":
-                    {
-                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
-                        ind.tGestionTotal = tGestion;
-                        ind.tLectoEscritura = tLE;
-                        ind.tSatisfaccion = tSatis;
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(0);
-                        ind.tOperaciones.Add(tOP);
-                        indicadoresOP.Add(ind);
-                        break;
-                    }
+            int Tmax = 0;
 
-                default:
+            for (int i = 0; i < indicadoresOP.Count; i++)
+            {
+                if (indicadoresOP[i].tipoOp == tipo)
+                {
+                    if (indicadoresOP[i].tSatisfaccion > Tmax)
                     {
-                        Console.WriteLine("Operacion Incorrecta, se descarta");
-                        break;
+                        Tmax = indicadoresOP[i].tSatisfaccion;
                     }
+                }
             }
-        }**/
-        
+
+            return Tmax;
+        }
+
+        public int ObtenerTmin(char tipo) //funcion que devuelve el minimo dependiento el tiempo de operacion
+        {
+            int Tmin = 0;
+
+            for (int i = 0; i < indicadoresOP.Count; i++)
+            {
+                if (indicadoresOP[i].tipoOp == tipo)
+                {
+                    if (indicadoresOP[i].tSatisfaccion < Tmin)
+                    {
+                        Tmin= indicadoresOP[i].tSatisfaccion;
+                    }
+                }
+            }
+
+            return Tmin;
+        }
+
         /**
          * Getters y Setters
         **/
