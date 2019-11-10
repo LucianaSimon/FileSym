@@ -113,7 +113,7 @@ namespace FireSim
             bool ObtuveLibres = false;
 
             if (OrgaFisica == Org.Contigua)
-            { //////@AYRTON DESDE LA INTERFAZ MANDA LOS NOMBRES EN MINUSCULA
+            {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
                 List<int> bloquesLibres = new List<int>(bloquesDeseados);

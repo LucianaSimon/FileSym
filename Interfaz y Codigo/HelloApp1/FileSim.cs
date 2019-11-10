@@ -16,27 +16,28 @@ namespace FireSim
         private Org organizacionFisica;
         private Libres adminEspacio;
         private Acceso metodoAcceso;
-        private ArrayList TablaOperaciones;
-        private List<Operacion> ColaEspera; //DUDA @LU : tendria que ser array list como tabla de operaciones??
-                                            //esta lista almacenaria todas las operaciones que no se pudieron realizar
-                                            //porque en su tarribo ya 
+        private List<Operacion> TablaOperaciones;
+        private List<int> ColaEspera; //DUDA @LU : tendria que ser array list como tabla de operaciones??
+                                            //esta lista almacenaria las posiciones en la TablaOperaciones de las operaciones que 
+                                            // no se pudieron realizar todavia (por ejemplo una operacion esta esperando que se cierre un archivo)
+                                             
         private Dispositivo disp;
         private int ContadorOp;
         private List<Archivo> TablaArchivos;
-        private Dictionary<string, Indicadores> indicadorArchivo; 
         //c/ string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
+        private List<Indicadores> indicadoresOP;
+        private int tSimulacion;
        
         public FileSim(int tProc, Org orgFisica, Libres admEspacio, Acceso metAcceso,
                        int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, string ruta)
         {
             //Crea las listas de operaciones, tabla de archivos y la cola de espera (vacias!)
-            this.TablaOperaciones = new ArrayList();
+            this.TablaOperaciones = new List<Operacion>();
             this.TablaArchivos = new List<Archivo>();
-            this.ColaEspera = new List<Operacion>();
+            this.ColaEspera = new List<int>();
             this.SetContadorOp(0);
-
-            //DUDA @LU : el mapa se inicializaria aca vacio tambn???
-            this.indicadorArchivo = new Dictionary<string, Indicadores>();
+            // Por cada operacion se agrega un objeto Indicadores a la lista
+            this.indicadoresOP = new List<Indicadores>();
 
             //Se crea el dispositivo --> se le pasan los parametros configurables relacionados con disp
             this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc);
@@ -48,6 +49,8 @@ namespace FireSim
 
             //Carga las operaciones desde el archivo ingresado x usuario --> las almacena en la tabla operaciones
             CargarOperaciones(ruta);
+
+            this.tSimulacion = 0;
 
         }
 
@@ -65,7 +68,7 @@ namespace FireSim
                 {
                     var valores = linea.Split(';');
                     opAux.NombreArchivo = valores[0];
-                    opAux.IdOperacion = char.Parse(valores[1]);
+                    opAux.IdOperacion = valores[1];
                     switch (opAux.IdOperacion.ToString())
                     {
                         case "N":
@@ -126,38 +129,38 @@ namespace FireSim
 
         public void SimularSiguienteOp()
         {
-            Operacion nextOp = ((Operacion)TablaOperaciones[GetContadorOp()]);
-            //case --> CREATE(n) / WRITE(w) / READ(r) / OPEN(o) / CLOSE(c) / DELETE(d)
-            switch (Char.ToUpper(nextOp.IdOperacion))
+            Operacion nextOp = TablaOperaciones[GetContadorOp()];
+            // Todos los metodos deben devolver el tiempo que tardo en ejecutarse la operacion
+            switch (nextOp.IdOperacion)
             {
-                case 'N':
+                case "CREATE":
                     {
-                        Create(nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA, nextOp.NombreArchivo);
+                        tSimulacion += Create(nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA, nextOp.NombreArchivo);
                         break;
                     }
-                case 'D':
+                case "DELETE":
                     {
-                        Delete(nextOp.NombreArchivo);
+                        tSimulacion += Delete(nextOp.NombreArchivo);
                         break;
                     }
-                case 'O':
+                case "OPEN":
                     {
-                        Open(nextOp.NombreArchivo, nextOp.NumProceso);
+                        tSimulacion += Open(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
-                case 'C':
+                case "CLOSE":
                     {
-                        Close(nextOp.NombreArchivo, nextOp.NumProceso);
+                        tSimulacion += Close(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
-                case 'R':
+                case "READ":
                     {
-                        Read();
+                        tSimulacion += Read();
                         break;
                     }
-                case 'W':
+                case "WRITE":
                     {
-                        Write();
+                        tSimulacion += Write();
                         break;
                     }
 
@@ -170,50 +173,133 @@ namespace FireSim
             SetContadorOp(GetContadorOp() + 1);
         }
 
-        public void Create(int idProc, int offset, int cant_uA, string name)
+        public int Create(int idProc, int offset, int cant_uA, string name)
         {
-            if (BuscaArch(name) == -1) //comprueba que el archivo esta cerrado
+            int tOP = 0;
+            if (BuscaArch(name) == -1) //comprueba que el archivo no este creado ya
             {
                 Archivo archivo = new Archivo(name, cant_uA);
-                Indicadores indicador = new Indicadores();
 
                 if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
                 {
                     TablaArchivos.Add(archivo);
-
-                    indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(this.GetAdminEspacio(), cant_uA);
-                    indicador.tEscritura = 0; ///DUDA @lu: Aca me surgio la re duda de si estos tiempos estarian todos en cero......
-                                              ///porque en el metodo TprocesamientoBloquesLibres estamos actualizando tiempos
-                                              ///capaz lo que tendriamos que hacer es actualizar los indicadores desde la otra funcion???
-                    indicador.tLectura = 0;
-                    indicador.tSatisfaccion = 0;
-                    indicador.tMax = 0;
-                    indicador.tMin = 0;
-
-                    this.indicadorArchivo.Add(archivo.getNombre(),indicador);
-
-
+                    // tOP = ;
+                    // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
+                    // opRealizada(0,0,0,0,"CREATE");
                 }
             }
             else
             {
                 Console.WriteLine("Error: El archivo ya se encuentra creado!");
             }
+            return tOP;
         }
 
-        public void Write()
+        public int Write()
         {
-            throw new Exception("The method or operation is not implemented.");
+            int tOP = 0;
+
+            return tOP;
         }
 
-        public void Read()
+        public int Read()
         {
             // Aca solo irian calculos de tiempo no?
-            throw new Exception("The method or operation is not implemented.");
+            int tOP = 0;
+
+            return tOP;
         }
 
-                // Función que te busca un archivo en la Tabla por el nombre
-        public int BuscaArch (string nameArchivo)
+        public int Delete(string nameArchivo)
+        {
+            int numBloque = 0;
+            int tOP = 0;
+            int posArch = BuscaArch(nameArchivo);
+  
+            // Corroboro que el archivo se encuentre en la tabla (por nombre) y que se encuentre cerrado
+            if ( posArch != -1 && TablaArchivos[posArch].getEstado() == -1) //Estado -1 significa que el archivo está cerrado
+            {
+                // Dejo cada bloque como libre
+                for (int j=0; j<TablaArchivos[posArch].getTablaDireccion().Count; j++)
+                {
+                    numBloque = TablaArchivos[posArch].getTablaDireccion()[j];
+                    disp.CambiarEstadoOcupado(numBloque, 0);
+                    // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
+
+                    if (organizacionFisica == Org.Contigua)
+                    {
+                        disp.CambiarEstadoBurocracia(numBloque, 0);
+                    }
+                    else
+                    {
+                        disp.CambiarEstadoBurocracia(numBloque, 0);
+                    }
+
+                    disp.CambiarEstadoReserva(numBloque, false);
+                }
+
+                // Lo quito de la tabla de archivos
+                TablaArchivos.RemoveAt(posArch);
+                tOP = disp.GetTprocesamient();
+                // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
+                // opRealizada(0,0,0,0,"DELETE");
+            }
+            else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo se encuentra abierto por algun proceso, lo agrego a la cola de espera
+            {
+                ColaEspera.Add(GetContadorOp());
+            }
+
+            return tOP;
+        }
+
+        public int Open(string nameArchivo, int processID)
+        {
+            int posArch = BuscaArch(nameArchivo);
+            int tOP = 0;
+            // Si el archivo se encuentra en la tabla, y si el estado es -1, lo abro cambiando el numero de estado por 
+            // el numero de proceso que lo quiere abrir.
+            if (posArch != -1 && TablaArchivos[posArch].getEstado() == -1)
+            {
+                Indicadores indicador = new Indicadores();
+
+                TablaArchivos[posArch].setEstado(processID);
+                tOP = disp.GetTprocesamient();
+                // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
+                // opRealizada(0,0,0,0,"OPEN");
+            }
+            else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo ya se encuentra abierto, agrego esta operacion a la cola de espera
+            {
+                ColaEspera.Add(GetContadorOp());
+            }
+
+            return tOP;
+        }
+
+        public int Close(string nameArchivo, int processID)
+        {
+            int posArch = BuscaArch(nameArchivo);
+            int tOP = 0;
+            // Si el archivo se encuentra en la tabla, y si el num de proceso que quiere cerrarlo es el que lo tiene
+            // abierto, lo cierro cambiando el estado a -1
+            if (posArch != -1 && TablaArchivos[posArch].getEstado() == processID)
+            {
+                TablaArchivos[posArch].setEstado(-1);
+
+                tOP = disp.GetTprocesamient();
+                // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
+                // opRealizada(0,0,0,0,"CLOSE");
+            }
+            else if (TablaArchivos[posArch].getEstado() != -processID) // si el archivo lo tiene abierto otro proceso, agrego esta operacion a la cola de espera
+            {
+                ColaEspera.Add(GetContadorOp());
+            }
+
+            return tOP;
+        }
+
+
+        // Función que te busca un archivo en la Tabla por el nombre
+        public int BuscaArch(string nameArchivo)
         {
             int posArch = -1;
 
@@ -222,68 +308,116 @@ namespace FireSim
                 if (nameArchivo == TablaArchivos[i].getNombre())
                 {
                     return i;
-                } 
+                }
             }
 
             return posArch; //Si devuelve -1 es que no está en la tabla
         }
 
-        public void Delete(string nameArchivo)
+        private void opRealizada(int tGestion, int tSatis, int tLE, int tOP, string OP)
         {
-            int numBloque = 0;
-
-            int posArch = BuscaArch(nameArchivo);
-  
-                // Corroboro que el archivo se encuentre en la tabla (por nombre) y que el proceso que se encuentre cerrado
-                if ( posArch != -1 && TablaArchivos[posArch].getEstado() == -1) //Estado -1 significa que el archivo está cerrado
-                {
-                    // Dejo cada bloque como libre
-                    for (int j=0; j<TablaArchivos[posArch].getTablaDireccion().Count; j++)
+            Indicadores ind = new Indicadores();
+            switch(OP)
+            {
+                case "CREATE":
                     {
-                        numBloque = TablaArchivos[posArch].getTablaDireccion()[j];
-                        disp.CambiarEstadoOcupado(numBloque, 0);
-                        // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
-
-                        if (organizacionFisica == Org.Contigua)
-                        {
-                            disp.CambiarEstadoBurocracia(numBloque, 0);
-                        }
-                        else
-                        {
-                            disp.CambiarEstadoBurocracia(numBloque, 0);
-                        }
-
-                        disp.CambiarEstadoReserva(numBloque, false);
+                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                        ind.tGestionTotal = tGestion;
+                        ind.tLectoEscritura = tLE;
+                        ind.tSatisfaccion = tSatis;
+                        ind.tOperaciones.Add(tOP);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        indicadoresOP.Add(ind);
+                        break;
+                    }
+                case "DELETE":
+                    {
+                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                        ind.tGestionTotal = tGestion;
+                        ind.tLectoEscritura = tLE;
+                        ind.tSatisfaccion = tSatis;
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(tOP);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        indicadoresOP.Add(ind);
+                        break;
+                    }
+                case "OPEN":
+                    {
+                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                        ind.tGestionTotal = tGestion;
+                        ind.tLectoEscritura = tLE;
+                        ind.tSatisfaccion = tSatis;
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(tOP);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        indicadoresOP.Add(ind);
+                        break;
+                    }
+                case "CLOSE":
+                    {
+                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                        ind.tGestionTotal = tGestion;
+                        ind.tLectoEscritura = tLE;
+                        ind.tSatisfaccion = tSatis;
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(tOP);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        indicadoresOP.Add(ind);
+                        break;
+                    }
+                case "READ":
+                    {
+                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                        ind.tGestionTotal = tGestion;
+                        ind.tLectoEscritura = tLE;
+                        ind.tSatisfaccion = tSatis;
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(tOP);
+                        ind.tOperaciones.Add(0);
+                        indicadoresOP.Add(ind);
+                        break;
+                    }
+                case "WRITE":
+                    {
+                        ind.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                        ind.tGestionTotal = tGestion;
+                        ind.tLectoEscritura = tLE;
+                        ind.tSatisfaccion = tSatis;
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(0);
+                        ind.tOperaciones.Add(tOP);
+                        indicadoresOP.Add(ind);
+                        break;
                     }
 
-                    // Lo quito de la tabla de archivos
-                    TablaArchivos.RemoveAt(posArch);
-                }
-        }
-
-        public void Open(string nameArchivo, int processID)
-        {
-            int posArch = BuscaArch(nameArchivo);
-            // Si el archivo se encuentra en la tabla, y si el estado es -1, lo abro cambiando el numero de estado por 
-            // el numero de proceso que lo quiere abrir.
-            if (posArch != -1 && TablaArchivos[posArch].getEstado() == -1)
-            {
-                TablaArchivos[posArch].setEstado(processID);
+                default:
+                    {
+                        Console.WriteLine("Operacion Incorrecta, se descarta");
+                        break;
+                    }
             }
         }
-
-        public void Close(string nameArchivo, int processID)
-        {
-            int posArch = BuscaArch(nameArchivo);
-
-            // Si el archivo se encuentra en la tabla, y si el num de proceso que quiere cerrarlo es el que lo tiene
-            // abierto, lo cierro cambiando el estado a -1
-            if (posArch != -1 && TablaArchivos[posArch].getEstado() == processID)
-            {
-                TablaArchivos[posArch].setEstado(-1);
-            }
-        }
-
+        
         /**
          * Getters y Setters
         **/
@@ -377,7 +511,7 @@ namespace FireSim
             return disp.getTablaBloques();
         }
 
-        public ArrayList getTablaOperaciones()
+        public List<Operacion> getTablaOperaciones()
         {
             return TablaOperaciones;
         }
@@ -385,15 +519,15 @@ namespace FireSim
 }
 
 
-public class ComparaOp : IComparer
+public class ComparaOp : IComparer<Operacion>
 {
-    public int Compare(object x, object y)
+    public int Compare(Operacion x, Operacion y)
     {
-        if (((Operacion)x).Tarribo < ((Operacion)y).Tarribo)
+        if (x.Tarribo < y.Tarribo)
         {
             return -1;
         }
-        else if (((Operacion)x).Tarribo == ((Operacion)y).Tarribo)
+        else if (x.Tarribo == y.Tarribo)
         {
             return 0;
         }
