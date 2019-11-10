@@ -72,23 +72,23 @@ namespace FireSim
                     opAux.IdOperacion = valores[1];
                     switch (opAux.IdOperacion.ToString())
                     {
-                        case "N":
-                            opAux.NombreOperacion = "CREATE";
+                        case "N": //N de new
+                            opAux.IdOperacion = "CREATE";
                             break;
-                        case "C": 
-                            opAux.NombreOperacion = "CLOSE";
+                        case "C": //C de close
+                            opAux.IdOperacion = "CLOSE";
                             break;
-                        case "O":
-                            opAux.NombreOperacion = "OPEN";
+                        case "O": //O de open
+                            opAux.IdOperacion = "OPEN";
                             break;
-                        case "D":
-                            opAux.NombreOperacion = "DELETE";
+                        case "D": //D de delete
+                            opAux.IdOperacion = "DELETE";
                             break;
-                        case "W":
-                            opAux.NombreOperacion = "WRITE";
+                        case "W": //W de write 
+                            opAux.IdOperacion = "WRITE";
                             break;
-                        case "R":
-                            opAux.NombreOperacion = "READ";
+                        case "R": //R de read
+                            opAux.IdOperacion = "READ";
                             break;
                     }
                     opAux.NumProceso = Int32.Parse(valores[2]);
@@ -135,7 +135,7 @@ namespace FireSim
             {
                 case "CREATE":
                     {
-                        tSimulacion += Create(nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA, nextOp.NombreArchivo);
+                        tSimulacion += Create(nextOp.NumProceso, nextOp.CantidadUA, nextOp.NombreArchivo);
                         break;
                     }
                 case "DELETE":
@@ -180,7 +180,7 @@ namespace FireSim
             SetContadorOp(GetContadorOp() + 1);
         }
 
-        public int Create(int idProc, int offset, int cant_uA, string name)
+        public int Create(int idProc, int cant_uA, string name)
         {
             int tOP = 0;
 
@@ -191,10 +191,7 @@ namespace FireSim
                 if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
                 {
                     TablaArchivos.Add(archivo); //agregamos el nuevo archivo a la tabla 
-
-                    // tOP = ;
-                    // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
-                    // opRealizada(0,0,0,0,"CREATE");
+                    // Tespera = Tsimualcion - Tarribo; 
                 }
             }
             else //si el archivo ya esta creado
@@ -291,7 +288,7 @@ namespace FireSim
         {
             int numBloque = 0;
             int tOP = 0;
-            int posArch = BuscaArch(nameArchivo);
+            int posArch = BuscaArch(nameArchivo); //busca si existe el arhivo
   
             // Corroboro que el archivo se encuentre en la tabla (por nombre) y que se encuentre cerrado
             if ( posArch != -1 && TablaArchivos[posArch].getEstado() == -1) //Estado -1 significa que el archivo está cerrado
@@ -301,7 +298,6 @@ namespace FireSim
                 {
                     numBloque = TablaArchivos[posArch].getTablaDireccion()[j];
                     disp.CambiarEstadoOcupado(numBloque, 0);
-                    // DUDA: Aca habria que analizar el tipo de AdminLibres o la OrgaFisica????
 
                     if (organizacionFisica == Org.Contigua)
                     {
@@ -494,8 +490,11 @@ namespace FireSim
                     }
                 case Libres.ListadeLibres:
                     {
-                        // @FEDE 
-                        // Aca no estaria entendiendo como se "guarda" la lista de libres
+                        for (int i= 0; i < disp.GetCantBloques() - 1; i++)
+                        {
+                            disp.getTablaBloques();
+                        }
+
                         break;
                     }
                 case Libres.ListadeLibresdePrincipioyCuenta:

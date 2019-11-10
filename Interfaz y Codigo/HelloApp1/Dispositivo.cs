@@ -18,7 +18,6 @@ namespace FireSim
         private int tLectura;
         private int tEscritura;
         private int tSeek;
-        private int tAcceso;
         private int tProcesamiento;        
         private int tamBloque;
         private int tamDispositivo;
@@ -31,14 +30,10 @@ namespace FireSim
             //seteamos los parametros de entrada
             this.SetTlectura(tLectura);
             this.SetTescritura(tEscritura);
-            this.SetTseek(tSeek);
-            this.SetTAcceso(tAcceso);
             this.SetTamBloques(tamBloques);
             this.SetTamDispositivo(tamDispositivo);
-            this.SetCantBloques((int)Math.Truncate((decimal)tamDispositivo / (decimal)tamBloques)); //DUDA @lu: estaria bien asi?
-            //09/11/2019 El espacio que no lo utilizamos queda como fragmentación externa?
+            this.SetCantBloques((int)Math.Truncate((decimal)tamDispositivo / (decimal)tamBloques)); //windows no considera fragmentacion externa si no es entera la division del dispositivo en bloques 
             this.SetTprocesamiento(tProcesamiento);
-            //this.SetEspacioLibre(espacioLibre); Lo vamos a usar?
 
             //Creo el arreglo de bloques para almacenar los diferentes estados de cada bloque
             this.TablaBloques = new Bloque[this.GetCantBloques()];
@@ -126,15 +121,8 @@ namespace FireSim
             else if (OrgaFisica == Org.Enlazada)
             {
 
-                //// ************************ @ROCIO ***************************////
-                ///Chicos, aca vos le estas sumando, a las unidades de almacenamiento deseado totales, UNA sola vez el tamaño de UN indice. Me huele a que estamos haciendolo mal
-                ////Posible solucion
-                /// int tamBloqueEnlazada = tamBloque - tamIndice ----------->>> AGREGAR: normalizas los bloques, ajustandolos a enlazada
-
-                // Rocio, si creo que tenes razon, deberia quedar algo asi me parece:
                  int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)(tamBloque-tamIndice));
-                // si estan de acuerdo, descomentamos la de arriba y borramos la de abajo
-                //int bloquesDeseados = (int)Math.Ceiling((decimal) (uAdeseada) / (decimal)tamBloque); ////----------------------> eliminar
+
                 List<int> bloquesLibres = new List<int>(bloquesDeseados);
 
                 try
@@ -145,8 +133,6 @@ namespace FireSim
                 {
                     Console.WriteLine("Error: " + e);
                 }
-
-             /// NO LEAN ESTE COMMENT ES PARA ROCIO NOMAS  ELIMINAR LLEGUE A NORMALIZAR LOS BLOQUES ME FALTA ANALIZAR LA ASIGNACION
 
                 if (bloquesLibres.Count != 0)
                 {
@@ -165,16 +151,10 @@ namespace FireSim
             }
 
 
-            ////*****************@ROCIO *************************/////////
-            ///Cuando hacemos el check storage no chequeamos que haya espacio extra para los bloques indices.
-            ///Posible solución: ver lineas comentadas con flecha nueva!!!!!!
-            /// Busca lo que dice @RESPUESTA ROCIO en la funcion checkStorage, lo mismo que pusiste esta implementado ya
             else if (OrgaFisica == Org.Indexada)
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
-                ///     int cantUAindice = bloquesDeseados * tamIndice; ------------------------------------------>nueva
-                ///     bloquesDeseados += (int)Math.Ceiling((decimal)cantUAindice / (decimal)tamBloque); -----------> nueva
 
                 if (checkStorage(bloquesDeseados, arch.getTablaIndices()))
                 {
@@ -189,8 +169,7 @@ namespace FireSim
                         Console.WriteLine("Error: " + e);
                     }
 
-                    if (bloquesLibres.Count != 0) // DUDA: habria que comprobar tambien aca los indices??? VER COMENTARIO ROCIO
-                    {                             // Ya se sabe que hay espacio para los bloques deseados del usuario y para los del indice (@RESPUESTA ROCIO)
+                    if (bloquesLibres.Count != 0) { 
                         ObtuveLibres = true; //si obtuve libres devuelvo verdadero
                         arch.TablaDireccion_AddRange(bloquesLibres);
 
@@ -225,19 +204,17 @@ namespace FireSim
                 // son necesarios para almacenar todos los indices necesarios
                 int cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
 
-                // Se recorre desde el final al principio para dejar los indices en el final de la tabla de bloques
-                //(No se, se me ocurrio a mi, sino aca se pude usar el metodo getDireccionBloqueLibre)(FEDE)
-                int posBloque = GetCantBloques() - 1;
+                int posBloque = 0; //arranca desde el principio a almacenar los bloques indices --> first fit
                 int posIndice = 0;
 
-                while ((posIndice < cant_bloquesI) && (posBloque >= 0))
+                while ((posIndice < cant_bloquesI) && (posBloque < GetCantBloques() ))
                 {
                     if (!TablaBloques[posBloque].estadoReserva)
                     {
                         bloquesLibresIndices.Add(posBloque);
                         posIndice++;
                     }
-                    posBloque--;
+                    posBloque++;
                 }
                 if (posIndice == cant_bloquesI)
                 {
@@ -285,7 +262,6 @@ namespace FireSim
                     // Asigno la cantidad de indices que entran en el ultimo indice
                     TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia += diff;
 
-                    // bloqueNecesitado en este caso es la cantidad de indices que voy a necesitar (no bloques, indices)
                     int bloqueNecesitado = (int)Math.Ceiling((decimal)(cant_uaI - diff) / (decimal)tamIndice);
 
                     // En aux se van a guardar los nuevos bloques indices que se van a anexar a la tabla original
@@ -395,7 +371,7 @@ namespace FireSim
         {
             
             int bloquesDisponibles = 0;
-            int posBloque = GetCantBloques() - 1;
+            int posBloque = 0; //arranca desde el principio a modificar --> para respetar first fit
             int cant_uaI;
             int cant_bloquesI = 0;
 
@@ -406,7 +382,6 @@ namespace FireSim
                 // Se divide la cantidad anterior por el tamaño de bloque para obtener cuantos bloques
                 // son necesarios para almacenar los indices 
                 cant_bloquesI = (int)Math.Ceiling((decimal)cant_uaI / (decimal)tamBloque);
-                // @RESPUESTA ROCIO
             }
             else
             {
@@ -425,18 +400,17 @@ namespace FireSim
                 {
                     int diff = (tamBloque - TablaBloques[(int)TablaIndices[ultimoIndice]].uABurocracia);
 
-                    // cant_bloquesI en este caso es la cantidad de indices que voy a necesitar (no bloques, indices)
                     cant_bloquesI = (int)Math.Ceiling((decimal)(cant_uaI - diff) / (decimal)tamBloque);
                 }
             }
 
-            while ((bloquesDisponibles < (cant_bloquesI + bloquesdeseados) && (posBloque >= 0))) // @RESPUESTA ROCIO
+            while ((bloquesDisponibles < (cant_bloquesI + bloquesdeseados) && (posBloque < GetCantBloques() ))) 
             {
                 if (!TablaBloques[posBloque].estadoReserva)
                 {
                     bloquesDisponibles++;
                 }
-                posBloque--;
+                posBloque++;
             }
             if ((bloquesdeseados + cant_bloquesI) == bloquesDisponibles)
             {
@@ -475,16 +449,6 @@ namespace FireSim
             tLectura = value;
         }
         
-        public int GetTAcceso()
-        {
-            return tAcceso;
-        }
-
-        private void SetTAcceso(int value)
-        {
-            tAcceso = value;
-        }
-       
 
         public int GetTescritura()
         {

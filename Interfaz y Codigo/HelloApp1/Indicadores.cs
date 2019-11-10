@@ -10,7 +10,6 @@ namespace FireSim
         public int tLectoEscritura { get; set; }
         public int tGestionTotal { get; set; }
         public int tEspera { get; set; }
-
         public char tipoOp { get; set; } //se usaria para hacer la comparacion de tmax y tmin!!!! 
                                         //almacena el tipo de operacion realizada relacionada con los tiempos 
     }
