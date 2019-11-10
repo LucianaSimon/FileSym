@@ -129,6 +129,20 @@ namespace FireSim
 
         public void SimularSiguienteOp()
         {
+            SimularColaEspera();
+            SimularOp();  
+        }
+
+        public void SimularColaEspera()
+        {
+            if (ColaEspera.Count != 0)
+            {
+                
+            }
+        }
+
+        public void SimularOp()
+        {
             Operacion nextOp = TablaOperaciones[GetContadorOp()];
             // Todos los metodos deben devolver el tiempo que tardo en ejecutarse la operacion
             switch (nextOp.IdOperacion)
@@ -179,7 +193,6 @@ namespace FireSim
             }
             SetContadorOp(GetContadorOp() + 1);
         }
-
         public int Create(int idProc, int cant_uA, string name)
         {
             int tOP = 0;

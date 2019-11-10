@@ -418,7 +418,53 @@ namespace FireSim
             }
             return false;
         }
-        
+
+        public int getFragExt()
+        {
+            int cnt = 0;
+
+            for (int i = 0; i < GetCantBloques(); i++)
+            {
+                if(!TablaBloques[i].estadoReserva)
+                {
+                    cnt++;
+                }
+            }
+
+            return cnt;
+        }
+
+        public void datosMetadatos(ref int datos, ref int metadatos)
+        {
+            for (int i=0; i<GetCantBloques(); i++)
+            {
+                if (TablaBloques[i].uAOcupado > 0 || TablaBloques[i].uABurocracia > 0)
+                {
+                    datos += TablaBloques[i].uAOcupado;
+                    metadatos += TablaBloques[i].uABurocracia;
+                }
+            }
+        }
+
+        public void getFragInt(ref int fragint, int cnt)
+        {
+
+            for (int i = 0; i < GetCantBloques(); i++)
+            {
+                if (TablaBloques[i].estadoReserva)
+                {
+                    if ((TablaBloques[i].uAOcupado + TablaBloques[i].uABurocracia) < GetTamBloques())
+                    {
+                        fragint = GetTamBloques() - (TablaBloques[i].uAOcupado + TablaBloques[i].uABurocracia);
+                    }
+                    else
+                    {
+                        cnt++;
+                    }
+                }
+            }
+        }
+
         public int GetCantBloques()
         {
             return cantBloques;
