@@ -204,14 +204,66 @@ namespace FireSim
         public int Write(string name, int idProc, int offset, int cant_uA)
         {
             int tOP = 0;
-
             int posArch = BuscaArch(name);
-            // Verifico que el archivo este creado
-            if (posArch != -1)
-            {   // Verifico que el proceso que abrio el archivo sea el que lo quiere leer
-                if (TablaArchivos[posArch].getEstado() == idProc)
+            
+            if (posArch != -1) // Verifico que el archivo este creado
+            {   
+                if (TablaArchivos[posArch].getEstado() == idProc) // Verifico que el proceso que abrio el archivo sea el que lo quiere leer
                 {
+                    int inicio = (int)Math.Floor((decimal)(offset) / (decimal)(disp.GetTamBloques())); //bloque donde comienza a leerse
+                    int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques()));
+                    Indicadores indicador = new Indicadores();
+                    Archivo arch = TablaArchivos[posArch]; //busco archivo en la tabla
 
+                    if (fin > arch.getTablaDireccion().Count && GetOrganizacionFisica() == Org.Contigua) //solo se realoca si es contigua
+                    {
+                        if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //PROBAR SI MODIFICA ARCH ASI!!!!!!!
+                        {
+                            throw new Exception("No se pudo realocar.");
+                        }
+                    }
+                    else if (fin > arch.getTablaDireccion().Count) //para enlazada e indexada
+                    {
+                        indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), fin - arch.getTablaDireccion().Count); 
+                    }
+
+                    switch (GetOrganizacionFisica())
+                    {
+                        case Org.Contigua:
+                        {
+                                indicador.tGestionTotal += disp.GetTseek(); //el t de gestion es el t en ir al primer bloque
+                                break;
+                        }
+                        case Org.Enlazada:
+                        {
+                                int bloqueLeido = -1;
+
+                                for (int i = 0; i < fin; i++)
+                                {
+                                    if (arch.getTablaDireccion()[i] != bloqueLeido - 1) //comprueba si los bloques son contiguos
+                                    {
+                                        indicador.tGestionTotal += disp.GetTseek();
+                                    }
+                                    bloqueLeido = arch.getTablaDireccion()[i];
+                                }
+
+                                indicador.tGestionTotal += inicio * disp.GetTlectura();
+
+                                break;
+                        }
+                        case Org.Indexada:
+                        {
+                                indicador.tGestionTotal += (2 * disp.GetTseek() + disp.GetTprocesamient()) * (fin - inicio);
+                                break;
+                        }
+                    }
+
+                    indicador.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                    indicador.tLectoEscritura = (fin - inicio) * disp.GetTescritura();
+                    indicador.tSatisfaccion = indicador.tGestionTotal + indicador.tEspera + indicador.tLectoEscritura;
+                    indicador.tipoOp = 'W';
+                    indicadoresOP.Add(indicador);
+                    tOP = indicador.tSatisfaccion - indicador.tEspera;
                 }
                 else
                 {
@@ -219,64 +271,68 @@ namespace FireSim
                 }
             }
 
+            
             return tOP;
         }
 
         public int Read(string name, int idProc, int offset, int cant_uA)
         {
-            // Aca solo irian calculos de tiempo no?
             int tOP = 0;
-
             int posArch = BuscaArch(name);
-
-            // Verifico que el archivo este creado
-            if (posArch != -1)
-            {   // Verifico que el proceso que abrio el archivo sea el que lo quiere leer
-                if (TablaArchivos[posArch].getEstado() == idProc)
+         
+            if (posArch != -1)   // Verifico que el archivo este creado
+            {   
+                if (TablaArchivos[posArch].getEstado() == idProc) // Verifico que el proceso que abrio el archivo sea el que lo quiere leer
                 {
-                    Archivo arch = TablaArchivos[posArch];
+                    Archivo arch = TablaArchivos[posArch]; //busco archivo en la tabla
                     Indicadores indicador = new Indicadores();
-                    int inicio = (int)Math.Ceiling((decimal)(offset) / (decimal)(disp.GetTamBloques())); 
+
+                    int inicio = (int)Math.Floor((decimal)(offset) / (decimal)(disp.GetTamBloques())); //bloque donde comienza a leerse
                     int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques()));
-                    // Control de cuanto se quiere leer
-                    if (fin > arch.getTablaDireccion().Count)
+                   
+                    if (fin > arch.getTablaDireccion().Count) // Control de cuanto se quiere leer
                     {
                         throw new Exception("Se quiere leer mas de lo que hay");
                     }
                     switch (GetOrganizacionFisica())
                     {
                         case Org.Contigua:
-                            {
+                        {
+                                indicador.tGestionTotal = disp.GetTseek(); //el t de gestion es el t en ir al primer bloque
                                 break;
-                            }
+                        }
                         case Org.Enlazada:
-                            {
-                                int bloqueLeido = -1;
-                                for (int i=0; i<fin; i++)
-                                {
-                                    // Si el bloque anterior era contiguo al actual no hay tiempo de seek
-                                    if (arch.getTablaDireccion()[i] != bloqueLeido - 1)
-                                    {
-                                        indicador.tSatisfaccion += disp.GetTseek();
-                                    }
+                        {
+                                 int bloqueLeido = -1;
 
-                                    indicador.tLectoEscritura += disp.GetTlectura();
-                                    bloqueLeido = arch.getTablaDireccion()[i];
-                                }
-                                break;
-                            }
+                                 for (int i=0; i<fin; i++)
+                                 {
+                                   if (arch.getTablaDireccion()[i] != bloqueLeido - 1) //comprueba si los bloques son contiguos
+                                   {
+                                       indicador.tGestionTotal += disp.GetTseek();
+                                   }
+                                   bloqueLeido = arch.getTablaDireccion()[i];
+                                 }
+
+                                indicador.tGestionTotal += inicio * disp.GetTlectura();
+
+                             break;
+                        }
                         case Org.Indexada:
-                            {
+                        {
+                                indicador.tGestionTotal = (2 * disp.GetTseek() + disp.GetTprocesamient()) * (fin - inicio);
                                 break;
-                            }
+                        }
                     }
 
-                    indicador.tSatisfaccion += disp.GetTprocesamient();
                     indicador.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                    indicador.tLectoEscritura = (fin - inicio) * disp.GetTlectura();
+                    indicador.tSatisfaccion =  indicador.tGestionTotal + indicador.tEspera + indicador.tLectoEscritura;
+                    indicador.tipoOp = 'R';
                     indicadoresOP.Add(indicador);
-                    tOP = indicador.tSatisfaccion;
+                    tOP = indicador.tSatisfaccion - indicador.tEspera;
                 }
-                else // Si no es asi, lo agrego a la cola de espera
+                else // Si el archivo esta abierto x otro proceso --> lo agrego a la cola de espera
                 {
                     ColaEspera.Add(GetContadorOp());
                 }
@@ -375,6 +431,21 @@ namespace FireSim
             }
 
             return tOP;
+        }
+         //bloquesRealocar son los bloques totales!!!! 
+        public bool realocar(ref Archivo arch, int BloquesRealocar, int BloquesAntes, ref Indicadores indicador)
+        {
+            bool aux = false;
+
+            int uArealocar = BloquesRealocar*disp.GetTamBloques();
+
+            if (disp.GetLibres(uArealocar, GetOrganizacionFisica(), ref arch))
+            {
+                indicador.tGestionTotal = BloquesAntes * (disp.GetTprocesamient() + disp.GetTseek()) + disp.TprocesamientoBloquesLibres(GetAdminEspacio(), uArealocar);
+                aux = true;
+            }
+
+            return aux;
         }
 
 
@@ -492,7 +563,7 @@ namespace FireSim
                     {
                         for (int i= 0; i < disp.GetCantBloques() - 1; i++)
                         {
-                            disp.getTablaBloques();
+                            disp.CambiarEstadoBurocracia(i,1); //le asignamos 1 uA que es el indice
                         }
 
                         break;
