@@ -36,6 +36,7 @@ namespace FireSim
             this.SetTamBloques(tamBloques);
             this.SetTamDispositivo(tamDispositivo);
             this.SetCantBloques((int)Math.Truncate((decimal)tamDispositivo / (decimal)tamBloques)); //DUDA @lu: estaria bien asi?
+            //09/11/2019 El espacio que no lo utilizamos queda como fragmentación externa?
             this.SetTprocesamiento(tProcesamiento);
             //this.SetEspacioLibre(espacioLibre); Lo vamos a usar?
 

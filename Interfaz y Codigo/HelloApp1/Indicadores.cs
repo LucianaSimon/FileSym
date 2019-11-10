@@ -10,6 +10,7 @@ namespace FireSim
         public int tLectoEscritura { get; set; }
         public int tGestionTotal { get; set; }
         public int tEspera { get; set; }
+<<<<<<< HEAD
         /*
          * Lista con los timpos que lleva una operacion, el tamaño maximo debe ser 6 siempre!
          * Si la operacion es un create ese tiempo se debe introducir en la posicion 0 y de la posicion 1 a la 5 ponerlos en 0
@@ -22,6 +23,16 @@ namespace FireSim
         public List<int> tOperaciones { get; set; }
     
 }
+=======
+     //   public int tEscritura { get; set; }
+
+//        public int tLectura { get; set; }
+
+     ///   public float tMax { get; set; } //DUDA @lu irian aca estos tiempos?? no se refiere al tmax o min total??? NOOOOOO!!!!
+
+      //  public float tMin { get; set; }
+    }
+>>>>>>> e9f1bce8826e8ca09a02b1805499d7894d3bd39d
 }
 
 
