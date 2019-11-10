@@ -1,35 +1,36 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\Prueba.csproj": {}
+    "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\Prueba.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj": {
+    "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj",
+        "projectUniqueName": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj",
         "projectName": "HelloApp1",
-        "projectPath": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj"
+        "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj"
       },
       "frameworks": {
         "net472": {}
       }
     },
-    "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\Prueba.csproj": {
+    "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\Prueba.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
+        "projectUniqueName": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
         "projectName": "Prueba",
-        "projectPath": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
-        "packagesPath": "C:\\Users\\Luciana\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\Prueba\\obj\\",
+        "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\Prueba.csproj",
+        "packagesPath": "C:\\Users\\Federico\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\Prueba\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\Luciana\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Federico\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.0"
@@ -41,8 +42,8 @@
         "frameworks": {
           "netcoreapp3.0": {
             "projectReferences": {
-              "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj": {
-                "projectPath": "C:\\Users\\Luciana\\Desktop\\FileSym - Copy\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj"
+              "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj": {
+                "projectPath": "C:\\Users\\Federico\\Documents\\Proyectos\\FileSym\\Interfaz y Codigo\\HelloApp1\\HelloApp1.csproj"
               }
             }
           }
@@ -56,10 +57,21 @@
       "frameworks": {
         "netcoreapp3.0": {
           "imports": [
-            "net461"
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

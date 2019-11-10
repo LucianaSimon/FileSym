@@ -155,12 +155,19 @@ namespace FireSim
                     }
                 case "READ":
                     {
-                        tSimulacion += Read();
+                        try
+                        {
+                            tSimulacion += Read(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error: " + e);
+                        }
                         break;
                     }
                 case "WRITE":
                     {
-                        tSimulacion += Write();
+                        tSimulacion += Write(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
                         break;
                     }
 
@@ -197,18 +204,86 @@ namespace FireSim
             return tOP;
         }
 
-        public int Write()
+        public int Write(string name, int idProc, int offset, int cant_uA)
         {
             int tOP = 0;
+
+            int posArch = BuscaArch(name);
+            // Verifico que el archivo este creado
+            if (posArch != -1)
+            {   // Verifico que el proceso que abrio el archivo sea el que lo quiere leer
+                if (TablaArchivos[posArch].getEstado() == idProc)
+                {
+
+                }
+                else
+                {
+                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
+                }
+            }
 
             return tOP;
         }
 
-        public int Read()
+        public int Read(string name, int idProc, int offset, int cant_uA)
         {
             // Aca solo irian calculos de tiempo no?
             int tOP = 0;
 
+            int posArch = BuscaArch(name);
+
+            // Verifico que el archivo este creado
+            if (posArch != -1)
+            {   // Verifico que el proceso que abrio el archivo sea el que lo quiere leer
+                if (TablaArchivos[posArch].getEstado() == idProc)
+                {
+                    Archivo arch = TablaArchivos[posArch];
+                    Indicadores indicador = new Indicadores();
+                    int inicio = (int)Math.Ceiling((decimal)(offset) / (decimal)(disp.GetTamBloques())); 
+                    int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques()));
+                    // Control de cuanto se quiere leer
+                    if (fin > arch.getTablaDireccion().Count)
+                    {
+                        throw new Exception("Se quiere leer mas de lo que hay");
+                    }
+                    switch (GetOrganizacionFisica())
+                    {
+                        case Org.Contigua:
+                            {
+                                break;
+                            }
+                        case Org.Enlazada:
+                            {
+                                int bloqueLeido = -1;
+                                for (int i=0; i<fin; i++)
+                                {
+                                    // Si el bloque anterior era contiguo al actual no hay tiempo de seek
+                                    if (arch.getTablaDireccion()[i] != bloqueLeido - 1)
+                                    {
+                                        indicador.tSatisfaccion += disp.GetTseek();
+                                    }
+
+                                    indicador.tLectoEscritura += disp.GetTlectura();
+                                    bloqueLeido = arch.getTablaDireccion()[i];
+                                }
+                                break;
+                            }
+                        case Org.Indexada:
+                            {
+                                break;
+                            }
+                    }
+
+                    indicador.tSatisfaccion += disp.GetTprocesamient();
+                    indicador.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                    indicadoresOP.Add(indicador);
+                    tOP = indicador.tSatisfaccion;
+                }
+                else // Si no es asi, lo agrego a la cola de espera
+                {
+                    ColaEspera.Add(GetContadorOp());
+                }
+            }
             return tOP;
         }
 
