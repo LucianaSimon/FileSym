@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HelloApp1"
         mc:Ignorable="d"
-        Title="Configuración de parámetros" Height="590" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Configuración de parámetros" Height="640" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <WrapPanel>
 
         <WrapPanel Height="50" Width="600" Orientation="Horizontal">
@@ -31,52 +31,42 @@
             </Canvas>
 
         </WrapPanel>
-
-
-
-        <WrapPanel Height="50" Width="600" Orientation="Vertical">
-            <Label Content="Tiempo de acceso" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
-            <TextBox x:Name="ttAcceso" Text="{Binding ElementName=stAcceso, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" Margin="0,5,0,0" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
-                     PreviewTextInput="NumberValidationTextBox" TextAlignment="Center" />
-            <Slider Name="stAcceso" TickFrequency="1" Width="190" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
-
-        </WrapPanel>
-        <WrapPanel Height="50" Width="600" Orientation="Vertical">
+        <WrapPanel Height="70" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de seek" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
             <TextBox x:Name="ttSeek" Text="{Binding ElementName=stSeek, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
-                     PreviewTextInput="NumberValidationTextBox" Margin="0,5,0,0" TextAlignment="Center"/>
+                     PreviewTextInput="NumberValidationTextBox" Margin="0,15,0,0" TextAlignment="Center"/>
             <Slider Name="stSeek" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
-        <WrapPanel Height="50" Width="600" Orientation="Vertical">
+        <WrapPanel Height="70" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de lectura" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
             <TextBox x:Name="ttLectura" Text="{Binding ElementName=stLectura, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
-                     Margin="0,5,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
+                     Margin="0,15,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
             <Slider Name="stLectura" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
-        <WrapPanel Height="50" Width="600" Orientation="Vertical">
+        <WrapPanel Height="70" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de escritura" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
             <TextBox x:Name="ttEscritura" Text="{Binding ElementName=stEscritura, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
-                     Margin="0,5,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
+                     Margin="0,15,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
             <Slider Name="stEscritura" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
-        <WrapPanel Height="50" Width="600" Orientation="Vertical">
+        <WrapPanel Height="70" Width="600" Orientation="Vertical">
             <Label Content="Tiempo de procesamiento" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
             <TextBox x:Name="ttProcesamiento" Text="{Binding ElementName=stProcesamiento, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="100" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
-                     Margin="0,5,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
+                     Margin="0,15,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
             <Slider Name="stProcesamiento" TickFrequency="1" Width="190" Value="0" Maximum="255" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
 
         </WrapPanel>
-        <WrapPanel Height="50" Width="600" Orientation="Vertical">
+        <WrapPanel Height="60" Width="600" Orientation="Vertical">
             <Label Content="Tamaño de bloque" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
             <TextBox x:Name="ttamBloque" Text="{Binding ElementName=slValue6, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      Margin="0,12,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>
 
 
         </WrapPanel>
-        <WrapPanel Height="50" Width="600" Orientation="Vertical">
+        <WrapPanel Height="60" Width="600" Orientation="Vertical">
             <Label Content="Tamaño del dispositivo" Style="{StaticResource lblDesign}" FontSize="14" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,11,120,0" Width="240" FontWeight="Bold"/>
             <TextBox x:Name="ttamDisp" Text="{Binding ElementName=slValue7, Path=Value, UpdateSourceTrigger=PropertyChanged}" Height="23" TextWrapping="Wrap" Width="187" FontFamily="/HelloApp1;component/Font/#Ubuntu" 
                      Margin="0,12,0,0" PreviewTextInput="NumberValidationTextBox" TextAlignment="Center"/>

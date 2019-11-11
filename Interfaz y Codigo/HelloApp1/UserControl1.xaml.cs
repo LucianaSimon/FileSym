@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LiveCharts;
 using LiveCharts.Wpf;
-using System.Windows.Media;
 
 namespace HelloApp1
 {

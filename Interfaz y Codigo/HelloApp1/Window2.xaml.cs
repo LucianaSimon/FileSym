@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace HelloApp1
 {
@@ -35,8 +37,20 @@ namespace HelloApp1
         //Exportar
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //Con los resultados obtenidos de la simulacion se crea un File
-            //con un nombre generico? y se almacenan los indicadores para cada operacion.
+            //Con los resultados obtenidos de la simulacion se crea un File 
+            // y se almacenan los indicadores para cada operacion.
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            string fileText = "Texto de prueba";
+
+            SaveFileDialog dialog = new SaveFileDialog()
+            {
+                Filter = "Archivo de texto(*.txt)|*.txt"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                File.WriteAllText(dialog.FileName, fileText);
+            }
         }
 
         //Salir

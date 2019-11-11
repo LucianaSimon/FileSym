@@ -28,6 +28,7 @@ namespace HelloApp1
         public Window1()
         {
             InitializeComponent();
+            
             //Cada cierto tiempo se presiona el boton siguiente operación
             timer.Tick += (s, ev) => btn_SiguientePaso.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
@@ -36,11 +37,22 @@ namespace HelloApp1
 
             lvDataBinding.ItemsSource = simulador.getTablaOperaciones();
 
-            dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)
+            //frag externa: cantidad de bloques no reservados
+            int datos = 0, metadatos = 0;
+            simulador.GetDispositivo().datosMetadatos(ref datos, ref metadatos);
 
-            //informacion adicional cambiante por cada operacion simulada
-            info_adicional.Text = "A rellenar con indicadores!";
-                
+            int fragExterna = simulador.GetDispositivo().getFragExt();
+            int aux = simulador.GetDispositivo().GetCantBloques() - fragExterna;
+
+            int fragI = 0, cnt = 0;
+            simulador.GetDispositivo().getFragInt(ref fragI, ref cnt);
+
+            fragInterna.Content = "Fragmentación interna: " + fragI + " unidades de almacenamiento.";
+            FragExterna.RefreshData((double)fragExterna, (double)aux);  //Para configurar barra de FE
+            DatosyMeta.RefreshData((double)datos, (double)metadatos);   //Para configurar barra de datos y meta
+
+
+            dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)    
         }
 
         //@toDO - Revisar dibujado de bloques de manera dinámica.
@@ -67,8 +79,10 @@ namespace HelloApp1
                     {
                         Rectangle bloque = new Rectangle();
                         
+                        //
+
                         if(simulador.GetDispositivo().estadoBloque(numBloque) == 0) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //LIBRE
-                        else if(simulador.GetDispositivo().estadoBloque(numBloque) == 1) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF1181A1")); //OCUPADO
+                        else if(simulador.GetDispositivo().estadoBloque(numBloque) == simulador.GetDispositivo().GetTamBloques()) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF1181A1")); //OCUPADO
                         else bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#0ddbac"));
 
                         bloque.Width = 20;

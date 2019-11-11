@@ -30,14 +30,14 @@ namespace HelloApp1
             admLibre = Libres.Vacio;
             modoAcceso = Acceso.Vacio;
 
-            tAcceso = 10;
-            tSeek = 10;
-            tLectura = 10;
-            tEscritura = 10;
-            tProcesamiento = 10;
+            tAcceso = 2;
+            tSeek = 2;
+            tLectura = 2;
+            tEscritura = 2;
+            tProcesamiento = 2;
 
-            tamBloque = 10;         //uA
-            tamDispositivo = 1000;  //uA
+            tamBloque = 50;         //uA
+            tamDispositivo = 100;  //uA
 
             rutaArchivo = "";
         }
@@ -75,7 +75,6 @@ namespace HelloApp1
 
 
             //Sliders (s)
-            stAcceso.Value = Globales.tAcceso;
             stLectura.Value = Globales.tLectura;
             stEscritura.Value = Globales.tEscritura;
             stSeek.Value = Globales.tSeek;
@@ -115,7 +114,6 @@ namespace HelloApp1
             else Globales.modoAcceso = Acceso.Vacio;
 
             //Con los TextBox (t)
-            Globales.tAcceso = Int32.Parse(ttAcceso.Text);
             Globales.tEscritura = Int32.Parse(ttEscritura.Text);
             Globales.tLectura = Int32.Parse(ttLectura.Text);
             Globales.tProcesamiento = Int32.Parse(ttProcesamiento.Text);
@@ -139,6 +137,7 @@ namespace HelloApp1
         {
             HabilitarRadioButtons();
             Acceso_Indexado.IsEnabled = false;
+            Acceso_Secuencial.IsEnabled = false; 
             Adm_Lista.IsEnabled = false;
         }
 

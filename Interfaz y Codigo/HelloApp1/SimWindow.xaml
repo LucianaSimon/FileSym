@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HelloApp1"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="Simulando..." Height="600" Width="1024" WindowStartupLocation="CenterScreen" Topmost="True" ResizeMode="CanMinimize">
+        Title="Simulando..." Height="640" Width="1024" WindowStartupLocation="CenterScreen" Topmost="True" ResizeMode="CanMinimize">
 
     <WrapPanel Orientation="Vertical">
 
@@ -32,11 +32,12 @@
             <ListView Margin="25,5,0,0" Width="460" Height="350" Name="lvDataBinding" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="15">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Operación" Width="95" DisplayMemberBinding="{Binding NombreOperacion}" />
-                        <GridViewColumn Header="Archivo" Width="166" DisplayMemberBinding="{Binding NombreArchivo}" />
-                        <GridViewColumn Header="N° P" Width="65" DisplayMemberBinding="{Binding NumProceso}" />
-                        <GridViewColumn Header="Arribo" Width="65" DisplayMemberBinding="{Binding Tarribo}" />
-                        <GridViewColumn Header="Offset" Width="65" DisplayMemberBinding="{Binding Offset}" />
+                        <GridViewColumn Header="Operación" Width="85" DisplayMemberBinding="{Binding IdOperacion}" />
+                        <GridViewColumn Header="Archivo" Width="140" DisplayMemberBinding="{Binding NombreArchivo}" />
+                        <GridViewColumn Header="N° P" Width="55" DisplayMemberBinding="{Binding NumProceso}" />
+                        <GridViewColumn Header="Arribo" Width="55" DisplayMemberBinding="{Binding Tarribo}" />
+                        <GridViewColumn Header="Offset" Width="55" DisplayMemberBinding="{Binding Offset}" />
+                        <GridViewColumn Header="Cant. UA" Width="65" DisplayMemberBinding="{Binding CantidadUA}" />
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -71,11 +72,16 @@
 
         </WrapPanel>
 
-        <WrapPanel Orientation="Vertical">
-            <Label HorizontalAlignment="Left" Content="Información general" Style="{StaticResource lblDesign}" FontSize="22" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="35,10,0,0" Width="250" FontWeight="Bold"/>
+        <WrapPanel Height="59">
+            <Canvas Height="145">
+                <Label HorizontalAlignment="Left" Content="Indicadores del sistema:" Style="{StaticResource lblDesign}" FontSize="22" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="270" FontWeight="Bold" Canvas.Left="23" Canvas.Top="7"/>
+                <Label HorizontalAlignment="Left" x:Name="fragInterna" Content="" Style="{StaticResource lblDesign}" FontSize="17" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="940" FontWeight="Bold" Canvas.Left="23" Canvas.Top="49"/>
 
-            <TextBlock x:Name="info_adicional" TextWrapping="Wrap" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,10,0,0" Width="1000" FontWeight="Bold"></TextBlock>
+                <local:UserControl3 x:Name="FragExterna" Width="940" Height="42" Canvas.Left="23" Canvas.Top="93" />
+                <local:UserControl2 x:Name="DatosyMeta" Width="940" Height="42" Canvas.Left="23" Canvas.Top="140" />
+            </Canvas>
         </WrapPanel>
+
 
     </WrapPanel>
 

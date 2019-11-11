@@ -446,7 +446,7 @@ namespace FireSim
             }
         }
 
-        public void getFragInt(ref int fragint, int cnt)
+        public void getFragInt(ref int fragint, ref int cnt)
         {
 
             for (int i = 0; i < GetCantBloques(); i++)
