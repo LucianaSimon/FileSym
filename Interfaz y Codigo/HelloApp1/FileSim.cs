@@ -133,7 +133,7 @@ namespace FireSim
 
         public void SimularSiguienteOp()
         {
-            if (GetContadorOp() < GetContadorOp())
+            if (GetContadorOp() < GetCantidadOp())
             {
                 SimularOp(GetContadorOp());
                 SetContadorOp(GetContadorOp() + 1);
@@ -187,7 +187,15 @@ namespace FireSim
                     }
                 case "WRITE":
                     {
-                        tSimulacion += Write(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
+                        try
+                        {
+                            tSimulacion += Write(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error: " + e);
+                        }
+                        
                         break;
                     }
 
@@ -217,6 +225,7 @@ namespace FireSim
                     indicador.tipoOp = 'N';
                     indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tGestionTotal + indicador.tEspera;
                     tOP = indicador.tGestionTotal + indicador.tLectoEscritura;
+                    indicadoresOP.Add(indicador);
                 }
             }
             else //si el archivo ya esta creado
@@ -283,12 +292,13 @@ namespace FireSim
                         }
                     }
 
-                    indicador.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                    indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
                     indicador.tLectoEscritura = (fin - inicio) * disp.GetTescritura();
                     indicador.tSatisfaccion = indicador.tGestionTotal + indicador.tEspera + indicador.tLectoEscritura;
                     indicador.tipoOp = 'W';
-                    indicadoresOP.Add(indicador);
+
                     tOP = indicador.tSatisfaccion - indicador.tEspera;
+                    indicadoresOP.Add(indicador);
                 }
                 else
                 {
@@ -353,12 +363,14 @@ namespace FireSim
                         }
                     }
 
-                    indicador.tEspera = tSimulacion - TablaOperaciones[GetContadorOp()].Tarribo;
+                    indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
                     indicador.tLectoEscritura = (fin - inicio) * disp.GetTlectura();
                     indicador.tSatisfaccion =  indicador.tGestionTotal + indicador.tEspera + indicador.tLectoEscritura;
                     indicador.tipoOp = 'R';
-                    indicadoresOP.Add(indicador);
+                    
                     tOP = indicador.tSatisfaccion - indicador.tEspera;
+                    
+                    indicadoresOP.Add(indicador);
                 }
                 else // Si el archivo esta abierto x otro proceso --> lo agrego a la cola de espera
                 {
@@ -398,10 +410,19 @@ namespace FireSim
                     disp.CambiarEstadoReserva(numBloque, false);
                 }
 
+                Indicadores indicador = new Indicadores();
+
+                indicador.tLectoEscritura = 0;
+                indicador.tGestionTotal = disp.GetTprocesamient();
+                indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
+                indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tEspera + indicador.tGestionTotal;
+                indicador.tipoOp = 'D';
+
+                indicadoresOP.Add(indicador);
+
+                tOP = indicador.tLectoEscritura + indicador.tGestionTotal;
                 // Lo quito de la tabla de archivos
                 TablaArchivos.RemoveAt(posArch);
-                tOP = disp.GetTprocesamient();
-
             }
             else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo se encuentra abierto por algun proceso, lo agrego a la cola de espera
             {
@@ -427,10 +448,15 @@ namespace FireSim
 
                 indicador.tGestionTotal = disp.GetTprocesamient(); //DUDA lu: no se si esto esta bien!
                 indicador.tipoOp = 'O';
+                indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
+                indicador.tLectoEscritura = 0;
+                indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tGestionTotal + indicador.tEspera;
+                tOP = indicador.tLectoEscritura + indicador.tGestionTotal;
+
+                indicadoresOP.Add(indicador);
 
                 TablaArchivos[posArch].setEstado(processID);
-                tOP = disp.GetTprocesamient();
-                // Se agrega a la lista de indicadores de operaciones los indicadores de esta operacion
+                
             }
             else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo ya se encuentra abierto, agrego esta operacion a la cola de espera
             {
@@ -456,11 +482,14 @@ namespace FireSim
 
                 indicador.tGestionTotal = disp.GetTprocesamient(); //DUDA lu: no se si esto esta bien!
                 indicador.tipoOp = 'C';
+                indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
+                indicador.tLectoEscritura = 0;
+                indicador.tSatisfaccion = indicador.tEspera + indicador.tLectoEscritura + indicador.tGestionTotal;
+                tOP = indicador.tGestionTotal + indicador.tLectoEscritura;
+
+                indicadoresOP.Add(indicador);
 
                 TablaArchivos[posArch].setEstado(-1);
-
-                tOP = disp.GetTprocesamient();
-           
             }
             else if (TablaArchivos[posArch].getEstado() != -processID) // si el archivo lo tiene abierto otro proceso, agrego esta operacion a la cola de espera
             {
@@ -541,6 +570,109 @@ namespace FireSim
             return Tmin;
         }
 
+        public bool Find(List<int> cola, int val)
+        {
+            for (int i = 0; i < cola.Count; i++)
+            {
+                if (cola[i] == val)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Dictionary<string, object> Resultados()
+        {
+            Dictionary<string, object> res = new Dictionary<string, object>();
+
+            float fragInt = 0;
+            float fragExt = 0;
+            int datos = 0;
+            int metadatos = 0;
+            int aux1 = 0;
+            int cnt = 0;
+
+            float porDatos;
+            float porMetadatos;
+            float tiempoGestion = 0;
+            int tMaxC, tMaxO, tMaxN, tMaxD, tMaxR, tMaxW;
+            int tMinC, tMinO, tMinN, tMinD, tMinR, tMinW;
+            float tEsperaProm = 0;
+
+
+            // Fragmentacion Interna es la cantidad de espacio libre en los bloques reservados, dividido la cantidad total de bloques reservados 
+            disp.getFragInt(ref aux1, ref cnt);
+            fragInt = aux1 / (aux1 + cnt);
+
+            // Fragmentacion Externa es la cantidad de espacio libre en uA, dividido el tamaño total del dispositivo en uA
+            fragExt = (disp.getFragExt() * disp.GetTamBloques()) / disp.GetTamDispositivo();
+
+            disp.datosMetadatos(ref datos, ref metadatos);
+
+            // Porcentaje de Datos es la cantidad de uA de datos dividido la cantidad de uA ocuapadas total
+            porDatos = (float)datos / (datos + metadatos);
+
+            // Porcentaje de Metadatos es la cantidad de uA de metadatos dividido la cantidad de uA ocupadas total
+            porMetadatos = (float)metadatos / (datos + metadatos);
+            
+            for (int i = 0; i < indicadoresOP.Count; i++)
+            {
+                tiempoGestion += indicadoresOP[i].tGestionTotal;
+            }
+
+            // El % de tiempo consumido en gestion es el tiempo de gestion total dividido el tiempo total de simulacion
+            tiempoGestion = tiempoGestion / tSimulacion;
+
+            // Calculos tMax y tMin para cada tipo de operacion
+            tMaxC = ObtenerTmax('C');
+            tMinC = ObtenerTmin('C');
+            tMaxD = ObtenerTmax('D');
+            tMinD = ObtenerTmin('D');
+            tMaxN = ObtenerTmax('N');
+            tMinN = ObtenerTmin('N');
+            tMaxO = ObtenerTmax('O');
+            tMinO = ObtenerTmin('O');
+            tMaxR = ObtenerTmax('R');
+            tMinR = ObtenerTmin('R');
+            tMaxW = ObtenerTmax('W');
+            tMinW = ObtenerTmin('W');
+
+            for (int i=0; i<indicadoresOP.Count; i++)
+            {
+                tEsperaProm += indicadoresOP[i].tEspera;
+            }
+
+            tEsperaProm = tEsperaProm / indicadoresOP.Count;
+
+            // -------- Indicadores del Sistema --------
+            res.Add("fragInt", fragInt);
+            res.Add("fragExt", fragExt);
+            res.Add("%datos", porDatos);
+            res.Add("%metadatos", porMetadatos);
+            res.Add("tGestion", tiempoGestion);
+            res.Add("tEspera", tEsperaProm);
+            res.Add("tMaxC", tMaxC);
+            res.Add("tMinC", tMinC);
+            res.Add("tMaxO", tMaxO);
+            res.Add("tMinO", tMinO);
+            res.Add("tMaxN", tMaxN);
+            res.Add("tMinN", tMinN);
+            res.Add("tMaxD", tMaxD);
+            res.Add("tMinD", tMinD);
+            res.Add("tMaxR", tMaxR);
+            res.Add("tMinR", tMinR);
+            res.Add("tMaxW", tMaxW);
+            res.Add("tMinW", tMinW);
+            res.Add("tSimulacion", tSimulacion);
+
+            // -------- Indicadores por Operacion --------
+            res.Add("IndicadoresOP", indicadoresOP);
+
+
+            return res;
+        }
+
         /**
          * Getters y Setters
         **/
@@ -619,8 +751,8 @@ namespace FireSim
                         // Reservo 2 bloques al final para la lista y lo marco lleno de uA de Burocracia
                         disp.CambiarEstadoReserva(disp.GetCantBloques() - 2, true);
                         disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 2, disp.GetTamBloques());
-                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 2, true);
-                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 2, disp.GetTamBloques());
+                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 1, true);
+                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 1, disp.GetTamBloques());
 
                         break;
                     }
@@ -648,17 +780,7 @@ namespace FireSim
             return TablaOperaciones;
         }
 
-        public bool Find(List<int> cola, int val)
-        {
-            for (int i=0; i<cola.Count; i++)
-            {
-                if (cola[i] == val)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        
     }
 }
 
