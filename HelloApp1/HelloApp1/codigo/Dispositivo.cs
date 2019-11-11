@@ -25,7 +25,7 @@ namespace FireSim
         private int cantBloques;
         private Bloque[] TablaBloques; //arreglo fijo, dispositivo no puede crecer en tamaño fisico
 
-        public Dispositivo(int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, int tProcesamiento)
+        public Dispositivo(int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, int tProcesamiento)
         {
             //seteamos los parametros de entrada
             this.SetTlectura(tLectura);

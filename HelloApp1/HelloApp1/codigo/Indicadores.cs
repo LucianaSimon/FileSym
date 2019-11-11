@@ -9,7 +9,7 @@ namespace FireSim
         public int tSatisfaccion { get; set; }
         public int tLectoEscritura { get; set; }
         public int tGestionTotal { get; set; }
-        public int tEspera { get; set; }
+        public int tEspera { get; set; } // @Fede, hay un error en cuando la primer operacion no llega en tiempo 0, el primer tEspera queda negativo
         public char tipoOp { get; set; } //se usaria para hacer la comparacion de tmax y tmin!!!! 
                                         //almacena el tipo de operacion realizada relacionada con los tiempos 
     }

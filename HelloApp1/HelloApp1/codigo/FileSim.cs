@@ -17,35 +17,29 @@ namespace FireSim
         private Libres adminEspacio;
         private Acceso metodoAcceso;
         private List<Operacion> TablaOperaciones;
-        private List<int> ColaEspera;
-        private int contColaEspera;
         private int opActual;
-                                            //esta lista almacenaria las posiciones en la TablaOperaciones de las operaciones que 
-                                            // no se pudieron realizar todavia (por ejemplo una operacion esta esperando que se cierre un archivo)
-                                             
+        
         private Dispositivo disp;
-        private int ContadorOp;
+
         private List<Archivo> TablaArchivos;
         //c/ string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
         private List<Indicadores> indicadoresOP;
-        private int tSimulacion;
+        private int tSimulacion; 
        
         public FileSim(int tProc, Org orgFisica, Libres admEspacio, Acceso metAcceso,
-                       int tLectura, int tEscritura, int tSeek, int tAcceso, int tamBloques, int tamDispositivo, string ruta)
+                       int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, string ruta)
         {
             //Crea las listas de operaciones, tabla de archivos y la cola de espera (vacias!)
             this.TablaOperaciones = new List<Operacion>();
             this.TablaArchivos = new List<Archivo>();
-            this.ColaEspera = new List<int>();
-            this.SetContadorOp(0);
-            this.contColaEspera = 0;
             this.opActual = 0;
+            
 
             // Por cada operacion se agrega un objeto Indicadores a la lista
             this.indicadoresOP = new List<Indicadores>();
 
             //Se crea el dispositivo --> se le pasan los parametros configurables relacionados con disp
-            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tAcceso, tamBloques, tamDispositivo, tProc);
+            this.disp = new Dispositivo(tLectura, tEscritura, tSeek, tamBloques, tamDispositivo, tProc);
 
             //setters parametros fileSim
             SetOrganizacionFisica(orgFisica);
@@ -67,48 +61,57 @@ namespace FireSim
             {
                 // El metodo ReadAllLines de File, cierra el archivo automaticamente.
                 string[] lineas = File.ReadAllLines(ruta);
-            
-                Operacion opAux = new Operacion();
+                string idOp;
+                string name;
+                int numP;
+                int tA;
+                int offs;
+                int cuA;
+                EstadoOp e;
+
                 foreach (var linea in lineas)
                 {
+                    
                     var valores = linea.Split(';');
-                    opAux.NombreArchivo = valores[0];
-                    opAux.IdOperacion = valores[1];
-                    switch (opAux.IdOperacion.ToString())
+                    name = valores[0];
+                    idOp = valores[1];
+                    switch (idOp)
                     {
                         case "N": //N de new
-                            opAux.IdOperacion = "CREATE";
+                            idOp = "CREATE";
                             break;
                         case "C": //C de close
-                            opAux.IdOperacion = "CLOSE";
+                            idOp = "CLOSE";
                             break;
                         case "O": //O de open
-                            opAux.IdOperacion = "OPEN";
+                            idOp = "OPEN";
                             break;
                         case "D": //D de delete
-                            opAux.IdOperacion = "DELETE";
+                            idOp = "DELETE";
                             break;
                         case "W": //W de write 
-                            opAux.IdOperacion = "WRITE";
+                            idOp = "WRITE";
                             break;
                         case "R": //R de read
-                            opAux.IdOperacion = "READ";
+                            idOp = "READ";
                             break;
                     }
-                    opAux.NumProceso = Int32.Parse(valores[2]);
-                    opAux.Tarribo = Int32.Parse(valores[3]);
-                    opAux.Offset = Int32.Parse(valores[4]);
-                    opAux.CantidadUA = Int32.Parse(valores[5]);
-                    TablaOperaciones.Add(opAux);
+                    numP = Int32.Parse(valores[2]);
+                    tA = Int32.Parse(valores[3]);
+                    offs= Int32.Parse(valores[4]);
+                    cuA= Int32.Parse(valores[5]);
+
+                    TablaOperaciones.Add(new Operacion(name, idOp, numP, tA, offs, cuA, EstadoOp.Listo));
                 }
 
                 TablaOperaciones.Sort(new ComparaOp());
-                
+
+                Console.WriteLine("Archivo Ordenado");
                 /*  Bloque solo de testeo de metodo Sort*/
                 foreach(Operacion op in TablaOperaciones)
                 {
-                    Console.WriteLine(op.NombreArchivo + " " + op.IdOperacion + " " + op.NumProceso + " " +
-                        op.Tarribo + " " + op.Offset + " " + op.CantidadUA);
+                    Console.WriteLine(op.NombreArchivo + "\t" + op.IdOperacion + "\t" + op.NumProceso + "\t" +
+                        op.Tarribo + "\t" + op.Offset + "\t" + op.CantidadUA);
                 }
 
             }
@@ -133,51 +136,60 @@ namespace FireSim
 
         public void SimularSiguienteOp()
         {
-            if (GetContadorOp() < GetCantidadOp())
+
+            opActual = opLista();
+            if (opActual != -1)
             {
-                SimularOp(GetContadorOp());
-                SetContadorOp(GetContadorOp() + 1);
+                SimularOp(opActual);
             }
-            else if (contColaEspera < ColaEspera.Count)
+            else
             {
-                SimularOp(contColaEspera);
-                contColaEspera++;
+                opActual = opEspera();
+                if (opActual != -1)
+                {
+                    SimularOp(opActual);
+                }
+                else
+                {
+                    opActual = -1;
+                }
             }
-            opActual++;
+
         }
 
 
-        public void SimularOp(int op)
+        public int SimularOp(int op)
         {
             Operacion nextOp = TablaOperaciones[op];
+            int tOp = 0;
             // Todos los metodos deben devolver el tiempo que tardo en ejecutarse la operacion
             switch (nextOp.IdOperacion)
             {
                 case "CREATE":
                     {
-                        tSimulacion += Create(nextOp.NumProceso, nextOp.CantidadUA, nextOp.NombreArchivo);
+                        tOp += Create(nextOp.NumProceso, nextOp.CantidadUA, nextOp.NombreArchivo);
                         break;
                     }
                 case "DELETE":
                     {
-                        tSimulacion += Delete(nextOp.NombreArchivo);
+                        tOp += Delete(nextOp.NombreArchivo);
                         break;
                     }
                 case "OPEN":
                     {
-                        tSimulacion += Open(nextOp.NombreArchivo, nextOp.NumProceso);
+                        tOp += Open(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
                 case "CLOSE":
                     {
-                        tSimulacion += Close(nextOp.NombreArchivo, nextOp.NumProceso);
+                        tOp += Close(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
                 case "READ":
                     {
                         try
                         {
-                            tSimulacion += Read(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
+                            tOp += Read(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
                         }
                         catch (Exception e)
                         {
@@ -189,7 +201,7 @@ namespace FireSim
                     {
                         try
                         {
-                            tSimulacion += Write(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
+                            tOp += Write(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
                         }
                         catch (Exception e)
                         {
@@ -205,8 +217,12 @@ namespace FireSim
                         break;
                     }
             }
-            
+
+            tSimulacion += tOp;
+            return tOp;
+
         }
+       
         public int Create(int idProc, int cant_uA, string name)
         {
             int tOP = 0;
@@ -226,11 +242,15 @@ namespace FireSim
                     indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tGestionTotal + indicador.tEspera;
                     tOP = indicador.tGestionTotal + indicador.tLectoEscritura;
                     indicadoresOP.Add(indicador);
+                    Console.WriteLine("Archivo " + archivo.getNombre() + " creado");
+
+                    TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
                 }
             }
             else //si el archivo ya esta creado
             {
                 Console.WriteLine("Error: El archivo ya se encuentra creado!");
+                TablaOperaciones[opActual].setEstado(EstadoOp.Error); // Cambia el estado a Error automaticamente, no se puede crear un archivo ya existente
             }
             return tOP;
         }
@@ -299,13 +319,11 @@ namespace FireSim
 
                     tOP = indicador.tSatisfaccion - indicador.tEspera;
                     indicadoresOP.Add(indicador);
+                    TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
                 }
                 else
                 {
-                    if (!Find(ColaEspera, GetContadorOp()))
-                    {
-                        ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
-                    }
+                    cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
                 }
             }
 
@@ -371,13 +389,11 @@ namespace FireSim
                     tOP = indicador.tSatisfaccion - indicador.tEspera;
                     
                     indicadoresOP.Add(indicador);
+                    TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
                 }
                 else // Si el archivo esta abierto x otro proceso --> lo agrego a la cola de espera
                 {
-                    if (!Find(ColaEspera, GetContadorOp()))
-                    {
-                        ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
-                    }
+                    cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
                 }
             }
             return tOP;
@@ -423,13 +439,11 @@ namespace FireSim
                 tOP = indicador.tLectoEscritura + indicador.tGestionTotal;
                 // Lo quito de la tabla de archivos
                 TablaArchivos.RemoveAt(posArch);
+                TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
             }
             else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo se encuentra abierto por algun proceso, lo agrego a la cola de espera
             {
-                if (!Find(ColaEspera, GetContadorOp()))
-                {
-                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
-                }
+                cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
             }
 
             return tOP;
@@ -456,14 +470,13 @@ namespace FireSim
                 indicadoresOP.Add(indicador);
 
                 TablaArchivos[posArch].setEstado(processID);
-                
+
+                Console.WriteLine("Archivo " + TablaArchivos[posArch].getNombre() + " abierto por " + processID);
+                TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
             }
-            else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo ya se encuentra abierto, agrego esta operacion a la cola de espera
+            else  // Si el archivo ya se encuentra abierto o no fue creado, agrego esta operacion a la cola de espera
             {
-                if (!Find(ColaEspera, GetContadorOp()))
-                {
-                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
-                }
+                cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
             }
 
             return tOP;
@@ -490,13 +503,13 @@ namespace FireSim
                 indicadoresOP.Add(indicador);
 
                 TablaArchivos[posArch].setEstado(-1);
+
+                Console.WriteLine("Archivo " + TablaArchivos[posArch].getNombre() + " cerrado por " + processID);
+                TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
             }
-            else if (TablaArchivos[posArch].getEstado() != -processID) // si el archivo lo tiene abierto otro proceso, agrego esta operacion a la cola de espera
+            else // si el archivo lo tiene abierto otro proceso o no fue creado, agrego esta operacion a la cola de espera
             {
-                if (!Find(ColaEspera, GetContadorOp()))
-                {
-                    ColaEspera.Add(GetContadorOp()); // Si no es asi, lo agrego a la cola de espera
-                }
+                cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
             }
 
             return tOP;
@@ -568,18 +581,6 @@ namespace FireSim
             }
 
             return Tmin;
-        }
-
-        public bool Find(List<int> cola, int val)
-        {
-            for (int i = 0; i < cola.Count; i++)
-            {
-                if (cola[i] == val)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public Dictionary<string, object> Resultados()
@@ -673,6 +674,52 @@ namespace FireSim
             return res;
         }
 
+        /*
+         * Devuelve el indice de la primer operacion en estado Listo
+         */
+        public int opLista()
+        {
+            for (int i=0; i<GetCantidadOp(); i ++)
+            {
+                if (TablaOperaciones[i].estado == EstadoOp.Listo)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /*
+         * Devuelve el indice de la primer operacion en estado Espera
+         */
+        public int opEspera()
+        {
+            for (int i = 0; i < GetCantidadOp(); i++)
+            {
+                if (TablaOperaciones[i].estado == EstadoOp.Espera)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private void cambiarEstado(int i)
+        {
+            if (TablaOperaciones[i].estado == EstadoOp.Listo) // Si estaba en Listo, se la mueve a espera
+            {
+                TablaOperaciones[i].setEstado(EstadoOp.Espera);
+                Console.WriteLine("Operacion " + (opActual + 1) + " movida a cola de espera");
+                SimularSiguienteOp();   // Se Simula la siguiente operacion en lista automaticamente
+            }
+            else if (TablaOperaciones[i].estado == EstadoOp.Espera) // Si estaba en espera, se marca como realizado (o como que no se puede realizar) y se saca de la lista de espera
+            {
+                Console.WriteLine("Operacion " + (opActual + 1) + ": error, no se puede ejecutar");
+                TablaOperaciones[i].setEstado(EstadoOp.Error);
+            }
+        }
         /**
          * Getters y Setters
         **/
@@ -687,20 +734,11 @@ namespace FireSim
         {
             return this.TablaOperaciones.Count;
         }
-
-        public int GetContadorOp()
-        {
-            return this.ContadorOp;
-        }
-
-        public void SetContadorOp(int value)
-        {
-            ContadorOp = value;
-        }
-
+        
+        // @Fede, para que es esta funcion?
         public Operacion GetOperacion() //devuelve la operacion actual?
         {
-            return (Operacion)this.TablaOperaciones[this.ContadorOp];
+            return (Operacion)this.TablaOperaciones[this.opActual];
         }
 
         public Dispositivo GetDispositivo()

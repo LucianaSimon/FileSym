@@ -170,6 +170,9 @@
     <Resource Include="Font\Ubuntu-MI.ttf" />
     <Resource Include="Font\Ubuntu-R.ttf" />
     <Resource Include="Font\Ubuntu-RI.ttf" />
+    <None Include="Datos-O-C.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

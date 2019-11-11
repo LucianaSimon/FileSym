@@ -18,7 +18,7 @@ namespace HelloApp1
     public partial class Window1 : Window
     {
         FileSim simulador = new FileSim(Globales.tProcesamiento, Globales.orgFisica, Globales.admLibre, Globales.modoAcceso,
-            Globales.tLectura, Globales.tEscritura, Globales.tSeek, Globales.tAcceso, Globales.tamBloque, Globales.tamDispositivo, Globales.rutaArchivo);
+            Globales.tLectura, Globales.tEscritura, Globales.tSeek, Globales.tamBloque, Globales.tamDispositivo, Globales.rutaArchivo);
 
         int pagActual = 0;
         int opActual = 0; //este atributo quedara reemplazada x simulador.GetContadorOp
