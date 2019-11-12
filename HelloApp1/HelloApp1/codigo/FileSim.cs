@@ -402,7 +402,7 @@ namespace FireSim
             int posArch = BuscaArch(nameArchivo); //busca si existe el arhivo
   
             // Corroboro que el archivo se encuentre en la tabla (por nombre) y que se encuentre cerrado
-            if ( posArch != -1 && TablaArchivos[posArch].getEstado() == -1) //Estado -1 significa que el archivo est· cerrado
+            if ( posArch != -1 && TablaArchivos[posArch].getEstado() == -1) //Estado -1 significa que el archivo est√° cerrado
             {
                 // Dejo cada bloque como libre
                 for (int j=0; j<TablaArchivos[posArch].getTablaDireccion().Count; j++)
@@ -527,7 +527,7 @@ namespace FireSim
         }
 
 
-        // FunciÛn que te busca un archivo en la Tabla por el nombre
+        // Funci√≥n que te busca un archivo en la Tabla por el nombre
         public int BuscaArch(string nameArchivo)
         {
             int posArch = -1;
@@ -540,7 +540,7 @@ namespace FireSim
                 }
             }
 
-            return posArch; //Si devuelve -1 es que no est· en la tabla
+            return posArch; //Si devuelve -1 es que no est√° en la tabla
         }
 
         public int ObtenerTmax(char tipo) //funcion para obtener el maximo dependiento el tiempo de operacion
@@ -602,7 +602,7 @@ namespace FireSim
             disp.getFragInt(ref aux1, ref cnt);
             fragInt = aux1 / (aux1 + cnt);
 
-            // Fragmentacion Externa es la cantidad de espacio libre en uA, dividido el tamaÒo total del dispositivo en uA
+            // Fragmentacion Externa es la cantidad de espacio libre en uA, dividido el tama√±o total del dispositivo en uA
             fragExt = (disp.getFragExt() * disp.GetTamBloques()) / disp.GetTamDispositivo();
 
             disp.datosMetadatos(ref datos, ref metadatos);
@@ -647,6 +647,8 @@ namespace FireSim
             res.Add("fragExt", fragExt);
             res.Add("%datos", porDatos);
             res.Add("%metadatos", porMetadatos);
+            res.Add("datos", datos);
+            res.Add("metadatos", metadatos);
             res.Add("tGestion", tiempoGestion);
             res.Add("tEspera", tEsperaProm);
             res.Add("tMaxC", tMaxC);
