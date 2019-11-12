@@ -24,6 +24,7 @@ namespace FireSim
                 Console.WriteLine(op.ToString());
             }
 
+            
             Console.WriteLine("Resultados");
             foreach (var i in simulador.Resultados())
             {
@@ -42,6 +43,7 @@ namespace FireSim
                 }
                 
             }
+            
         }
     }
 }

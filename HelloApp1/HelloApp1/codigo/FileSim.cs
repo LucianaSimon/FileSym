@@ -24,8 +24,9 @@ namespace FireSim
         private List<Archivo> TablaArchivos;
         //c/ string NombreArchivo se tiene asociado una estructura Indicadores que almacena los resultados de la simulacion
         private List<Indicadores> indicadoresOP;
-        private int tSimulacion; 
-       
+        private int tSimulacion;
+
+        private List<int> bloquesModificados;
         public FileSim(int tProc, Org orgFisica, Libres admEspacio, Acceso metAcceso,
                        int tLectura, int tEscritura, int tSeek, int tamBloques, int tamDispositivo, string ruta)
         {
@@ -50,7 +51,7 @@ namespace FireSim
             CargarOperaciones(ruta);
 
             this.tSimulacion = 0;
-
+            this.bloquesModificados = new List<int>();
         }
 
         private void CargarOperaciones(string ruta)
@@ -239,6 +240,9 @@ namespace FireSim
                     indicadoresOP.Add(indicador);
                     Console.WriteLine("Archivo " + archivo.getNombre() + " creado");
 
+                    bloquesModificados = archivo.getTablaDireccion();   // agrego la tabla de direcciones
+                    bloquesModificados.AddRange(archivo.getTablaIndices()); // en caso de ser indexada agrego la tabla de indices
+
                     TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
                 }
             }
@@ -324,6 +328,11 @@ namespace FireSim
                     Console.WriteLine("Archivo " + arch.getNombre() + " escrito desde bloque " + inicio + " hasta " + (fin-1));
                     tOP = indicador.tSatisfaccion - indicador.tEspera;
                     indicadoresOP.Add(indicador);
+                    
+                    bloquesModificados = arch.getTablaDireccion();   // agrego la tabla de direcciones
+                    bloquesModificados.AddRange(arch.getTablaIndices()); // en caso de ser indexada agrego la tabla de indices
+
+
                     TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
                 }
                 else
@@ -400,6 +409,10 @@ namespace FireSim
                     Console.WriteLine("Archivo " + arch.getNombre() + " leido desde bloque " + inicio + " hasta " + (fin-1));
                     indicadoresOP.Add(indicador);
                     TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
+
+                    bloquesModificados = arch.getTablaDireccion();   // agrego la tabla de direcciones
+                    bloquesModificados.AddRange(arch.getTablaIndices()); // en caso de ser indexada agrego la tabla de indices
+
                 }
                 else // Si el archivo esta abierto x otro proceso --> lo agrego a la cola de espera
                 {
@@ -452,6 +465,10 @@ namespace FireSim
                 Console.WriteLine("Archivo " + TablaArchivos[posArch].getNombre() + " eliminado");
                 tOP = indicador.tLectoEscritura + indicador.tGestionTotal;
                 // Lo quito de la tabla de archivos
+
+                bloquesModificados = TablaArchivos[posArch].getTablaDireccion();   // agrego la tabla de direcciones
+                bloquesModificados.AddRange(TablaArchivos[posArch].getTablaIndices()); // en caso de ser indexada agrego la tabla de indices
+
                 TablaArchivos.RemoveAt(posArch);
                 TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
             }
@@ -581,7 +598,7 @@ namespace FireSim
 
         public int ObtenerTmin(char tipo) //funcion que devuelve el minimo dependiento el tiempo de operacion
         {
-            int Tmin = 0;
+            int Tmin = 10000;
 
             for (int i = 0; i < indicadoresOP.Count; i++)
             {
@@ -618,10 +635,10 @@ namespace FireSim
 
             // Fragmentacion Interna es la cantidad de espacio libre en los bloques reservados, dividido la cantidad total de bloques reservados 
             disp.getFragInt(ref aux1, ref cnt);
-            fragInt = aux1 / (aux1 + cnt);
+            fragInt = (float)aux1 / (aux1 + cnt); // @Fede, esto es aux1 + cnt abajo? o cnt?
 
             // Fragmentacion Externa es la cantidad de espacio libre en uA, dividido el tamaño total del dispositivo en uA
-            fragExt = (disp.getFragExt() * disp.GetTamBloques()) / disp.GetTamDispositivo();
+            fragExt = (float)(disp.getFragExt() * disp.GetTamBloques()) / disp.GetTamDispositivo();
 
             disp.datosMetadatos(ref datos, ref metadatos);
 
@@ -745,7 +762,6 @@ namespace FireSim
             return this.opActual;
         }
 
-
         public int GetCantidadOp()
         {
             return this.TablaOperaciones.Count;
@@ -837,6 +853,11 @@ namespace FireSim
         public int getTSimulacion()
         {
             return this.tSimulacion;
+        }
+
+        public List<int> getBloquesModificados()
+        {
+            return this.bloquesModificados;
         }
     }
 }

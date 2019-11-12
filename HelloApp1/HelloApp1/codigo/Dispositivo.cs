@@ -486,12 +486,9 @@ namespace FireSim
                 {
                     if ((TablaBloques[i].uAOcupado + TablaBloques[i].uABurocracia) < GetTamBloques())
                     {
-                        fragint = GetTamBloques() - (TablaBloques[i].uAOcupado + TablaBloques[i].uABurocracia);
+                        fragint += GetTamBloques() - (TablaBloques[i].uAOcupado + TablaBloques[i].uABurocracia);
                     }
-                    else
-                    {
-                        cnt++;
-                    }
+                    cnt++;
                 }
             }
         }
