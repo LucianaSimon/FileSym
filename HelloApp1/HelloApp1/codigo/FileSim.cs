@@ -228,24 +228,32 @@ namespace FireSim
             if (BuscaArch(name) == -1) //comprueba que el archivo no este creado ya
             {
                 Archivo archivo = new Archivo(name, cant_uA);
-
-                if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
+                try
                 {
-                    Indicadores indicador = new Indicadores();
-                    TablaArchivos.Add(archivo); //agregamos el nuevo archivo a la tabla 
-                    indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), cant_uA);
-                    indicador.tLectoEscritura = 0;
-                    indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
-                    indicador.tipoOp = 'N';
-                    indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tGestionTotal + indicador.tEspera;
-                    tOP = indicador.tGestionTotal + indicador.tLectoEscritura;
-                    indicadoresOP.Add(indicador);
-                    Console.WriteLine("Archivo " + archivo.getNombre() + " creado");
 
-                    bloquesModificados = archivo.getTablaDireccion();   // agrego la tabla de direcciones
-                    bloquesModificados.AddRange(archivo.getTablaIndices()); // en caso de ser indexada agrego la tabla de indices
 
-                    TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
+                    if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref archivo))
+                    {
+                        Indicadores indicador = new Indicadores();
+                        TablaArchivos.Add(archivo); //agregamos el nuevo archivo a la tabla 
+                        indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), cant_uA);
+                        indicador.tLectoEscritura = 0;
+                        indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
+                        indicador.tipoOp = 'N';
+                        indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tGestionTotal + indicador.tEspera;
+                        tOP = indicador.tGestionTotal + indicador.tLectoEscritura;
+                        indicadoresOP.Add(indicador);
+                        Console.WriteLine("Archivo " + archivo.getNombre() + " creado");
+
+                        bloquesModificados = archivo.getTablaDireccion();   // agrego la tabla de direcciones
+                        bloquesModificados.AddRange(archivo.getTablaIndices()); // en caso de ser indexada agrego la tabla de indices
+
+                        TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
+                    }
+                }
+                catch(Exception e)
+                {
+                    TablaOperaciones[opActual].setEstado(EstadoOp.Error); // No se pudo crear por falta de espacio
                 }
             }
             else //si el archivo ya esta creado
@@ -798,8 +806,8 @@ namespace FireSim
                 case Libres.MapadeBits:
                     {
                         // Reservo un bloque al final para el mapa de bits, y lo marco lleno de uA de Burocracia
-                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 1, true);
-                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 1, disp.GetTamBloques());
+                        disp.CambiarEstadoReserva(0, true);
+                        disp.CambiarEstadoBurocracia(0, disp.GetTamBloques());
                         break;
                     }
                 case Libres.ListadeLibres:
@@ -814,10 +822,10 @@ namespace FireSim
                 case Libres.ListadeLibresdePrincipioyCuenta:
                     {
                         // Reservo 2 bloques al final para la lista y lo marco lleno de uA de Burocracia
-                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 2, true);
-                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 2, disp.GetTamBloques());
-                        disp.CambiarEstadoReserva(disp.GetCantBloques() - 1, true);
-                        disp.CambiarEstadoBurocracia(disp.GetCantBloques() - 1, disp.GetTamBloques());
+                        disp.CambiarEstadoReserva(0, true);
+                        disp.CambiarEstadoBurocracia(0, disp.GetTamBloques());
+                        disp.CambiarEstadoReserva(1, true);
+                        disp.CambiarEstadoBurocracia(1, disp.GetTamBloques());
 
                         break;
                     }

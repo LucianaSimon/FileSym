@@ -108,7 +108,8 @@ namespace FireSim
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error: " + e);
+                    throw new Exception("No hay mas espacio de almacenamiento");
+                    // Console.WriteLine("Error: " + e);
                 }
 
                 if (bloquesLibres.Count != 0)
@@ -142,7 +143,8 @@ namespace FireSim
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error: " + e);
+                    throw new Exception("No hay mas espacio de almacenamiento");
+                    // Console.WriteLine("Error: " + e);
                 }
 
                 if (bloquesLibres.Count != 0)
@@ -177,7 +179,8 @@ namespace FireSim
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Error: " + e);
+                        throw new Exception("No hay mas espacio de almacenamiento");
+                        // Console.WriteLine("Error: " + e);
                     }
 
                     if (bloquesLibres.Count != 0) { 
@@ -190,7 +193,8 @@ namespace FireSim
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Error: " + e);
+                            throw new Exception("No hay mas espacio de almacenamiento");
+                            // Console.WriteLine("Error: " + e);
                         }
                     }//sino devuelve false
                 }
