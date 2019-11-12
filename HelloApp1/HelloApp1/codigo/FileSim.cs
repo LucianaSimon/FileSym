@@ -158,38 +158,38 @@ namespace FireSim
         }
 
 
-        public int SimularOp(int op)
+        public void SimularOp(int op)
         {
             Operacion nextOp = TablaOperaciones[op];
-            int tOp = 0;
+
             // Todos los metodos deben devolver el tiempo que tardo en ejecutarse la operacion
             switch (nextOp.IdOperacion)
             {
                 case "CREATE":
                     {
-                        tOp += Create(nextOp.NumProceso, nextOp.CantidadUA, nextOp.NombreArchivo);
+                        tSimulacion += Create(nextOp.NumProceso, nextOp.CantidadUA, nextOp.NombreArchivo);
                         break;
                     }
                 case "DELETE":
                     {
-                        tOp += Delete(nextOp.NombreArchivo);
+                        tSimulacion += Delete(nextOp.NombreArchivo);
                         break;
                     }
                 case "OPEN":
                     {
-                        tOp += Open(nextOp.NombreArchivo, nextOp.NumProceso);
+                        tSimulacion += Open(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
                 case "CLOSE":
                     {
-                        tOp += Close(nextOp.NombreArchivo, nextOp.NumProceso);
+                        tSimulacion += Close(nextOp.NombreArchivo, nextOp.NumProceso);
                         break;
                     }
                 case "READ":
                     {
                         try
                         {
-                            tOp += Read(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
+                            tSimulacion += Read(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
                         }
                         catch (Exception e)
                         {
@@ -201,7 +201,7 @@ namespace FireSim
                     {
                         try
                         {
-                            tOp += Write(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
+                            tSimulacion += Write(nextOp.NombreArchivo, nextOp.NumProceso, nextOp.Offset, nextOp.CantidadUA);
                         }
                         catch (Exception e)
                         {
@@ -217,10 +217,6 @@ namespace FireSim
                         break;
                     }
             }
-
-            tSimulacion += tOp;
-            return tOp;
-
         }
        
         public int Create(int idProc, int cant_uA, string name)
@@ -818,7 +814,10 @@ namespace FireSim
             return TablaOperaciones;
         }
 
-        
+        public int getTSimulacion()
+        {
+            return this.tSimulacion;
+        }
     }
 }
 
