@@ -434,7 +434,7 @@ namespace FireSim
         {          
             int i = 0;  // Para recorrer la tabla de direcciones
             
-            while (cant_uA > 0)
+            while (cant_uA > 0 && i < direcciones.Count)
             {
                 int espacioDisponibleBloque = GetTamBloques() - getTablaBloques()[direcciones[i]].uABurocracia - getTablaBloques()[direcciones[i]].uAOcupado;
                 if (espacioDisponibleBloque >= cant_uA) // Si se puede escribir todo en ese bloque lo escribo
