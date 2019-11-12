@@ -628,8 +628,7 @@ namespace FireSim
             int aux1 = 0;
             int cnt = 0;
 
-            float porDatos;
-            float porMetadatos;
+            
             float tiempoGestion = 0;
             int tMaxC, tMaxO, tMaxN, tMaxD, tMaxR, tMaxW;
             int tMinC, tMinO, tMinN, tMinD, tMinR, tMinW;
@@ -638,18 +637,13 @@ namespace FireSim
 
             // Fragmentacion Interna es la cantidad de espacio libre en los bloques reservados, dividido la cantidad total de bloques reservados 
             disp.getFragInt(ref aux1, ref cnt);
-            fragInt = (float)aux1 / (aux1 + cnt); // @Fede, esto es aux1 + cnt abajo? o cnt?
+            fragInt = ((float)aux1 / (aux1 + cnt))*100; // @Fede, esto es aux1 + cnt abajo? o cnt?
 
             // Fragmentacion Externa es la cantidad de espacio libre en uA, dividido el tamaño total del dispositivo en uA
             fragExt = (float)(disp.getFragExt() * disp.GetTamBloques()) / disp.GetTamDispositivo();
+            fragExt = fragExt * 100;
 
             disp.datosMetadatos(ref datos, ref metadatos);
-
-            // Porcentaje de Datos es la cantidad de uA de datos dividido la cantidad de uA ocuapadas total
-            porDatos = (float)datos / (datos + metadatos);
-
-            // Porcentaje de Metadatos es la cantidad de uA de metadatos dividido la cantidad de uA ocupadas total
-            porMetadatos = (float)metadatos / (datos + metadatos);
             
             for (int i = 0; i < indicadoresOP.Count; i++)
             {
@@ -683,8 +677,6 @@ namespace FireSim
             // -------- Indicadores del Sistema --------
             res.Add("fragInt", fragInt);
             res.Add("fragExt", fragExt);
-            res.Add("%datos", porDatos);
-            res.Add("%metadatos", porMetadatos);
             res.Add("datos", datos);
             res.Add("metadatos", metadatos);
             res.Add("tGestion", tiempoGestion);
