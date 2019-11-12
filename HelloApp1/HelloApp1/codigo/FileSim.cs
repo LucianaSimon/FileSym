@@ -107,6 +107,8 @@ namespace FireSim
 
                 TablaOperaciones.Sort(new ComparaOp());
 
+                this.tSimulacion = getTablaOperaciones()[0].Tarribo; //actualizo el t de incio al t de arribo de la primera op
+
                 Console.WriteLine("Archivo Ordenado");
                 /*  Bloque solo de testeo de metodo Sort*/
                 foreach(Operacion op in TablaOperaciones)
@@ -265,22 +267,23 @@ namespace FireSim
                 {
                     Indicadores indicador = new Indicadores();
                     Archivo arch = TablaArchivos[posArch]; //busco archivo en la tabla
-                    int inicio = (int)Math.Floor((decimal)(offset) / (decimal)(disp.GetTamBloques())); //bloque donde comienza a leerse
-                    int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques())); // @Fede, cambie esto porque sino da no de mas
+                    int inicio = (int)Math.Floor((decimal)(offset) / (decimal)(disp.GetTamBloques())); //bloque donde comienza a escribir
+                    int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques())); // bloque donde termina de escribir
 
                     if (inicio >= arch.getTablaDireccion().Count)
                     {
                         Console.WriteLine("Error: Offset invalido");
                         TablaOperaciones[opActual].setEstado(EstadoOp.Error);
-                        throw new Exception("No se pudo realocar."); // @Fede, en este caso, hay que ponerla en estado Espera o Error?
+                        throw new Exception("No se pudo realocar."); 
 
                     }
 
                     if (fin >= arch.getTablaDireccion().Count && GetOrganizacionFisica() == Org.Contigua) //solo se realoca si es contigua
                     {
-                        if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //PROBAR SI MODIFICA ARCH ASI!!!!!!! Probado lo modifica
+                        if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //en realocar getlibres modifica el archivo
                         {
-                            throw new Exception("No se pudo realocar."); // @Fede, en caso de que no pueda realocar, hay que ponerla en estado Espera o Error?
+                            cambiarEstado(opActual);
+                            throw new Exception("No se pudo realocar."); 
                         }
                     }
                     else if (fin >= arch.getTablaDireccion().Count) //para enlazada e indexada
@@ -598,7 +601,7 @@ namespace FireSim
 
         public int ObtenerTmin(char tipo) //funcion que devuelve el minimo dependiento el tiempo de operacion
         {
-            int Tmin = 10000;
+            int Tmin = indicadoresOP[0].tipoOp;
 
             for (int i = 0; i < indicadoresOP.Count; i++)
             {
