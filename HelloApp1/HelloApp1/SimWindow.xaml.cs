@@ -24,11 +24,11 @@ namespace HelloApp1
         int opActual = 0; //este atributo quedara reemplazada x simulador.GetContadorOp
 
         DispatcherTimer timer = new DispatcherTimer(); //para poder ejecutar operaciones x tiempo
-        
+
         public Window1()
         {
             InitializeComponent();
-            
+
             //Cada cierto tiempo se presiona el boton siguiente operación
             timer.Tick += (s, ev) => btn_SiguientePaso.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
@@ -79,11 +79,11 @@ namespace HelloApp1
                     if (numBloque < simulador.GetDispositivo().GetCantBloques()) //si corresponde dibujar el bloque
                     {
                         Rectangle bloque = new Rectangle();
-                        
+
                         //
 
-                        if(simulador.GetDispositivo().estadoBloque(numBloque) == 0) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //LIBRE
-                        else if(simulador.GetDispositivo().estadoBloque(numBloque) == simulador.GetDispositivo().GetTamBloques()) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF1181A1")); //OCUPADO
+                        if (simulador.GetDispositivo().estadoBloque(numBloque) == 0) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //LIBRE
+                        else if (simulador.GetDispositivo().estadoBloque(numBloque) == simulador.GetDispositivo().GetTamBloques()) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF1181A1")); //OCUPADO
                         else bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#0ddbac"));
 
                         bloque.Width = 20;
@@ -117,14 +117,14 @@ namespace HelloApp1
                             miLienzo.Children.Add(txt1);
                         }
                     }
-                    
+
                 }
             }
         }
 
         private void btn_izq(object sender, RoutedEventArgs e)
         {   //dibuja una pagina antes
-            if(pagActual == 0)
+            if (pagActual == 0)
             {
 
             }
@@ -148,7 +148,7 @@ namespace HelloApp1
                 dibujarBloques(pagActual);
             }
         }
-        
+
 
         private void Button_Click_mostrarConfig(object sender, RoutedEventArgs e)
         {
@@ -267,7 +267,7 @@ namespace HelloApp1
                 dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques) 
             }
 
-            if(simulador.getOpActual() == -1)
+            if (simulador.getOpActual() == -1)
             {
                 lvDataBinding.ItemsSource = simulador.getTablaOperaciones();
 
@@ -297,6 +297,7 @@ namespace HelloApp1
                 DatosyMeta.RefreshData((double)datos, (double)metadatos);   //Para configurar barra de datos y meta
 
                 dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)
+                tSimu.Content = simulador.getTSimulacion() + " UT";
             }
 
         }
@@ -306,26 +307,35 @@ namespace HelloApp1
             //Esta metodo llama a algun metodo de la clase FileSim que realizara la operacion
             //correspondiente, almacenando los resultados.
             //Por ahora solo aumenta una variable global que indica en que operacion estamos.
+            //lvDataBinding.Items.Refresh();
+
             simulador.SimularSiguienteOp();
+            
 
             Spinner.Spin = true;
-            LEjecutando.Content = "Ejecutando operación " + (simulador.getOpActual() + 1) + " de " + simulador.GetCantidadOp();
+            /*if ()
+            {
+                MOSTRAR REALIZA O ERROR SEGUN!
+            }*/
+            LEjecutando.Content = "Realizada la operación " + (simulador.getOpActual() + 1) + " de " + simulador.GetCantidadOp();
 
             //Tambien en la tabla tiene que mostrarse la operacion actual
-            if(simulador.getOpActual() < simulador.GetCantidadOp() && simulador.getOpActual() != -1)
+            if (simulador.getOpActual() < simulador.GetCantidadOp() && simulador.getOpActual() != -1)
             {
+                lvDataBinding.ItemsSource = null;
                 lvDataBinding.ItemsSource = simulador.getTablaOperaciones();
+                
                 lvDataBinding.SelectedItem = lvDataBinding.Items[simulador.getOpActual()];
-                lvDataBinding.UpdateLayout(); // Pre-generates item containers 
+                //lvDataBinding.UpdateLayout(); // Pre-generates item containers 
 
-                var listBoxItem = (ListBoxItem)lvDataBinding
+                /*var listBoxItem = (ListBoxItem)lvDataBinding
                                             .ItemContainerGenerator
                                             .ContainerFromItem(lvDataBinding.SelectedItem);
 
-                listBoxItem.Focus();
+                listBoxItem.Focus();*/
             }
+
             
-            //opActual++;
             tSimu.Content = simulador.getTSimulacion() + " UT";
         }
 
