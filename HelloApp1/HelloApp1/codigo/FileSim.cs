@@ -288,10 +288,16 @@ namespace FireSim
 
                     if (fin >= arch.getTablaDireccion().Count && GetOrganizacionFisica() == Org.Contigua) //solo se realoca si es contigua
                     {
-                        if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //en realocar getlibres modifica el archivo
+                        try
                         {
-                            cambiarEstado(opActual);
-                            throw new Exception("No se pudo realocar."); 
+                            if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //en realocar getlibres modifica el archivo
+                            {
+                                cambiarEstado(opActual);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            TablaOperaciones[opActual].setEstado(EstadoOp.Error); // Cambia el estado a Error automaticamente, no se puede realocar el archivo
                         }
                     }
                     else if (fin >= arch.getTablaDireccion().Count) //para enlazada e indexada
@@ -562,13 +568,18 @@ namespace FireSim
             bool aux = false;
 
             int uArealocar = BloquesRealocar*disp.GetTamBloques();
-
-            if (disp.GetLibres(uArealocar, GetOrganizacionFisica(), ref arch))
+            try
             {
-                indicador.tGestionTotal = BloquesAntes * (disp.GetTprocesamient() + disp.GetTseek()) + disp.TprocesamientoBloquesLibres(GetAdminEspacio(), uArealocar);
-                aux = true;
+                if (disp.GetLibres(uArealocar, GetOrganizacionFisica(), ref arch))
+                {
+                    indicador.tGestionTotal = BloquesAntes * (disp.GetTprocesamient() + disp.GetTseek()) + disp.TprocesamientoBloquesLibres(GetAdminEspacio(), uArealocar);
+                    aux = true;
+                }
             }
-
+            catch (Exception e)
+            {
+                throw new Exception("No hay mas espacio de almacenamiento");
+            }
             return aux;
         }
 
