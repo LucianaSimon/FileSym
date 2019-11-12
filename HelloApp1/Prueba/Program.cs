@@ -7,7 +7,7 @@ namespace FireSim
     {
         static void Main(string[] args)
         {
-            FileSim simulador = new FileSim(2, Org.Contigua, Libres.MapadeBits, Acceso.Directo, 2, 3, 2, 5, 200, "../../../../Datos-O-C.csv");
+            FileSim simulador = new FileSim(2, Org.Contigua, Libres.MapadeBits, Acceso.Directo, 2, 3, 2, 5, 200, "../../../../Datos.csv");
             
             int simulaciones = 0;
 
@@ -17,6 +17,12 @@ namespace FireSim
                 simulaciones++;
             }
             Console.WriteLine("Cantidad Operaciones Simuladas: " + simulaciones + "\r\n");
+
+            Console.WriteLine("Tabla Operaciones Final");
+            foreach(var op in simulador.getTablaOperaciones())
+            {
+                Console.WriteLine(op.ToString());
+            }
 
             Console.WriteLine("Resultados");
             foreach (var i in simulador.Resultados())

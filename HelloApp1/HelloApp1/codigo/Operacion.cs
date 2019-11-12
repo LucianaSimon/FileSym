@@ -7,6 +7,8 @@
  * Estado Error: la operacion no puede realizarse
  */
 
+using System;
+
 public enum EstadoOp { Listo, Espera, Realizado, Error}
 public class Operacion
 {
@@ -42,6 +44,39 @@ public class Operacion
     public void setEstado(EstadoOp e)
     {
        estado = e;
+    }
+    
+    // Solo para debug!!!!!
+    public override string  ToString()
+    {
+        string res;
+        res = this.NombreArchivo + "\t" + this.IdOperacion + "\t" + this.NumProceso + "\t" +
+                        this.Tarribo + "\t" + this.Offset + "\t" + this.CantidadUA + "\t";
+        switch(this.estado)
+        {
+            case EstadoOp.Error:
+                {
+                    res += "Error";
+                    break;
+                }
+            case EstadoOp.Espera:
+                {
+                    res += "Espera";
+                    break;
+                }
+            case EstadoOp.Listo:
+                {
+                    res += "Listo";
+                    break;
+                }
+            case EstadoOp.Realizado:
+                {
+                    res += "Realizado";
+                    break;
+                }
+        }
+
+        return res;
     }
 }
 

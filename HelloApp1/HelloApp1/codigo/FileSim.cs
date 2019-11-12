@@ -110,8 +110,7 @@ namespace FireSim
                 /*  Bloque solo de testeo de metodo Sort*/
                 foreach(Operacion op in TablaOperaciones)
                 {
-                    Console.WriteLine(op.NombreArchivo + "\t" + op.IdOperacion + "\t" + op.NumProceso + "\t" +
-                        op.Tarribo + "\t" + op.Offset + "\t" + op.CantidadUA);
+                    Console.WriteLine(op.ToString());
                 }
 
             }
@@ -260,19 +259,27 @@ namespace FireSim
             {   
                 if (TablaArchivos[posArch].getEstado() == idProc) // Verifico que el proceso que abrio el archivo sea el que lo quiere leer
                 {
-                    int inicio = (int)Math.Floor((decimal)(offset) / (decimal)(disp.GetTamBloques())); //bloque donde comienza a leerse
-                    int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques()));
                     Indicadores indicador = new Indicadores();
                     Archivo arch = TablaArchivos[posArch]; //busco archivo en la tabla
+                    int inicio = (int)Math.Floor((decimal)(offset) / (decimal)(disp.GetTamBloques())); //bloque donde comienza a leerse
+                    int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques())); // @Fede, cambie esto porque sino da no de mas
 
-                    if (fin > arch.getTablaDireccion().Count && GetOrganizacionFisica() == Org.Contigua) //solo se realoca si es contigua
+                    if (inicio >= arch.getTablaDireccion().Count)
                     {
-                        if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //PROBAR SI MODIFICA ARCH ASI!!!!!!!
+                        Console.WriteLine("Error: Offset invalido");
+                        TablaOperaciones[opActual].setEstado(EstadoOp.Error);
+                        throw new Exception("No se pudo realocar."); // @Fede, en este caso, hay que ponerla en estado Espera o Error?
+
+                    }
+
+                    if (fin >= arch.getTablaDireccion().Count && GetOrganizacionFisica() == Org.Contigua) //solo se realoca si es contigua
+                    {
+                        if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //PROBAR SI MODIFICA ARCH ASI!!!!!!! Probado lo modifica
                         {
-                            throw new Exception("No se pudo realocar.");
+                            throw new Exception("No se pudo realocar."); // @Fede, en caso de que no pueda realocar, hay que ponerla en estado Espera o Error?
                         }
                     }
-                    else if (fin > arch.getTablaDireccion().Count) //para enlazada e indexada
+                    else if (fin >= arch.getTablaDireccion().Count) //para enlazada e indexada
                     {
                         indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), fin - arch.getTablaDireccion().Count); 
                     }
@@ -308,11 +315,13 @@ namespace FireSim
                         }
                     }
 
+                    // Escribo los "datos" en el dispositivo!!
+                    disp.Write(offset, cant_uA, arch.getTablaDireccion(), GetOrganizacionFisica());
                     indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
                     indicador.tLectoEscritura = (fin - inicio) * disp.GetTescritura();
                     indicador.tSatisfaccion = indicador.tGestionTotal + indicador.tEspera + indicador.tLectoEscritura;
                     indicador.tipoOp = 'W';
-
+                    Console.WriteLine("Archivo " + arch.getNombre() + " escrito desde bloque " + inicio + " hasta " + (fin-1));
                     tOP = indicador.tSatisfaccion - indicador.tEspera;
                     indicadoresOP.Add(indicador);
                     TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
@@ -321,6 +330,10 @@ namespace FireSim
                 {
                     cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
                 }
+            }
+            else
+            {
+                cambiarEstado(opActual); // Si el archivo no existe cambia el estado a Espera y luego si sigue sin existir a Error
             }
 
             
@@ -341,8 +354,9 @@ namespace FireSim
 
                     int inicio = (int)Math.Floor((decimal)(offset) / (decimal)(disp.GetTamBloques())); //bloque donde comienza a leerse
                     int fin = (int)Math.Ceiling((decimal)(offset + cant_uA) / (decimal)(disp.GetTamBloques()));
-                   
-                    if (fin > arch.getTablaDireccion().Count) // Control de cuanto se quiere leer
+                    
+                    
+                    if (fin > arch.getTablaDireccion().Count || inicio > arch.getTablaDireccion().Count || inicio > fin) // Control de cuanto se quiere leer
                     {
                         throw new Exception("Se quiere leer mas de lo que hay");
                     }
@@ -383,7 +397,7 @@ namespace FireSim
                     indicador.tipoOp = 'R';
                     
                     tOP = indicador.tSatisfaccion - indicador.tEspera;
-                    
+                    Console.WriteLine("Archivo " + arch.getNombre() + " leido desde bloque " + inicio + " hasta " + (fin-1));
                     indicadoresOP.Add(indicador);
                     TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
                 }
@@ -391,6 +405,10 @@ namespace FireSim
                 {
                     cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
                 }
+            }
+            else
+            {
+                cambiarEstado(opActual); // Si el archivo no existe cambia el estado a Espera y luego si sigue sin existir a Error
             }
             return tOP;
         }
@@ -431,7 +449,7 @@ namespace FireSim
                 indicador.tipoOp = 'D';
 
                 indicadoresOP.Add(indicador);
-
+                Console.WriteLine("Archivo " + TablaArchivos[posArch].getNombre() + " eliminado");
                 tOP = indicador.tLectoEscritura + indicador.tGestionTotal;
                 // Lo quito de la tabla de archivos
                 TablaArchivos.RemoveAt(posArch);
@@ -470,7 +488,7 @@ namespace FireSim
                 Console.WriteLine("Archivo " + TablaArchivos[posArch].getNombre() + " abierto por " + processID);
                 TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
             }
-            else  // Si el archivo ya se encuentra abierto o no fue creado, agrego esta operacion a la cola de espera
+            else // Si el archivo ya se encuentra abierto o no fue creado, agrego esta operacion a la cola de espera
             {
                 cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
             }

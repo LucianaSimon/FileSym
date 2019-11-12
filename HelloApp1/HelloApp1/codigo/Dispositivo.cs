@@ -113,8 +113,19 @@ namespace FireSim
 
                 if (bloquesLibres.Count != 0)
                 {
+                    if (arch.getTablaDireccion().Count > 0)
+                    {
+                        for (int i=0; i<arch.getTablaDireccion().Count; i++)
+                        {
+                            TablaBloques[bloquesLibres[i]].uAOcupado = TablaBloques[arch.getTablaDireccion()[i]].uAOcupado;
+                            TablaBloques[bloquesLibres[i]].uABurocracia = TablaBloques[arch.getTablaDireccion()[i]].uABurocracia;
+                            TablaBloques[arch.getTablaDireccion()[i]].uAOcupado = 0;
+                            TablaBloques[arch.getTablaDireccion()[i]].uABurocracia = 0;
+                            TablaBloques[arch.getTablaDireccion()[i]].estadoReserva = false;
+                        }
+                    }
                     ObtuveLibres = true; //si obtuve libres devuelvo verdadero
-                    arch.TablaDireccion_AddRange(bloquesLibres);
+                    arch.setTablaDireccion(bloquesLibres);  // Se mueve todo siempre!
                 }//sino devuelve false
 
             }
@@ -419,6 +430,26 @@ namespace FireSim
             return false;
         }
 
+        public void Write(int inicio, int cant_uA, List<int> direcciones, Org orga)
+        {          
+            int i = 0;  // Para recorrer la tabla de direcciones
+            
+            while (cant_uA > 0)
+            {
+                int espacioDisponibleBloque = GetTamBloques() - getTablaBloques()[direcciones[i]].uABurocracia - getTablaBloques()[direcciones[i]].uAOcupado;
+                if (espacioDisponibleBloque >= cant_uA) // Si se puede escribir todo en ese bloque lo escribo
+                {
+                    getTablaBloques()[direcciones[i]].uAOcupado += cant_uA;
+                    cant_uA = 0;
+                }
+                else
+                {
+                    getTablaBloques()[direcciones[i]].uAOcupado += espacioDisponibleBloque;
+                    cant_uA = cant_uA - espacioDisponibleBloque;
+                }
+                i++;
+            }
+        }
         public int getFragExt()
         {
             int cnt = 0;
