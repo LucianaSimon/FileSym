@@ -6,8 +6,8 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:HelloApp1"
         mc:Ignorable="d"
-        Title="Resultados" Height="400" Width="600">
-    <WrapPanel Orientation="Vertical">
+        Title="Resultados" Height="250" Width="600">
+    <Canvas>
         <DockPanel Width="600">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Archivo">
@@ -16,10 +16,10 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Label HorizontalAlignment="Left" Content="Resultados:" Style="{StaticResource lblDesign}" FontSize="22" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="25,10,0,0" Width="250" FontWeight="Bold"/>
-        <TextBlock x:Name="info_resultados" Height="120" TextWrapping="Wrap" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="15,10,0,0" Width="560" FontWeight="Bold"></TextBlock>
-        
-        <local:UserControl1 x:Name="grafico" Width="350" Height="160" />
+        <Label HorizontalAlignment="Left" Content="Indicadores del sistema:" Style="{StaticResource lblDesign}" FontSize="22" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="294" FontWeight="Bold" Canvas.Left="25" Canvas.Top="26"/>
+        <TextBlock x:Name="info_resultados" Height="120" TextWrapping="Wrap" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="560" FontWeight="Bold" Canvas.Left="25" Canvas.Top="66"/>
 
-    </WrapPanel>
+        <local:UserControl1 x:Name="grafico" Width="150" Height="150" Canvas.Left="403" Canvas.Top="49" />
+
+    </Canvas>
 </Window>

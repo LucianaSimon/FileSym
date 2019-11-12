@@ -10,13 +10,13 @@
     <Grid>
         <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="None">
             <lvc:CartesianChart.AxisX>
-                <lvc:Axis LabelFormatter="{Binding Formatter}" />
+                <lvc:Axis LabelFormatter="{Binding Formatter}"/>
             </lvc:CartesianChart.AxisX>
             <lvc:CartesianChart.DataTooltip>
                 <lvc:DefaultTooltip SelectionMode="SharedYValues"></lvc:DefaultTooltip>
             </lvc:CartesianChart.DataTooltip>
             <lvc:CartesianChart.AxisY>
-                <lvc:Axis Title="" Labels="{Binding Labels}"/>
+                <lvc:Axis Title="" Labels="{Binding Labels}" ShowLabels="False"/>
             </lvc:CartesianChart.AxisY>
         </lvc:CartesianChart>
     </Grid>

@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:HelloApp1"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="Simulando..." Height="640" Width="1024" WindowStartupLocation="CenterScreen" Topmost="True" ResizeMode="CanMinimize">
+        Title="Simulando..." Height="640" Width="1050" WindowStartupLocation="CenterScreen" Topmost="True" ResizeMode="CanMinimize">
 
     <WrapPanel Orientation="Vertical">
 
 
-        <WrapPanel>
+        <WrapPanel Width="1044">
             <fa:ImageAwesome x:Name="Spinner" Icon="Spinner" Spin="True" Margin="25,5,0,0" SpinDuration="3" Width="19" Foreground="#ff422c"/>
             <Label x:Name="LEjecutando" Content="" Style="{StaticResource lblDesign}" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="1,10,0,0" Width="266" FontWeight="Bold"/>
 
@@ -22,24 +22,46 @@
             <Label Content="Tiempo (seg)" Style="{StaticResource lblDesign}" FontSize="12" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Margin="0,10,0,0" Width="83" FontWeight="Bold"/>
             <TextBox x:Name="tTiempoS" PreviewTextInput="NumberValidationTextBox" Height="25" TextWrapping="Wrap" Text="2" Width="26" Margin="0,10,10,0" FontFamily="/HelloApp1;component/Font/#Ubuntu"/>
 
-            <Button x:Name="btn_SiguientePaso" Content="Siguiente operación" Width="125" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="85,10,15,0" Height="30" FontWeight="Bold" Click="Button_Click" IsEnabled="False"/>
+            <Button x:Name="btn_SiguientePaso" Content="Siguiente operación" Width="125" FontFamily="/HelloApp1;component/Font/#Ubuntu" Margin="115,10,15,0" Height="30" FontWeight="Bold" Click="Button_Click" IsEnabled="False"/>
 
             <Border BorderBrush="#FF1181A1" BorderThickness="1" Margin="5,10,0,0" Height="1" Width="1000"/>
 
         </WrapPanel>
 
         <WrapPanel Orientation="Horizontal" Width="1024">
-            <ListView Margin="25,5,0,0" Width="460" Height="350" Name="lvDataBinding" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="15">
+            <ListView Margin="5,5,0,0" Width="505" Height="350" Name="lvDataBinding" FontFamily="/HelloApp1;component/Font/#Ubuntu" FontSize="15">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Operación" Width="85" DisplayMemberBinding="{Binding IdOperacion}" />
-                        <GridViewColumn Header="Archivo" Width="140" DisplayMemberBinding="{Binding NombreArchivo}" />
-                        <GridViewColumn Header="N° P" Width="55" DisplayMemberBinding="{Binding NumProceso}" />
+                        <GridViewColumn Header="Operación" Width="80" DisplayMemberBinding="{Binding IdOperacion}" />
+                        <GridViewColumn Header="Archivo" Width="110" DisplayMemberBinding="{Binding NombreArchivo}" />
+                        <GridViewColumn Header="Estado" Width="70" DisplayMemberBinding="{Binding estado}" />
+                        <GridViewColumn Header="Cant. UA" Width="62" DisplayMemberBinding="{Binding CantidadUA}"/>
+                        <GridViewColumn Header="N° P" Width="50" DisplayMemberBinding="{Binding NumProceso}" />
                         <GridViewColumn Header="Arribo" Width="55" DisplayMemberBinding="{Binding Tarribo}" />
                         <GridViewColumn Header="Offset" Width="55" DisplayMemberBinding="{Binding Offset}" />
-                        <GridViewColumn Header="Cant. UA" Width="65" DisplayMemberBinding="{Binding CantidadUA}" />
                     </GridView>
                 </ListView.View>
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding estado}"
+                                        Value="Espera">
+                                <Setter Property="Background"
+                                        Value="#FFB5F3E5" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding estado}"
+                                        Value="Realizado">
+                                <Setter Property="Background"
+                                        Value="#FFFFE68A" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding estado}"
+                                        Value="Error">
+                                <Setter Property="Background"
+                                        Value="#FFFF5642" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.Resources>
             </ListView>
 
             <Canvas x:Name="miLienzo" Margin="10,5,0,0" Width="495" Height="350">
@@ -75,10 +97,10 @@
         <WrapPanel Height="59">
             <Canvas Height="145">
                 <Label HorizontalAlignment="Left" Content="Indicadores del sistema:" Style="{StaticResource lblDesign}" FontSize="22" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="270" FontWeight="Bold" Canvas.Left="23" Canvas.Top="7"/>
-                <Label HorizontalAlignment="Left" x:Name="fragInterna" Content="" Style="{StaticResource lblDesign}" FontSize="17" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="940" FontWeight="Bold" Canvas.Left="23" Canvas.Top="49"/>
+                <Label HorizontalAlignment="Left" x:Name="fragInterna" Content="Fragmentación interna" Style="{StaticResource lblDesign}" FontSize="16" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="Black" Width="940" Canvas.Left="23" Canvas.Top="50"/>
 
-                <local:UserControl3 x:Name="FragExterna" Width="940" Height="42" Canvas.Left="23" Canvas.Top="93" />
-                <local:UserControl2 x:Name="DatosyMeta" Width="940" Height="42" Canvas.Left="23" Canvas.Top="140" />
+                <local:UserControl3 x:Name="FragExterna" Width="975" Height="42" Canvas.Left="7" Canvas.Top="82" />
+                <local:UserControl2 x:Name="DatosyMeta" Width="975" Height="42" Canvas.Left="7" Canvas.Top="132" />
             </Canvas>
         </WrapPanel>
 

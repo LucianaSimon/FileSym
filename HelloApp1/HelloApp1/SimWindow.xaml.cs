@@ -32,6 +32,7 @@ namespace HelloApp1
             //Cada cierto tiempo se presiona el boton siguiente operación
             timer.Tick += (s, ev) => btn_SiguientePaso.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
+            tSimu.Content = simulador.getTSimulacion() + " UT";
             LEjecutando.Content = "Esperando usuario";
             Spinner.Spin = false;
 
@@ -233,7 +234,9 @@ namespace HelloApp1
             if (btn_SiguientePaso.Content.Equals("Resultados"))
             {
                 /*  Para la ventana de resultados!*/
-                Window2 subWindow = new Window2();
+                Dictionary<string, Object> resultados = simulador.Resultados();
+                Window2 subWindow = new Window2(resultados);
+
                 //this.WindowState = WindowState.Minimized;
                 this.Topmost = false;
                 subWindow.Show();
@@ -241,24 +244,59 @@ namespace HelloApp1
                 this.Close();
             }
 
-            if (opActual < simulador.GetCantidadOp())
+            if (simulador.getOpActual() <= simulador.GetCantidadOp())
             {
                 ejecutarSiguienteOp();
                 //Tambien voy a tener que dibujar (mostrar) los bloques que esten siendo modificados
                 //en la operacion actual.
+
+                //frag externa: cantidad de bloques no reservados
+                int datos = 0, metadatos = 0;
+                simulador.GetDispositivo().datosMetadatos(ref datos, ref metadatos);
+
+                int fragExterna = simulador.GetDispositivo().getFragExt();
+                int aux = simulador.GetDispositivo().GetCantBloques() - fragExterna;
+
+                int fragI = 0, cnt = 0;
+                simulador.GetDispositivo().getFragInt(ref fragI, ref cnt);
+
+                fragInterna.Content = "Fragmentación interna: " + fragI + " unidades de almacenamiento.";
+                FragExterna.RefreshData((double)fragExterna, (double)aux);  //Para configurar barra de FE
+                DatosyMeta.RefreshData((double)datos, (double)metadatos);   //Para configurar barra de datos y meta
+
+                dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques) 
             }
 
-            if(opActual == simulador.GetCantidadOp())
+            if(simulador.getOpActual() == -1)
             {
+                lvDataBinding.ItemsSource = simulador.getTablaOperaciones();
+
                 LEjecutando.Content = "Simulación completa";
                 btn_SiguientePaso.Content = "Resultados";
                 timer.Stop();
+                Spinner.Spin = false;
 
                 tTiempoS.IsEnabled = false;
                 btn_SiguientePaso.IsEnabled = true;
                 btn_Todo.IsEnabled = false;
                 btn_PasoAPaso.IsEnabled = false;
                 btn_P.IsEnabled = false;
+
+                //frag externa: cantidad de bloques no reservados
+                int datos = 0, metadatos = 0;
+                simulador.GetDispositivo().datosMetadatos(ref datos, ref metadatos);
+
+                int fragExterna = simulador.GetDispositivo().getFragExt();
+                int aux = simulador.GetDispositivo().GetCantBloques() - fragExterna;
+
+                int fragI = 0, cnt = 0;
+                simulador.GetDispositivo().getFragInt(ref fragI, ref cnt);
+
+                fragInterna.Content = "Fragmentación interna: " + fragI + " unidades de almacenamiento.";
+                FragExterna.RefreshData((double)fragExterna, (double)aux);  //Para configurar barra de FE
+                DatosyMeta.RefreshData((double)datos, (double)metadatos);   //Para configurar barra de datos y meta
+
+                dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)
             }
 
         }
@@ -268,13 +306,16 @@ namespace HelloApp1
             //Esta metodo llama a algun metodo de la clase FileSim que realizara la operacion
             //correspondiente, almacenando los resultados.
             //Por ahora solo aumenta una variable global que indica en que operacion estamos.
+            simulador.SimularSiguienteOp();
+
             Spinner.Spin = true;
-            LEjecutando.Content = "Ejecutando operación " + (opActual + 1) + " de " + simulador.GetCantidadOp();
+            LEjecutando.Content = "Ejecutando operación " + (simulador.getOpActual() + 1) + " de " + simulador.GetCantidadOp();
 
             //Tambien en la tabla tiene que mostrarse la operacion actual
-            if(opActual < simulador.GetCantidadOp())
+            if(simulador.getOpActual() < simulador.GetCantidadOp() && simulador.getOpActual() != -1)
             {
-                lvDataBinding.SelectedItem = lvDataBinding.Items[opActual];
+                lvDataBinding.ItemsSource = simulador.getTablaOperaciones();
+                lvDataBinding.SelectedItem = lvDataBinding.Items[simulador.getOpActual()];
                 lvDataBinding.UpdateLayout(); // Pre-generates item containers 
 
                 var listBoxItem = (ListBoxItem)lvDataBinding
@@ -284,7 +325,8 @@ namespace HelloApp1
                 listBoxItem.Focus();
             }
             
-            opActual++;
+            //opActual++;
+            tSimu.Content = simulador.getTSimulacion() + " UT";
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)

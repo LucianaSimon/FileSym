@@ -22,7 +22,7 @@
                 <lvc:DefaultTooltip SelectionMode="SharedYValues"></lvc:DefaultTooltip>
             </lvc:CartesianChart.DataTooltip>
             <lvc:CartesianChart.AxisY>
-                <lvc:Axis Title="" Labels="{Binding Labels}"/>
+                <lvc:Axis Title="" Labels="{Binding Labels}" ShowLabels="False"/>
             </lvc:CartesianChart.AxisY>
         </lvc:CartesianChart>
     </Grid>

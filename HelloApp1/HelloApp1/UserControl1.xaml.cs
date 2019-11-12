@@ -26,17 +26,17 @@ namespace HelloApp1
         {
             InitializeComponent();
 
-            myPieChart.Series.Add(new PieSeries { Title = "Dato", Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff422c")), StrokeThickness = 0, Values = new ChartValues<double> { 100.0 } });
-            myPieChart.Series.Add(new PieSeries { Title = "Metadato", Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")), StrokeThickness = 0, Values = new ChartValues<double> { 0.0 } });
+            myPieChart.Series.Add(new PieSeries { Title = "Dato [UA]", Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff422c")), StrokeThickness = 0, Values = new ChartValues<double> { 100.0 } });
+            myPieChart.Series.Add(new PieSeries { Title = "Metadato [UA]", Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")), StrokeThickness = 0, Values = new ChartValues<double> { 0.0 } });
 
             DataContext = this;
 
         }
 
-        internal void RefreshData(double badPct)
+        internal void RefreshData(double dato, double metadato)
         {
-            myPieChart.Series[0].Values[0] = badPct;
-            myPieChart.Series[1].Values[0] = 100.0 - badPct;
+            myPieChart.Series[0].Values[0] = dato;
+            myPieChart.Series[1].Values[0] = metadato;
         }
 
         private void Chart_OnDataClick(object sender, ChartPoint chartpoint)
