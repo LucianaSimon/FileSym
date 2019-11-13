@@ -29,19 +29,19 @@ namespace HelloApp1
             InitializeComponent();
             this.res = res;
             //Prueba para cargar texto a info_resultados REVISAR!!!
-            info_resultados.Text = "\n" +
-                "* Fragmentación interna total: " + res["fragInt"].ToString() + " UA\n" +
-                "* Fragmentación externa total: " + res["fragExt"].ToString() + " UA\n" +
-                "* Tiempo de gestion: " + res["tGestion"].ToString() + " UT\n" +
-                "* Tiempo de espera: " + res["tEspera"].ToString() + " UT\n" +
-                "* Tiempo de simulación: " + res["tSimulacion"].ToString() + "UT\n";
+            info_resultados.Text = Environment.NewLine +
+                "* Fragmentación interna total: " + res["fragInt"].ToString() + " %" + Environment.NewLine +
+                "* Fragmentación externa total: " + res["fragExt"].ToString() + " %" + Environment.NewLine +
+                "* Tiempo de gestion: " + res["tGestion"].ToString() + " UT" + Environment.NewLine +
+                "* Tiempo de espera: " + res["tEspera"].ToString() + " UT" + Environment.NewLine +
+                "* Tiempo de simulación: " + res["tSimulacion"].ToString() + " UT" + Environment.NewLine;
 
-            if ((int)res["tMaxN"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de CREATE: " + res["tMaxN"].ToString() + " y " + res["tMinN"].ToString() + " UT\n";
-            if ((int)res["tMaxD"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de DELETE: " + res["tMaxD"].ToString() + " y " + res["tMinD"].ToString() + " UT\n";
-            if ((int)res["tMaxR"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de READ: " + res["tMaxR"].ToString() + " y " + res["tMinR"].ToString() + " UT\n";
-            if ((int)res["tMaxW"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de WRITE: " + res["tMaxW"].ToString() + " y " + res["tMinW"].ToString() + " UT\n";
-            if ((int)res["tMaxO"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de OPEN: " + res["tMaxO"].ToString() + " y " + res["tMinO"].ToString() + " UT\n";
-            if ((int)res["tMaxC"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de CLOSE: " + res["tMaxC"].ToString() + " y " + res["tMinC"].ToString() + " UT\n";
+            if ((int)res["tMaxN"] > 0) info_resultados.Text = info_resultados.Text.ToString() + "* Tiempo máximo y mínimo de CREATE: " + res["tMaxN"].ToString() + " y " + res["tMinN"].ToString() + " UT\n";
+            if ((int)res["tMaxD"] > 0) info_resultados.Text = info_resultados.Text.ToString() + "* Tiempo máximo y mínimo de DELETE: " + res["tMaxD"].ToString() + " y " + res["tMinD"].ToString() + " UT\n";
+            if ((int)res["tMaxR"] > 0) info_resultados.Text = info_resultados.Text.ToString() + "* Tiempo máximo y mínimo de READ: " + res["tMaxR"].ToString() + " y " + res["tMinR"].ToString() + " UT\n";
+            if ((int)res["tMaxW"] > 0) info_resultados.Text = info_resultados.Text.ToString() + "* Tiempo máximo y mínimo de WRITE: " + res["tMaxW"].ToString() + " y " + res["tMinW"].ToString() + " UT\n";
+            if ((int)res["tMaxO"] > 0) info_resultados.Text = info_resultados.Text.ToString() + "* Tiempo máximo y mínimo de OPEN: " + res["tMaxO"].ToString() + " y " + res["tMinO"].ToString() + " UT\n";
+            if ((int)res["tMaxC"] > 0) info_resultados.Text = info_resultados.Text.ToString() + "* Tiempo máximo y mínimo de CLOSE: " + res["tMaxC"].ToString() + " y " + res["tMinC"].ToString() + " UT\n";
 
             //Grafico de TORTA
             int dato = (int)res["datos"];
@@ -50,40 +50,63 @@ namespace HelloApp1
         }
 
         //Exportar
+
+        public bool esValido(int tiempo)
+        {
+            if(tiempo > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             //Con los resultados obtenidos de la simulacion se crea un File 
             // y se almacenan los indicadores para cada operacion.
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            string fileText = "\n Indicadores del sistema: \n\n" +
-                "* Fragmentación interna total: " + res["fragInt"].ToString() + " UA\n" +
-                "* Fragmentación externa total: " + res["fragExt"].ToString() + " UA\n" +
-                "* Datos: " + res["datos"].ToString() + " UA\n" +
-                "* Metadatos: " + res["metadatos"].ToString() + " UA\n" +
-                "* Tiempo de gestion: " + res["tGestion"].ToString() + " UT\n" +
-                "* Tiempo de espera: " + res["tEspera"].ToString() + " UT\n" +
-                "* Tiempo de simulación: " + res["tSimulacion"].ToString() + "UT\n";
+            string fileText = "Indicadores del sistema:" + Environment.NewLine +
+                "* Fragmentación interna total: " + res["fragInt"].ToString() + " %" + Environment.NewLine +
+                "* Fragmentación externa total: " + res["fragExt"].ToString() + " %" + Environment.NewLine +
+                "* Tiempo de gestion: " + res["tGestion"].ToString() + " UT" + Environment.NewLine +
+                "* Tiempo de espera: " + res["tEspera"].ToString() + " UT" + Environment.NewLine +
+                "* Tiempo de simulación: " + res["tSimulacion"].ToString() + " UT" + Environment.NewLine;
 
-            if ((int)res["tMaxN"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de CREATE: " + res["tMaxN"].ToString() + " y " + res["tMinN"].ToString() + " UT\n";
-            if ((int)res["tMaxD"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de DELETE: " + res["tMaxD"].ToString() + " y " + res["tMinD"].ToString() + " UT\n";
-            if ((int)res["tMaxR"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de READ: " + res["tMaxR"].ToString() + " y " + res["tMinR"].ToString() + " UT\n";
-            if ((int)res["tMaxW"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de WRITE: " + res["tMaxW"].ToString() + " y " + res["tMinW"].ToString() + " UT\n";
-            if ((int)res["tMaxO"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de OPEN: " + res["tMaxO"].ToString() + " y " + res["tMinO"].ToString() + " UT\n";
-            if ((int)res["tMaxC"] > 0) info_resultados.Text = info_resultados.Text + "* Tiempo máximo y mínimo de CLOSE: " + res["tMaxC"].ToString() + " y " + res["tMinC"].ToString() + " UT\n";
+            if ((int)res["tMaxN"] > 0) fileText = fileText + "* Tiempo máximo y mínimo de CREATE: " + res["tMaxN"].ToString() + " y " + res["tMinN"].ToString() + " UT" + Environment.NewLine;
+            if ((int)res["tMaxD"] > 0) fileText = fileText + "* Tiempo máximo y mínimo de DELETE: " + res["tMaxD"].ToString() + " y " + res["tMinD"].ToString() + " UT" + Environment.NewLine;
+            if ((int)res["tMaxR"] > 0) fileText = fileText + "* Tiempo máximo y mínimo de READ: " + res["tMaxR"].ToString() + " y " + res["tMinR"].ToString() + " UT" + Environment.NewLine;
+            if ((int)res["tMaxW"] > 0) fileText = fileText + "* Tiempo máximo y mínimo de WRITE: " + res["tMaxW"].ToString() + " y " + res["tMinW"].ToString() + " UT" + Environment.NewLine;
+            if ((int)res["tMaxO"] > 0) fileText = fileText + "* Tiempo máximo y mínimo de OPEN: " + res["tMaxO"].ToString() + " y " + res["tMinO"].ToString() + " UT" + Environment.NewLine;
+            if ((int)res["tMaxC"] > 0) fileText = fileText + "* Tiempo máximo y mínimo de CLOSE: " + res["tMaxC"].ToString() + " y " + res["tMinC"].ToString() + " UT" + Environment.NewLine;
 
             String textoOperacion = "";
             List<Indicadores> indicadores = (List<Indicadores>)res["IndicadoresOP"];
 
-            
             for (int i=0; i<indicadores.Count; i++)
             {
                 textoOperacion = textoOperacion +
-                    "\nOperación" + i + ":\n" +
-                    "* Tiempo de satisfaccion: " + indicadores[i].tSatisfaccion.ToString() + " UT\n" +
-                    "* Tiempo de lectura/escritura: " + indicadores[i].tLectoEscritura.ToString() + " UT\n" +
-                    "* Tiempo de espera: " + indicadores[i].tEspera.ToString() + " UT\n" +
-                    "* Tiempo de gestion total: " + indicadores[i].tGestionTotal.ToString() + " UT\n\n";
+                    Environment.NewLine + "Operación " + i + ":" + Environment.NewLine +
+                    "* Tiempo de satisfaccion: " + indicadores[i].tSatisfaccion.ToString() + " UT" + Environment.NewLine +
+                    "* Tiempo de lectura/escritura: " + indicadores[i].tLectoEscritura.ToString() + " UT" + Environment.NewLine +
+                    "* Tiempo de espera: " + indicadores[i].tEspera.ToString() + " UT" + Environment.NewLine +
+                    "* Tiempo de gestion total: " + indicadores[i].tGestionTotal.ToString() + " UT" + Environment.NewLine;
             }
+
+            String config= "Las configuraciones para la simulacion son:" + Environment.NewLine + 
+                "* Organización física: " + Globales.orgFisica + Environment.NewLine +
+                "* Modo de acceso: " + Globales.modoAcceso + Environment.NewLine +
+                "* Administración de espacios libres: " + Globales.admLibre + Environment.NewLine +
+                "* Tiempo de acceso: " + Globales.tAcceso + Environment.NewLine +
+                "* Tiempo de seek: " + Globales.tSeek + Environment.NewLine +
+                "* Tiempo de lectura: " + Globales.tLectura + Environment.NewLine +
+                "* Tiempo de escritura: " + Globales.tEscritura + Environment.NewLine +
+                "* Tiempo de procesamiento: " + Globales.tProcesamiento + Environment.NewLine +
+                "* Tamaño de bloque: " + Globales.tamBloque + " uA" + Environment.NewLine +
+                "* Tamaño de dispositivo: " + Globales.tamDispositivo + " uA" + Environment.NewLine +
+                "* Cantidad de bloques: " + (int)Math.Truncate((decimal)Globales.tamDispositivo / (decimal)Globales.tamBloque) + Environment.NewLine + Environment.NewLine;
 
             SaveFileDialog dialog = new SaveFileDialog()
             {
@@ -92,7 +115,7 @@ namespace HelloApp1
 
             if (dialog.ShowDialog() == true)
             {
-                File.WriteAllText(dialog.FileName, (fileText + textoOperacion));
+                File.WriteAllText(dialog.FileName, (config + fileText + textoOperacion));
             }
         }
 

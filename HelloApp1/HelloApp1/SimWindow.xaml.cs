@@ -21,7 +21,6 @@ namespace HelloApp1
             Globales.tLectura, Globales.tEscritura, Globales.tSeek, Globales.tamBloque, Globales.tamDispositivo, Globales.rutaArchivo);
 
         int pagActual = 0;
-        int opActual = 0; //este atributo quedara reemplazada x simulador.GetContadorOp
 
         DispatcherTimer timer = new DispatcherTimer(); //para poder ejecutar operaciones x tiempo
 
@@ -33,7 +32,7 @@ namespace HelloApp1
             timer.Tick += (s, ev) => btn_SiguientePaso.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
             tSimu.Content = simulador.getTSimulacion() + " UT";
-            LEjecutando.Content = "Esperando usuario";
+            LEjecutando.Content = "Esperando al usuario";
             Spinner.Spin = false;
 
             lvDataBinding.ItemsSource = simulador.getTablaOperaciones();
@@ -52,7 +51,6 @@ namespace HelloApp1
             FragExterna.RefreshData((double)fragExterna, (double)aux);  //Para configurar barra de FE
             DatosyMeta.RefreshData((double)datos, (double)metadatos);   //Para configurar barra de datos y meta
 
-
             dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)    
         }
 
@@ -60,6 +58,10 @@ namespace HelloApp1
         //Tambien se debe poder mostrar los bloques que estan siendo modificados por la operación actual.
         public void dibujarBloques(int pagina)
         {
+            //Para manejar los bloques modificados
+            List<int> bloqModif = new List<int>();
+            bloqModif = simulador.getBloquesModificados();
+
             //Antes de dibujar todos los cuadrados necesito poner en blanco canvas
             //Tamaño = 330 W x 350 H
             Rectangle rect = new Rectangle();
@@ -80,16 +82,27 @@ namespace HelloApp1
                     {
                         Rectangle bloque = new Rectangle();
 
-                        //
-
                         if (simulador.GetDispositivo().estadoBloque(numBloque) == 0) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffd433")); //LIBRE
                         else if (simulador.GetDispositivo().estadoBloque(numBloque) == simulador.GetDispositivo().GetTamBloques()) bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF1181A1")); //OCUPADO
                         else bloque.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#0ddbac"));
 
+                        //Para marcar los bloques que se modificaron en la operación actual
+                        if (bloqModif.IndexOf(numBloque) !=-1)
+                        {
+                            bloque.StrokeThickness = 3;
+                            bloque.Stroke = Brushes.Black;
+                            //bloque.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff422c"));
+                        }
+                        else
+                        {
+                            bloque.StrokeThickness = 1;
+                            bloque.Stroke = Brushes.Black;
+                        }
+                        
+
                         bloque.Width = 20;
                         bloque.Height = 20;
-                        bloque.StrokeThickness = 1;
-                        bloque.Stroke = Brushes.Black;
+                        
                         Canvas.SetTop(bloque, i * 25 + 25);
                         Canvas.SetLeft(bloque, j * 30 + 35);
                         miLienzo.Children.Add(bloque);
@@ -264,7 +277,12 @@ namespace HelloApp1
                 FragExterna.RefreshData((double)fragExterna, (double)aux);  //Para configurar barra de FE
                 DatosyMeta.RefreshData((double)datos, (double)metadatos);   //Para configurar barra de datos y meta
 
-                dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques) 
+                //pagActual corresponde con los bloques modif
+                if(simulador.getBloquesModificados().Count > 0)
+                {
+                    pagActual = (int) Math.Floor((decimal)simulador.getBloquesModificados()[0] / 130);
+                }
+                dibujarBloques(pagActual);
             }
 
             if (simulador.getOpActual() == -1)
@@ -296,7 +314,13 @@ namespace HelloApp1
                 FragExterna.RefreshData((double)fragExterna, (double)aux);  //Para configurar barra de FE
                 DatosyMeta.RefreshData((double)datos, (double)metadatos);   //Para configurar barra de datos y meta
 
-                dibujarBloques(pagActual); //por defecto al inicio dibuja la primer pagina (130 o menos bloques)
+                //pagActual corresponde con los bloques modif
+                if (simulador.getBloquesModificados().Count > 0)
+                {
+                    pagActual = (int)Math.Floor((decimal)simulador.getBloquesModificados()[0] / 130);
+                }
+                dibujarBloques(pagActual);
+
                 tSimu.Content = simulador.getTSimulacion() + " UT";
             }
 
@@ -313,11 +337,19 @@ namespace HelloApp1
             
 
             Spinner.Spin = true;
-            /*if ()
+            if (simulador.getOpActual()> 0 && simulador.getOpActual() < simulador.GetCantidadOp())
             {
-                MOSTRAR REALIZA O ERROR SEGUN!
-            }*/
-            LEjecutando.Content = "Realizada la operación " + (simulador.getOpActual() + 1) + " de " + simulador.GetCantidadOp();
+                if(simulador.getTablaOperaciones()[simulador.getOpActual()].estado == EstadoOp.Error)
+                {
+                    LEjecutando.Content = "Error en la operación " + (simulador.getOpActual() + 1) + " de " + simulador.GetCantidadOp();
+                }
+                else
+                {
+                    LEjecutando.Content = "La operación " + (simulador.getOpActual() + 1) + " de " + simulador.GetCantidadOp()
+                    + " fue realizada";
+                }
+                
+            }
 
             //Tambien en la tabla tiene que mostrarse la operacion actual
             if (simulador.getOpActual() < simulador.GetCantidadOp() && simulador.getOpActual() != -1)

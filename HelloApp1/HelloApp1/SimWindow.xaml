@@ -34,7 +34,7 @@
                     <GridView>
                         <GridViewColumn Header="Operación" Width="80" DisplayMemberBinding="{Binding IdOperacion}" />
                         <GridViewColumn Header="Archivo" Width="110" DisplayMemberBinding="{Binding NombreArchivo}" />
-                        <GridViewColumn Header="Estado" Width="70" DisplayMemberBinding="{Binding estado}" />
+                        <GridViewColumn Header="Estado" Width="78" DisplayMemberBinding="{Binding estado}" />
                         <GridViewColumn Header="Cant. UA" Width="62" DisplayMemberBinding="{Binding CantidadUA}"/>
                         <GridViewColumn Header="N° P" Width="50" DisplayMemberBinding="{Binding NumProceso}" />
                         <GridViewColumn Header="Arribo" Width="55" DisplayMemberBinding="{Binding Tarribo}" />
