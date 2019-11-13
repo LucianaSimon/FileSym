@@ -107,7 +107,7 @@ namespace FireSim
 
                 TablaOperaciones.Sort(new ComparaOp());
 
-                this.tSimulacion = getTablaOperaciones()[0].Tarribo; //actualizo el t de incio al t de arribo de la primera op
+                tSimulacion = getTablaOperaciones()[0].Tarribo; //actualizo el t de incio al t de arribo de la primera op
 
                 Console.WriteLine("Archivo Ordenado");
                 /*  Bloque solo de testeo de metodo Sort*/
@@ -238,7 +238,7 @@ namespace FireSim
                         TablaArchivos.Add(archivo); //agregamos el nuevo archivo a la tabla 
                         indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), cant_uA);
                         indicador.tLectoEscritura = 0;
-                        indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
+                        indicador.tEspera = this.tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
                         indicador.tipoOp = 'N';
                         indicador.tSatisfaccion = indicador.tLectoEscritura + indicador.tGestionTotal + indicador.tEspera;
                         tOP = indicador.tGestionTotal + indicador.tLectoEscritura;
@@ -302,7 +302,16 @@ namespace FireSim
                     }
                     else if (fin >= arch.getTablaDireccion().Count) //para enlazada e indexada
                     {
-                        indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), fin - arch.getTablaDireccion().Count); 
+                        if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref arch)) // CORRECCION
+                        {
+                            indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), fin - arch.getTablaDireccion().Count);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No se puede obtener mas espacio");
+                            TablaOperaciones[opActual].setEstado(EstadoOp.Error); // Cambia el estado a Error automaticamente, no se puede realocar el archivo
+                        }
+
                     }
 
                     switch (GetOrganizacionFisica())
@@ -314,11 +323,11 @@ namespace FireSim
                         }
                         case Org.Enlazada:
                         {
-                                int bloqueLeido = -1;
+                                int bloqueLeido = -10;
 
-                                for (int i = 0; i < fin; i++)
+                                for (int i = 0; i < arch.getTablaDireccion().Count; i++)
                                 {
-                                    if (arch.getTablaDireccion()[i] != bloqueLeido - 1) //comprueba si los bloques son contiguos
+                                    if (arch.getTablaDireccion()[i] -1 != bloqueLeido) //comprueba si los bloques son contiguos CORRECCION
                                     {
                                         indicador.tGestionTotal += disp.GetTseek();
                                     }
@@ -384,6 +393,7 @@ namespace FireSim
                     
                     if (fin > arch.getTablaDireccion().Count || inicio > arch.getTablaDireccion().Count || inicio > fin) // Control de cuanto se quiere leer
                     {
+                        TablaOperaciones[opActual].setEstado(EstadoOp.Error);
                         throw new Exception("Se quiere leer mas de lo que hay");
                     }
                     switch (GetOrganizacionFisica())
@@ -448,7 +458,7 @@ namespace FireSim
             int numBloque = 0;
             int tOP = 0;
             int posArch = BuscaArch(nameArchivo); //busca si existe el arhivo
-  
+            int bloqueIndice = 0; // Para poner en 0 los bloques indices cuando se elimina (SOLO INDEXADA)
             // Corroboro que el archivo se encuentre en la tabla (por nombre) y que se encuentre cerrado
             if ( posArch != -1 && TablaArchivos[posArch].getEstado() == -1) //Estado -1 significa que el archivo está cerrado
             {
@@ -457,17 +467,47 @@ namespace FireSim
                 {
                     numBloque = TablaArchivos[posArch].getTablaDireccion()[j];
                     disp.CambiarEstadoOcupado(numBloque, 0);
-
-                    if (organizacionFisica == Org.Contigua)
+                    
+                    switch(GetAdminEspacio())
                     {
-                        disp.CambiarEstadoBurocracia(numBloque, 0);
-                    }
-                    else
-                    {
-                        disp.CambiarEstadoBurocracia(numBloque, 0);
+                        case Libres.MapadeBits:
+                            {
+                                disp.CambiarEstadoBurocracia(numBloque, 0);
+                                break;
+                            }
+                        case Libres.ListadeLibres:
+                            {
+                                disp.CambiarEstadoBurocracia(numBloque, 1);
+                                break;
+                            }
+                        case Libres.ListadeLibresdePrincipioyCuenta:
+                            {
+                                disp.CambiarEstadoBurocracia(numBloque, 0);
+                                break;
+                            }
                     }
 
                     disp.CambiarEstadoReserva(numBloque, false);
+                }
+
+                if (GetOrganizacionFisica() == Org.Indexada)
+                {
+                    for (int i = 0; i < TablaArchivos[posArch].getTablaIndices().Count; i++)
+                    {
+                        bloqueIndice = TablaArchivos[posArch].getTablaIndices()[i];
+                        
+                        if (GetAdminEspacio() == Libres.ListadeLibres)
+                        {
+                            disp.CambiarEstadoBurocracia(bloqueIndice, 0);
+                        }
+                        else
+                        {
+                            disp.CambiarEstadoBurocracia(bloqueIndice, 1);
+                        }
+                        disp.CambiarEstadoOcupado(bloqueIndice, 0);
+                        disp.CambiarEstadoReserva(bloqueIndice, false);
+                    }
+
                 }
 
                 Indicadores indicador = new Indicadores();

@@ -7,7 +7,7 @@ namespace FireSim
     {
         static void Main(string[] args)
         {
-            FileSim simulador = new FileSim(2, Org.Contigua, Libres.MapadeBits, Acceso.Directo, 2, 3, 2, 5, 200, "../../../../Datos.csv");
+            FileSim simulador = new FileSim(2, Org.Contigua, Libres.MapadeBits, Acceso.Directo, 2, 2, 2, 5, 200, "../../../../Datos2.csv");
             
             int simulaciones = 0;
 
