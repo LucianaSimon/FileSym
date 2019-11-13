@@ -198,6 +198,10 @@ namespace FireSim
                         }
                     }//sino devuelve false
                 }
+                else
+                {
+                    throw new Exception("No hay mas espacio de almacenamiento");
+                }
             }
 
             return ObtuveLibres;

@@ -50,7 +50,7 @@ namespace FireSim
             //Carga las operaciones desde el archivo ingresado x usuario --> las almacena en la tabla operaciones
             CargarOperaciones(ruta);
 
-            this.tSimulacion = 0;
+            this.tSimulacion = getTablaOperaciones()[0].Tarribo; //actualizo el t de incio al t de arribo de la primera op
             this.bloquesModificados = new List<int>();
         }
 
@@ -106,8 +106,6 @@ namespace FireSim
                 }
 
                 TablaOperaciones.Sort(new ComparaOp());
-
-                tSimulacion = getTablaOperaciones()[0].Tarribo; //actualizo el t de incio al t de arribo de la primera op
 
                 Console.WriteLine("Archivo Ordenado");
                 /*  Bloque solo de testeo de metodo Sort*/
@@ -174,7 +172,15 @@ namespace FireSim
                     }
                 case "DELETE":
                     {
-                        tSimulacion += Delete(nextOp.NombreArchivo);
+                        try
+                        {
+                            tSimulacion += Delete(nextOp.NombreArchivo);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error: " + e);
+                        }
+                        
                         break;
                     }
                 case "OPEN":
@@ -298,19 +304,31 @@ namespace FireSim
                         catch (Exception e)
                         {
                             TablaOperaciones[opActual].setEstado(EstadoOp.Error); // Cambia el estado a Error automaticamente, no se puede realocar el archivo
+                            throw e;
                         }
                     }
                     else if (fin >= arch.getTablaDireccion().Count) //para enlazada e indexada
                     {
-                        if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref arch)) // CORRECCION
+                        try
                         {
-                            indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), fin - arch.getTablaDireccion().Count);
+                            if (disp.GetLibres(cant_uA, GetOrganizacionFisica(), ref arch)) // CORRECCION
+                            {
+                                indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), fin - arch.getTablaDireccion().Count);
+                            }
+                            else
+                            {
+                                Console.WriteLine("No se puede obtener mas espacio");
+                                TablaOperaciones[opActual].setEstado(EstadoOp.Error); // Cambia el estado a Error automaticamente, no se puede realocar el archivo
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
                             Console.WriteLine("No se puede obtener mas espacio");
                             TablaOperaciones[opActual].setEstado(EstadoOp.Error); // Cambia el estado a Error automaticamente, no se puede realocar el archivo
+                            throw e;
                         }
+                        
+                        
 
                     }
 
@@ -498,11 +516,11 @@ namespace FireSim
                         
                         if (GetAdminEspacio() == Libres.ListadeLibres)
                         {
-                            disp.CambiarEstadoBurocracia(bloqueIndice, 0);
+                            disp.CambiarEstadoBurocracia(bloqueIndice, 1);
                         }
                         else
                         {
-                            disp.CambiarEstadoBurocracia(bloqueIndice, 1);
+                            disp.CambiarEstadoBurocracia(bloqueIndice, 0);
                         }
                         disp.CambiarEstadoOcupado(bloqueIndice, 0);
                         disp.CambiarEstadoReserva(bloqueIndice, false);
@@ -529,9 +547,14 @@ namespace FireSim
                 TablaArchivos.RemoveAt(posArch);
                 TablaOperaciones[opActual].setEstado(EstadoOp.Realizado); // Si se pudo realizar se marca como realizada
             }
-            else if (TablaArchivos[posArch].getEstado() != -1) // Si el archivo se encuentra abierto por algun proceso, lo agrego a la cola de espera
+            else if (posArch != -1) // Si el archivo existe, entonces encuentra abierto por algun proceso, lo agrego a la cola de espera
             {
                 cambiarEstado(opActual); // Cambia el estado de la operacion a Espera, o si ya estaba en Espera a Error
+            }
+            else
+            {
+                TablaOperaciones[opActual].setEstado(EstadoOp.Error);
+                throw new Exception("No existe el archivo");
             }
 
             return tOP;
@@ -660,8 +683,13 @@ namespace FireSim
 
         public int ObtenerTmin(char tipo) //funcion que devuelve el minimo dependiento el tiempo de operacion
         {
+            if (indicadoresOP.Count <= 0)
+            {
+                return 0;
+            }
+            
             int Tmin = indicadoresOP[0].tipoOp;
-
+            
             for (int i = 0; i < indicadoresOP.Count; i++)
             {
                 if (indicadoresOP[i].tipoOp == tipo)
@@ -696,11 +724,11 @@ namespace FireSim
 
             // Fragmentacion Interna es la cantidad de espacio libre en los bloques reservados, dividido la cantidad total de bloques reservados 
             disp.getFragInt(ref aux1, ref cnt);
-            fragInt = ((float)aux1 / (aux1 + cnt))*100; // @Fede, esto es aux1 + cnt abajo? o cnt?
+            fragInt = (float)Math.Round((decimal)(((float)aux1 / (aux1 + cnt))*100),2); // @Fede, esto es aux1 + cnt abajo? o cnt?
 
             // Fragmentacion Externa es la cantidad de espacio libre en uA, dividido el tamaño total del dispositivo en uA
             fragExt = (float)(disp.getFragExt() * disp.GetTamBloques()) / disp.GetTamDispositivo();
-            fragExt = fragExt * 100;
+            fragExt = (float)Math.Round((decimal)(fragExt * 100),2);
 
             disp.datosMetadatos(ref datos, ref metadatos);
             
@@ -710,7 +738,8 @@ namespace FireSim
             }
 
             // El % de tiempo consumido en gestion es el tiempo de gestion total dividido el tiempo total de simulacion
-            tiempoGestion = tiempoGestion / tSimulacion;
+            tiempoGestion = (float)Math.Round((decimal)((tiempoGestion / tSimulacion) * 100),2);
+            
 
             // Calculos tMax y tMin para cada tipo de operacion
             tMaxC = ObtenerTmax('C');
@@ -731,7 +760,11 @@ namespace FireSim
                 tEsperaProm += indicadoresOP[i].tEspera;
             }
 
-            tEsperaProm = tEsperaProm / indicadoresOP.Count;
+            if (indicadoresOP.Count > 0)
+            {
+                tEsperaProm = (float)Math.Round((decimal)(tEsperaProm / indicadoresOP.Count), 2);
+            }
+            
 
             // -------- Indicadores del Sistema --------
             res.Add("fragInt", fragInt);

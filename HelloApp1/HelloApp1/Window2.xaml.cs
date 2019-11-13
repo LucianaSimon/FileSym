@@ -32,7 +32,7 @@ namespace HelloApp1
             info_resultados.Text = Environment.NewLine +
                 "* Fragmentación interna total: " + res["fragInt"].ToString() + " %" + Environment.NewLine +
                 "* Fragmentación externa total: " + res["fragExt"].ToString() + " %" + Environment.NewLine +
-                "* Tiempo de gestion: " + res["tGestion"].ToString() + " UT" + Environment.NewLine +
+                "* Tiempo de gestion: " + res["tGestion"].ToString() + " %" + Environment.NewLine +
                 "* Tiempo de espera: " + res["tEspera"].ToString() + " UT" + Environment.NewLine +
                 "* Tiempo de simulación: " + res["tSimulacion"].ToString() + " UT" + Environment.NewLine;
 
