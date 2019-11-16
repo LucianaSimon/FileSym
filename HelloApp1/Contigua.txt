@@ -1,0 +1,223 @@
+Las configuraciones para la simulacion son:
+* Organización física: Contigua
+* Modo de acceso: Directo
+* Administración de espacios libres: MapadeBits
+* Tiempo de acceso: 2
+* Tiempo de seek: 2
+* Tiempo de lectura: 2
+* Tiempo de escritura: 2
+* Tiempo de procesamiento: 2
+* Tamaño de bloque: 50 uA
+* Tamaño de dispositivo: 10000 uA
+* Cantidad de bloques: 200
+
+Indicadores del sistema:
+* Fragmentación interna total: 96,32 %
+* Fragmentación externa total: 87 %
+* Tiempo de gestion: 24,04 UT
+* Tiempo de espera: 124,61 UT
+* Tiempo de simulación: 391 UT
+* Tiempo máximo y mínimo de CREATE: 130 y 4 UT
+* Tiempo máximo y mínimo de DELETE: 356 y 78 UT
+* Tiempo máximo y mínimo de READ: 139 y 21 UT
+* Tiempo máximo y mínimo de WRITE: 372 y 9 UT
+* Tiempo máximo y mínimo de OPEN: 357 y 5 UT
+* Tiempo máximo y mínimo de CLOSE: 359 y 78 UT
+
+Operación 0:
+* Tiempo de satisfaccion: 4 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 0 UT
+* Tiempo de gestion total: 4 UT
+
+Operación 1:
+* Tiempo de satisfaccion: 5 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 3 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 2:
+* Tiempo de satisfaccion: 7 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 3 UT
+* Tiempo de gestion total: 4 UT
+
+Operación 3:
+* Tiempo de satisfaccion: 9 UT
+* Tiempo de lectura/escritura: 4 UT
+* Tiempo de espera: 5 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 4:
+* Tiempo de satisfaccion: 21 UT
+* Tiempo de lectura/escritura: 14 UT
+* Tiempo de espera: 7 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 5:
+* Tiempo de satisfaccion: 23 UT
+* Tiempo de lectura/escritura: 2 UT
+* Tiempo de espera: 21 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 6:
+* Tiempo de satisfaccion: 25 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 23 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 7:
+* Tiempo de satisfaccion: 46 UT
+* Tiempo de lectura/escritura: 16 UT
+* Tiempo de espera: 24 UT
+* Tiempo de gestion total: 6 UT
+
+Operación 8:
+* Tiempo de satisfaccion: 51 UT
+* Tiempo de lectura/escritura: 6 UT
+* Tiempo de espera: 45 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 9:
+* Tiempo de satisfaccion: 61 UT
+* Tiempo de lectura/escritura: 10 UT
+* Tiempo de espera: 51 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 10:
+* Tiempo de satisfaccion: 63 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 59 UT
+* Tiempo de gestion total: 4 UT
+
+Operación 11:
+* Tiempo de satisfaccion: 64 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 62 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 12:
+* Tiempo de satisfaccion: 112 UT
+* Tiempo de lectura/escritura: 28 UT
+* Tiempo de espera: 64 UT
+* Tiempo de gestion total: 20 UT
+
+Operación 13:
+* Tiempo de satisfaccion: 109 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 107 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 14:
+* Tiempo de satisfaccion: 123 UT
+* Tiempo de lectura/escritura: 6 UT
+* Tiempo de espera: 107 UT
+* Tiempo de gestion total: 10 UT
+
+Operación 15:
+* Tiempo de satisfaccion: 124 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 122 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 16:
+* Tiempo de satisfaccion: 126 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 122 UT
+* Tiempo de gestion total: 4 UT
+
+Operación 17:
+* Tiempo de satisfaccion: 130 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 126 UT
+* Tiempo de gestion total: 4 UT
+
+Operación 18:
+* Tiempo de satisfaccion: 132 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 130 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 19:
+* Tiempo de satisfaccion: 133 UT
+* Tiempo de lectura/escritura: 2 UT
+* Tiempo de espera: 131 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 20:
+* Tiempo de satisfaccion: 135 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 133 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 21:
+* Tiempo de satisfaccion: 136 UT
+* Tiempo de lectura/escritura: 2 UT
+* Tiempo de espera: 134 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 22:
+* Tiempo de satisfaccion: 138 UT
+* Tiempo de lectura/escritura: 2 UT
+* Tiempo de espera: 136 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 23:
+* Tiempo de satisfaccion: 139 UT
+* Tiempo de lectura/escritura: 4 UT
+* Tiempo de espera: 135 UT
+* Tiempo de gestion total: 0 UT
+
+Operación 24:
+* Tiempo de satisfaccion: 141 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 139 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 25:
+* Tiempo de satisfaccion: 147 UT
+* Tiempo de lectura/escritura: 2 UT
+* Tiempo de espera: 139 UT
+* Tiempo de gestion total: 6 UT
+
+Operación 26:
+* Tiempo de satisfaccion: 148 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 146 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 27:
+* Tiempo de satisfaccion: 354 UT
+* Tiempo de lectura/escritura: 200 UT
+* Tiempo de espera: 148 UT
+* Tiempo de gestion total: 6 UT
+
+Operación 28:
+* Tiempo de satisfaccion: 356 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 354 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 29:
+* Tiempo de satisfaccion: 357 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 355 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 30:
+* Tiempo de satisfaccion: 359 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 357 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 31:
+* Tiempo de satisfaccion: 356 UT
+* Tiempo de lectura/escritura: 0 UT
+* Tiempo de espera: 354 UT
+* Tiempo de gestion total: 2 UT
+
+Operación 32:
+* Tiempo de satisfaccion: 372 UT
+* Tiempo de lectura/escritura: 2 UT
+* Tiempo de espera: 370 UT
+* Tiempo de gestion total: 0 UT

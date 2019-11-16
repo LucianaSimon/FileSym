@@ -100,34 +100,65 @@ namespace FireSim
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
 
-                List<int> bloquesLibres = new List<int>(bloquesDeseados);
-
-                try
+                List<int> bloquesLibres;
+                
+               if (arch.getTablaDireccion().Count > 0)
                 {
-                    bloquesLibres.AddRange(getDireccionBloqueContiguo(bloquesDeseados));
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("No hay mas espacio de almacenamiento");
-                    // Console.WriteLine("Error: " + e);
-                }
-
-                if (bloquesLibres.Count != 0)
-                {
-                    if (arch.getTablaDireccion().Count > 0)
+                    bloquesLibres = arch.getTablaDireccion();
+                    try
                     {
-                        for (int i=0; i<arch.getTablaDireccion().Count; i++)
-                        {
-                            TablaBloques[bloquesLibres[i]].uAOcupado = TablaBloques[arch.getTablaDireccion()[i]].uAOcupado;
-                            TablaBloques[bloquesLibres[i]].uABurocracia = TablaBloques[arch.getTablaDireccion()[i]].uABurocracia;
-                            TablaBloques[arch.getTablaDireccion()[i]].uAOcupado = 0;
-                            TablaBloques[arch.getTablaDireccion()[i]].uABurocracia = 0;
-                            TablaBloques[arch.getTablaDireccion()[i]].estadoReserva = false;
-                        }
+                        bloquesLibres.AddRange(Realloc(uAdeseada, arch.getTablaDireccion()));
+                        ObtuveLibres = true; //si obtuve libres devuelvo verdadero
+                        arch.setTablaDireccion(bloquesLibres);  // Se mueve todo siempre!
                     }
-                    ObtuveLibres = true; //si obtuve libres devuelvo verdadero
-                    arch.setTablaDireccion(bloquesLibres);  // Se mueve todo siempre!
-                }//sino devuelve false
+                    catch
+                    {
+                        // Si llega aca es que no hay los bloques libres necesarios a continuacion
+                        List<int> dir = arch.getTablaDireccion();
+                        for (int i=0; i<dir.Count; i++)
+                        {
+                            TablaBloques[dir[i]].estadoReserva = false;
+                        }
+
+                        try
+                        {
+                            bloquesLibres = getBloquesLibresContiguos(bloquesDeseados + dir.Count);
+                        }
+                        catch
+                        {
+                            for (int i = 0; i < dir.Count; i++)
+                            {
+                                TablaBloques[dir[i]].estadoReserva = true;
+                            }
+                            throw new Exception("No hay mas espacio");
+                        }
+                        
+
+                        for (int j=0; j<dir.Count; j++)
+                        {
+                            TablaBloques[bloquesLibres[j]].uAOcupado = TablaBloques[dir[j]].uAOcupado;
+                            TablaBloques[bloquesLibres[j]].uABurocracia = TablaBloques[dir[j]].uABurocracia;
+                            TablaBloques[dir[j]].uAOcupado = 0;
+                            TablaBloques[dir[j]].uABurocracia = 0;
+                        }
+                        ObtuveLibres = true; //si obtuve libres devuelvo verdadero
+                        arch.setTablaDireccion(bloquesLibres);  // Se mueve todo siempre!
+                    }
+                    
+                }
+               else
+                {
+                    try
+                    {
+                        bloquesLibres = getBloquesLibresContiguos(bloquesDeseados);
+                        ObtuveLibres = true; //si obtuve libres devuelvo verdadero
+                        arch.setTablaDireccion(bloquesLibres);  // Se mueve todo siempre!
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                }
 
             }
             else if (OrgaFisica == Org.Enlazada)
@@ -162,8 +193,6 @@ namespace FireSim
                 }//sino devuelve false 
 
             }
-
-
             else if (OrgaFisica == Org.Indexada)
             {
                 int bloquesDeseados = (int)Math.Ceiling((decimal)uAdeseada / (decimal)tamBloque);
@@ -336,20 +365,20 @@ namespace FireSim
             return bloquesLibres;
         }
 
-        private List<int> getDireccionBloqueContiguo(int bloquesDeseados)
+        private List<int> getBloquesLibresContiguos(int bloquesDeseados)
         {
             List<int> bloquesContiguos = new List<int>();
             
             // Para verificar que existan la cantidad de bloques deseados contiguos
             int contiguos = 0;
-            
+
             // Para recorrer la Tabla de Bloques
             int posBloque = 0;
 
             // Posicion donde comienzan los bloques contiguos
             int posInicial = -1;
 
-            while ((posBloque <GetCantBloques()) && (contiguos < bloquesDeseados))
+            while ((posBloque < GetCantBloques()) && (contiguos < bloquesDeseados))
             {
                 if (!TablaBloques[posBloque].estadoReserva)
                 {
@@ -359,12 +388,11 @@ namespace FireSim
                     {
                         posInicial = posBloque;
                     }
-                    
                 }
                 else
                 {
                     // Si en algun momento se encuentra un bloque reservado sin cumplir la cantidad de bloques
-                    // contiguos deseados, se vuelve a empezar de 0
+                    // contiguos deseados, se deja de buscar y se lanza la excepcion
                     contiguos = 0;
                     posInicial = -1;
                 }
@@ -372,7 +400,53 @@ namespace FireSim
             }
             if (contiguos == bloquesDeseados)
             {
-                for (int i=0; i<contiguos; i++)
+                for (int i = 0; i < contiguos; i++)
+                {
+                    bloquesContiguos.Add(posInicial + i);
+                    TablaBloques[posInicial + i].estadoReserva = true;
+                }
+            }
+            else
+            {
+                throw new Exception("No hay suficiente espacio de almacenamiento para el archivo solicitado");
+            }
+
+            return bloquesContiguos;
+        }
+
+        private List<int> Realloc(int bloquesDeseados, List<int> dir)
+        {
+            List<int> bloquesContiguos = new List<int>();
+
+            // Para verificar que existan la cantidad de bloques deseados contiguos
+            int contiguos = 0;
+
+            // Para recorrer la Tabla de Bloques
+            int posBloque = dir[dir.Count - 1] + 1; // El bloque siguiente al que ya esta asignado para este archivo;
+
+            // Posicion donde comienzan los bloques contiguos
+            int posInicial = posBloque; ;
+
+            while ((posBloque <GetCantBloques()) && (contiguos < bloquesDeseados) && posInicial == dir[dir.Count -1])
+            {
+                if (!TablaBloques[posBloque].estadoReserva)
+                {
+                    // Aumento el contador de bloques contiguos encontrados
+                    contiguos++;
+                }
+                else
+                {
+                    // Si en algun momento se encuentra un bloque reservado sin cumplir la cantidad de bloques
+                    // contiguos deseados, se deja de buscar y se lanza la excepcion
+                    contiguos = 0;
+                    posInicial = -1;
+                }
+                posBloque++;
+            }
+            if (contiguos == bloquesDeseados)
+            {
+                bloquesContiguos = dir;
+                for (int i = 0; i < contiguos; i++)
                 {
                     bloquesContiguos.Add(posInicial + i);
                     TablaBloques[posInicial + i].estadoReserva = true;
@@ -440,7 +514,7 @@ namespace FireSim
 
         public void Write(int inicio, int cant_uA, List<int> direcciones, Org orga)
         {          
-            int i = 0;  // Para recorrer la tabla de direcciones
+            int i = inicio;  // Para recorrer la tabla de direcciones
             
             while (cant_uA > 0 && i < direcciones.Count)
             {

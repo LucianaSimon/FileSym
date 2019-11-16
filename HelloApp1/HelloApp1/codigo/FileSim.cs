@@ -292,11 +292,11 @@ namespace FireSim
 
                     }
 
-                    if (fin >= arch.getTablaDireccion().Count && GetOrganizacionFisica() == Org.Contigua) //solo se realoca si es contigua
+                    if (fin > arch.getTablaDireccion().Count && GetOrganizacionFisica() == Org.Contigua) //solo se realoca si es contigua
                     {
                         try
                         {
-                            if (!realocar(ref arch, fin, arch.getTablaDireccion().Count, ref indicador)) //en realocar getlibres modifica el archivo
+                            if (!realocar(ref arch, fin-arch.getTablaDireccion().Count, arch.getTablaDireccion().Count, ref indicador)) //en realocar getlibres modifica el archivo
                             {
                                 cambiarEstado(opActual);
                             }
@@ -307,7 +307,7 @@ namespace FireSim
                             throw e;
                         }
                     }
-                    else if (fin >= arch.getTablaDireccion().Count) //para enlazada e indexada
+                    else if (fin > arch.getTablaDireccion().Count) //para enlazada e indexada
                     {
                         try
                         {
@@ -364,7 +364,7 @@ namespace FireSim
                     }
 
                     // Escribo los "datos" en el dispositivo!!
-                    disp.Write(offset, cant_uA, arch.getTablaDireccion(), GetOrganizacionFisica());
+                    disp.Write(inicio, cant_uA, arch.getTablaDireccion(), GetOrganizacionFisica());
                     indicador.tEspera = tSimulacion - TablaOperaciones[getOpActual()].Tarribo;
                     indicador.tLectoEscritura = (fin - inicio) * disp.GetTescritura();
                     indicador.tSatisfaccion = indicador.tGestionTotal + indicador.tEspera + indicador.tLectoEscritura;
@@ -629,13 +629,22 @@ namespace FireSim
         public bool realocar(ref Archivo arch, int BloquesRealocar, int BloquesAntes, ref Indicadores indicador)
         {
             bool aux = false;
+            int primerBloqueArch = arch.getTablaDireccion()[0];
 
             int uArealocar = BloquesRealocar*disp.GetTamBloques();
             try
             {
                 if (disp.GetLibres(uArealocar, GetOrganizacionFisica(), ref arch))
                 {
-                    indicador.tGestionTotal = BloquesAntes * (disp.GetTprocesamient() + disp.GetTseek()) + disp.TprocesamientoBloquesLibres(GetAdminEspacio(), uArealocar);
+                    if (primerBloqueArch == arch.getTablaDireccion()[0]) // Si no cambio el primer bloque, cambia el tiempo de gestion
+                    {
+                        indicador.tGestionTotal = disp.TprocesamientoBloquesLibres(GetAdminEspacio(), uArealocar); //@Fede, Creo que es asi 
+                    }
+                    else
+                    {
+                        indicador.tGestionTotal = BloquesAntes * (disp.GetTprocesamient() + disp.GetTseek()) + disp.TprocesamientoBloquesLibres(GetAdminEspacio(), uArealocar);
+                    }
+                    
                     aux = true;
                 }
             }
