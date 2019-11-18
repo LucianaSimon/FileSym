@@ -17,7 +17,7 @@
             </Menu>
         </DockPanel>
         <Label HorizontalAlignment="Left" Content="Indicadores del sistema:" Style="{StaticResource lblDesign}" FontSize="22" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="294" FontWeight="Bold" Canvas.Left="25" Canvas.Top="26"/>
-        <TextBlock x:Name="info_resultados" Height="214" TextWrapping="Wrap" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FFFF422C" Width="557" FontWeight="Bold" Canvas.Left="25" Canvas.Top="66"/>
+        <TextBlock x:Name="info_resultados" Height="214" TextWrapping="Wrap" FontSize="13" FontFamily="/HelloApp1;component/Font/#Ubuntu" Foreground="#FF2C2C2C" Width="557" FontWeight="Bold" Canvas.Left="25" Canvas.Top="66"/>
 
         <local:UserControl1 x:Name="grafico" Width="150" Height="150" Canvas.Left="403" Canvas.Top="49" />
 
